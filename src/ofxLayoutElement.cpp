@@ -9,14 +9,10 @@ void ofxLayoutElement::update(){
         boundary = ofRectangle(parentNode->boundary);
     }
     
-//    // WIDTH
-//    string widthValue = getStyle("width");
-//    
-//    if(widthValue != ""){
-//        if(ofIsStringInString(widthValue,"%")){
-//            
-//        }
-//    }
+    // DIMENSIONS
+    boundary.width = styles.getDimensionStyleValue(OSS_KEY::WIDTH,boundary.width);
+    boundary.height = styles.getDimensionStyleValue(OSS_KEY::HEIGHT,boundary.height);
+  
     for(int i = 0; i < childNodes.size(); i++){
         childNodes[i]->update();
     }
@@ -25,7 +21,7 @@ void ofxLayoutElement::update(){
 void ofxLayoutElement::draw(){
     glPushAttrib(GL_SCISSOR_BIT);
     glEnable(GL_SCISSOR_TEST);
-    glScissor(boundary.x, boundary.y, boundary.width, boundary.height);
+    glScissor(boundary.x, boundary.y+(ofGetHeight()-boundary.height), boundary.width, boundary.height);
     
     applyStyles();
     
@@ -34,7 +30,7 @@ void ofxLayoutElement::draw(){
 }
 
 void ofxLayoutElement::applyStyles(){
-    if(styles.has(OSS_KEY::BACKGROUND_COLOR)){
+    if(styles.hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofSetColor(styles.getColorStyle(OSS_KEY::BACKGROUND_COLOR));
         ofFill();
         ofRect(boundary);
@@ -50,7 +46,7 @@ void ofxLayoutElement::setStyle(OSS_KEY::ENUM styleKey, string styleValue){
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    if(!styles.has(styleKey)){
+    if(!styles.hasStyle(styleKey)){
         return "";
     }
     return styles.getStyle(styleKey);

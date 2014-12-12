@@ -46,13 +46,35 @@ ofColor ofxOSS::parseColor(string colorChannels){
     return color;
 }
 
-bool ofxOSS::has(string key){
-    return has(getEnumFromString(key));
-}
-
-bool ofxOSS::has(OSS_KEY::ENUM key){
+bool ofxOSS::hasStyle(OSS_KEY::ENUM key){
     return stylesMap.count(key) > 0;
 }
+
+bool ofxOSS::hasStyle(string key){
+    return hasStyle(getEnumFromString(key));
+}
+
+float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension){
+    string dimensionValue = getStyle(dimensionKey);
+    
+    // If dimension not found, return parent's
+    if(dimensionValue == ""){
+        return parentDimension;
+    }
+    
+    if(ofIsStringInString(dimensionValue,"%")){
+        float percent = (ofToFloat(ofSplitString(dimensionValue,"%")[0])/100.0);
+        return percent*parentDimension;
+    }
+    else if(ofIsStringInString(dimensionValue,"px")){
+        return ofToFloat(ofSplitString(dimensionValue,"px")[0]);
+    }
+    else{
+        return ofToFloat(dimensionValue);
+    }
+}
+
+
 
 ofColor ofxOSS::getColorStyle(string key){
     return getColorStyle(getEnumFromString(key));
@@ -100,6 +122,12 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_COLOR:
             type = OSS_TYPE::COLOR;
             break;
+        case OSS_KEY::WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::HEIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
         default:
             ofLogWarning("ofxOSS::getType","No type found for value provided.");
             type = OSS_TYPE::INVALID;
@@ -112,6 +140,12 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     if(key == "background-color"){
         return OSS_KEY::BACKGROUND_COLOR;
     }
+    else if(key == "width"){
+        return OSS_KEY::WIDTH;
+    }
+    else if(key == "height"){
+        return OSS_KEY::HEIGHT;
+    }
     else{
         ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -123,6 +157,12 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
     switch(key){
         case OSS_KEY::BACKGROUND_COLOR:
             keyString = "background-color";
+            break;
+        case OSS_KEY::WIDTH:
+            keyString = "width";
+            break;
+        case OSS_KEY::HEIGHT:
+            keyString = "height";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
