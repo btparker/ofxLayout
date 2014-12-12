@@ -6,7 +6,7 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION};
 };
 
 class ofxOSS{
@@ -73,14 +73,14 @@ public:
     /// If input cannot be parsed, throws warning and returns ofColor::black
     ///
     /// \param colorValue The string of the css-like color input
-    static ofColor getColorFromString(string colorValue);
+    static ofColor parseColor(string colorValue);
 
     /// \brief Given a comma deliminated string of color channels ( '255, 0, 0' ), return the ofColor
     ///
     /// Useful because color is stored this way in the stylesMap. Can handle rgba.
     ///
     /// \param colorChannels The string of color channels ( '255, 0, 0' )
-    static ofColor parseColor(string colorChannels);
+    static ofColor parseColorChannels(string colorChannels);
     
     
     

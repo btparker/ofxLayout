@@ -1,6 +1,6 @@
 #include "ofxOSS.h"
 
-ofColor ofxOSS::getColorFromString(string colorValue){
+ofColor ofxOSS::parseColor(string colorValue){
     ofColor color;
     
     // If given color in html hex form (#FF0000)
@@ -18,7 +18,7 @@ ofColor ofxOSS::getColorFromString(string colorValue){
         // From 'rgb(255,0,128)', would get '255,0,128'
         string commaSeparatedChannels = colorValue.substr(si,l);
         
-        color = parseColor(commaSeparatedChannels);
+        color = parseColorChannels(commaSeparatedChannels);
     }
     else{
         ofLogWarning("ofxOSS::getColorFromString","Could not parse "+colorValue+" to ofColor, returning ofColor::black");
@@ -27,7 +27,7 @@ ofColor ofxOSS::getColorFromString(string colorValue){
     return color;
 }
 
-ofColor ofxOSS::parseColor(string colorChannels){
+ofColor ofxOSS::parseColorChannels(string colorChannels){
     ofColor color;
     //splitting string form '255,0,128' into array [255,0,128]
     vector<string> splitChannels = ofSplitString(colorChannels,",");
@@ -74,15 +74,13 @@ float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDim
     }
 }
 
-
-
 ofColor ofxOSS::getColorStyle(string key){
     return getColorStyle(getEnumFromString(key));
 }
 
 ofColor ofxOSS::getColorStyle(OSS_KEY::ENUM key){
     if(getType(key) == OSS_TYPE::COLOR){
-        return parseColor(stylesMap[key]);
+        return parseColorChannels(stylesMap[key]);
     }
     else{
         ofLogWarning("ofxOSS::getColor","No color found for key provided.");
@@ -101,7 +99,7 @@ string ofxOSS::getStyle(OSS_KEY::ENUM key){
 void ofxOSS::setStyle(OSS_KEY::ENUM key, string value){
     switch (getType(key)) {
         case OSS_TYPE::COLOR:
-            stylesMap[key] = ofToString(getColorFromString(value));
+            stylesMap[key] = ofToString(parseColor(value));
             break;
         default:
             stylesMap[key] = value;
@@ -128,6 +126,9 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
         case OSS_KEY::HEIGHT:
             type = OSS_TYPE::NUMBER;
             break;
+        case OSS_KEY::POSITION:
+            type = OSS_TYPE::NUMBER;
+            break;
         default:
             ofLogWarning("ofxOSS::getType","No type found for value provided.");
             type = OSS_TYPE::INVALID;
@@ -146,6 +147,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     else if(key == "height"){
         return OSS_KEY::HEIGHT;
     }
+    else if(key == "position"){
+        return OSS_KEY::POSITION;
+    }
     else{
         ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -163,6 +167,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::HEIGHT:
             keyString = "height";
+            break;
+        case OSS_KEY::POSITION:
+            keyString = "position";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
