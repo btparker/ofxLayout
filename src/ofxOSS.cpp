@@ -212,10 +212,10 @@ float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle
         x = percent*parentBoundary.width;
     }
     else if(ofIsStringInString(xStr,"px")){
-        x = ofToFloat(ofSplitString(xStr,"px")[0])+parentBoundary.x;
+        x = ofToFloat(ofSplitString(xStr,"px")[0]);
     }
     else{
-        x = ofToFloat(xStr)+parentBoundary.x;
+        x = ofToFloat(xStr);
     }
     return x;
 }
@@ -231,10 +231,10 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
         y = percent*parentBoundary.height;
     }
     else if(ofIsStringInString(yStr,"px")){
-        y = ofToFloat(ofSplitString(yStr,"px")[0])+parentBoundary.y;
+        y = ofToFloat(ofSplitString(yStr,"px")[0]);
     }
     else{
-        y = ofToFloat(yStr)+parentBoundary.y;
+        y = ofToFloat(yStr);
     }
 
     return y;

@@ -1,5 +1,6 @@
 #include "ofMain.h"
 #include "ofxOSS.h"
+#include "ofxXmlSettings.h"
 
 class ofxLayoutElement{
     
@@ -19,11 +20,18 @@ public:
     
     void addChildElement(ofxLayoutElement* childElement);
     
+    void loadFromFile(string filename);
+    void loadFromLayout(ofxXmlSettings* layout, int which = 0);
+    
     ofxOSS stylesheet;
+    
+    string getID();
+    void setID(string _ID);
 private:
     ofRectangle boundary;
     ofRectangle parentBoundary;
     ofxLayoutElement* parentNode;
     vector<ofxLayoutElement*> childNodes;
     ofxOSS styles;
+    string ID;
 };
