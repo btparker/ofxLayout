@@ -3,9 +3,10 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofEnableAlphaBlending();
-    container.setStyle("width", "50%");
+    container.setStyle("width", "40");
     container.setStyle("height", "50%");
-    container.setStyle("background-color", "rgb(255,0,0,255)");
+    container.setStyle("position", "center");
+    container.setStyle("background-color", "rgb(255,0,0)");
 }
 
 //--------------------------------------------------------------

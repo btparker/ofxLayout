@@ -14,9 +14,13 @@ public:
     string getStyle(OSS_KEY::ENUM styleKey);
     void applyStyles();
     
+    void updateDimensions();
+    void updatePosition();
+    
     ofxOSS stylesheet;
 private:
     ofRectangle boundary;
+    ofRectangle parentBoundary;
     ofxLayoutElement* parentNode;
     vector<ofxLayoutElement*> childNodes;
     ofxOSS styles;
