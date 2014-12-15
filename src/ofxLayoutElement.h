@@ -17,6 +17,8 @@ public:
     void updateDimensions();
     void updatePosition();
     
+    void addChildElement(ofxLayoutElement* childElement);
+    
     ofxOSS stylesheet;
 private:
     ofRectangle boundary;

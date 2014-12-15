@@ -205,7 +205,7 @@ ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
 float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary){
     float x;
     if(xStr == "center"){
-        x = (parentBoundary.width/2.0)-(boundary.width/2.0)+parentBoundary.x;
+        x = (parentBoundary.width/2.0)-(boundary.width/2.0);
     }
     else if(ofIsStringInString(xStr,"%")){
         float percent = (ofToFloat(ofSplitString(xStr,"%")[0])/100.0);
@@ -224,7 +224,7 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
     float y;
     
     if(yStr == "center"){
-        y = (parentBoundary.height/2.0)-(boundary.height/2.0)+parentBoundary.y;
+        y = (parentBoundary.height/2.0)-(boundary.height/2.0);
     }
     else if(ofIsStringInString(yStr,"%")){
         float percent = (ofToFloat(ofSplitString(yStr,"%")[0])/100.0);
