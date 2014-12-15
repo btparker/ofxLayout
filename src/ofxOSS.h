@@ -1,4 +1,6 @@
 #include "ofMain.h"
+#include "ofxJSON.h"
+
 // Types of styles
 namespace OSS_TYPE{
     enum ENUM{INVALID, COLOR, NUMBER, POSITION};
@@ -105,10 +107,20 @@ public:
     
     ofPoint getPosition(ofRectangle boundary, ofRectangle parentBoundary);
     
+    /// \brief Loads and parses an oss file
+    ///
+    /// \param string filename
+    
+    void loadFromFile(string filename);
+    
+    ofxOSS* getStylesByID(string _ID);
+    
     
 private:
     // Where all of the styles are stored
     map<OSS_KEY::ENUM, string> stylesMap;
+    
+    map<string, ofxOSS> idStyles;
     
     //
     float computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary);

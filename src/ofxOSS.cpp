@@ -212,10 +212,10 @@ float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle
         x = percent*parentBoundary.width;
     }
     else if(ofIsStringInString(xStr,"px")){
-        x = ofToFloat(ofSplitString(xStr,"px")[0])+parentBoundary.x;
+        x = ofToFloat(ofSplitString(xStr,"px")[0]);
     }
     else{
-        x = ofToFloat(xStr)+parentBoundary.x;
+        x = ofToFloat(xStr);
     }
     return x;
 }
@@ -231,11 +231,47 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
         y = percent*parentBoundary.height;
     }
     else if(ofIsStringInString(yStr,"px")){
-        y = ofToFloat(ofSplitString(yStr,"px")[0])+parentBoundary.y;
+        y = ofToFloat(ofSplitString(yStr,"px")[0]);
     }
     else{
-        y = ofToFloat(yStr)+parentBoundary.y;
+        y = ofToFloat(yStr);
     }
 
     return y;
+}
+
+void ofxOSS::loadFromFile(string filename){
+    ofxJSONElement result;
+    // Now parse the OSS (but really, it's JSON)
+    bool parsingSuccessful = result.open(filename);
+    
+    if (parsingSuccessful){
+        vector<string> ossElementNames = result.getMemberNames();
+        for(int i = 0; i < ossElementNames.size(); i++){
+            string ossElementName = ossElementNames[i];
+            if(ossElementName.substr(0,1) == "#"){
+                string id = ossElementName.substr(1);
+                idStyles[id] = ofxOSS();
+                vector<string> styleKeys = result[ossElementName].getMemberNames();
+                for(int k = 0; k < styleKeys.size(); k++){
+                    string styleKey = styleKeys[k];
+                    string styleValue = result[ossElementName][styleKey].asString();
+                    idStyles[id].setStyle(styleKey, styleValue);
+                }
+            }
+        }
+    }
+    else
+    {
+        ofLogError("ofxOSS::loadFromFile")  << "Failed to parse OSS" << endl;
+    }
+}
+
+ofxOSS* ofxOSS::getStylesByID(string _ID){
+    if(idStyles.count(_ID) > 0){
+        return &idStyles[_ID];
+    }
+    else{
+        return NULL;
+    }
 }

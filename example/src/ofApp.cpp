@@ -4,17 +4,9 @@
 void ofApp::setup(){
     ofSetFrameRate(60);
     ofEnableAlphaBlending();
-    ofxLayoutElement* parent = &container;
-    for(int i = 0; i < 5; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        string channel = ofToString(int(((i+1)/6.0)*255.0));
-        child->setStyle(OSS_KEY::BACKGROUND_COLOR, "rgb(0, "+channel+", 0)");
-        child->setStyle(OSS_KEY::WIDTH, "75%");
-        child->setStyle(OSS_KEY::HEIGHT, "50%");
-        child->setStyle(OSS_KEY::POSITION, "center 0px");
-        parent->addChildElement(child);
-        parent = child;
-    }
+    container.loadFromFile("index.ofml");
+    stylesheet.loadFromFile("styles.oss");
+    container.setStylesheet(&stylesheet);
 }
 
 //--------------------------------------------------------------
