@@ -21,4 +21,5 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
         ofxLayoutElement container;
+        ofxOSS stylesheet;
 };
