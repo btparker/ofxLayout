@@ -1,6 +1,6 @@
 .dropbox
 example/example.xcodeproj
-
+example/.DS_Store
 #########################
 # openFrameworks patterns
 #########################

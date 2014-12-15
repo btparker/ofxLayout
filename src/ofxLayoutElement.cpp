@@ -3,28 +3,41 @@
 
 void ofxLayoutElement::update(){
     if(!parentNode){
-        boundary = ofRectangle(0.0f, 0.0f, ofGetWidth(), ofGetHeight());
+        parentBoundary = ofRectangle(0.0f, 0.0f, ofGetWidth(), ofGetHeight());
     }
     else{
-        boundary = ofRectangle(parentNode->boundary);
+        parentBoundary = ofRectangle(parentNode->boundary);
     }
     
-    // DIMENSIONS
-    boundary.width = styles.getDimensionStyleValue(OSS_KEY::WIDTH,boundary.width);
-    boundary.height = styles.getDimensionStyleValue(OSS_KEY::HEIGHT,boundary.height);
-  
+    updateDimensions();
+    updatePosition();
+    
     for(int i = 0; i < childNodes.size(); i++){
         childNodes[i]->update();
     }
 }
 
+void ofxLayoutElement::updateDimensions(){
+    boundary.width = styles.getDimensionStyleValue(OSS_KEY::WIDTH,parentBoundary.width);
+    boundary.height = styles.getDimensionStyleValue(OSS_KEY::HEIGHT,parentBoundary.height);
+}
+
+void ofxLayoutElement::updatePosition(){
+    if(styles.hasStyle("position")){
+        ofPoint pos = styles.getPosition(boundary, parentBoundary);
+        boundary.x = pos.x;
+        boundary.y = pos.y;
+    }
+}
+
 void ofxLayoutElement::draw(){
     glPushAttrib(GL_SCISSOR_BIT);
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(boundary.x, boundary.y+(ofGetHeight()-boundary.height), boundary.width, boundary.height);
-    
+    //glEnable(GL_SCISSOR_TEST);
+    ofPushMatrix();
+    ofTranslate(boundary.x, boundary.y);
+    //glScissor(boundary.x, boundary.y+(ofGetHeight()-boundary.height), boundary.width, boundary.height);
     applyStyles();
-    
+//    ofPopMatrix();
     glDisable(GL_SCISSOR_TEST);
     glPopAttrib();
 }
@@ -33,7 +46,7 @@ void ofxLayoutElement::applyStyles(){
     if(styles.hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofSetColor(styles.getColorStyle(OSS_KEY::BACKGROUND_COLOR));
         ofFill();
-        ofRect(boundary);
+        ofRect(0,0,boundary.width,boundary.height);
     }
 }
 

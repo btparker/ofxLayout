@@ -127,7 +127,7 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::POSITION:
-            type = OSS_TYPE::NUMBER;
+            type = OSS_TYPE::POSITION;
             break;
         default:
             ofLogWarning("ofxOSS::getType","No type found for value provided.");
@@ -175,4 +175,67 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
     }
     return keyString;
+}
+
+ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
+    string posString = getStyle(OSS_KEY::POSITION);
+    if(posString.length() > 0){
+        ofPoint posPt;
+        vector<string> posPieces = ofSplitString(posString, " ");
+        string xStr, yStr;
+        float x,y;
+        if(posPieces.size() == 2){
+            xStr = posPieces[0];
+            yStr = posPieces[1];
+        }
+        else{
+            xStr = yStr = posPieces[0];
+        }
+        
+        x = computeLeftPosition(xStr, boundary, parentBoundary);
+        y = computeTopPosition(yStr, boundary, parentBoundary);
+
+        return ofPoint(x,y);
+    }
+    else{
+        return ofPoint();
+    }
+}
+
+float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary){
+    float x;
+    if(xStr == "center"){
+        x = (parentBoundary.width/2.0)-(boundary.width/2.0)+parentBoundary.x;
+    }
+    else if(ofIsStringInString(xStr,"%")){
+        float percent = (ofToFloat(ofSplitString(xStr,"%")[0])/100.0);
+        x = percent*parentBoundary.width;
+    }
+    else if(ofIsStringInString(xStr,"px")){
+        x = ofToFloat(ofSplitString(xStr,"px")[0])+parentBoundary.x;
+    }
+    else{
+        x = ofToFloat(xStr)+parentBoundary.x;
+    }
+    return x;
+}
+
+float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary){
+    float y;
+    
+    if(yStr == "center"){
+        y = (parentBoundary.height/2.0)-(boundary.height/2.0)+parentBoundary.y;
+    }
+    else if(ofIsStringInString(yStr,"%")){
+        float percent = (ofToFloat(ofSplitString(yStr,"%")[0])/100.0);
+        y = percent*parentBoundary.height;
+    }
+    else if(ofIsStringInString(yStr,"px")){
+        y = ofToFloat(ofSplitString(yStr,"px")[0])+parentBoundary.y;
+    }
+    else{
+        y = ofToFloat(yStr)+parentBoundary.y;
+    }
+
+    return y;
 }

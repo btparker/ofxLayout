@@ -1,7 +1,7 @@
 #include "ofMain.h"
 // Types of styles
 namespace OSS_TYPE{
-    enum ENUM{INVALID, COLOR, NUMBER};
+    enum ENUM{INVALID, COLOR, NUMBER, POSITION};
 };
 
 // Style keys, in order to enforce string input
@@ -98,7 +98,21 @@ public:
 
     float getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension);
     
+    /// \brief Based on the boundary and current display modes, returns the absolute value
+    /// for the [x,y] position given.
+    ///
+    /// \param ofRectangle boundary
+    
+    ofPoint getPosition(ofRectangle boundary, ofRectangle parentBoundary);
+    
+    
 private:
     // Where all of the styles are stored
     map<OSS_KEY::ENUM, string> stylesMap;
+    
+    //
+    float computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary);
+    
+    //
+    float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
 };
