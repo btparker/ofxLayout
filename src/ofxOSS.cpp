@@ -39,6 +39,9 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_COLOR:
             type = OSS_TYPE::COLOR;
             break;
+        case OSS_KEY::BACKGROUND_IMAGE:
+            type = OSS_TYPE::IMAGE;
+            break;
         case OSS_KEY::WIDTH:
             type = OSS_TYPE::NUMBER;
             break;
@@ -76,6 +79,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     if(key == "background-color"){
         return OSS_KEY::BACKGROUND_COLOR;
     }
+    else if(key == "background-image"){
+        return OSS_KEY::BACKGROUND_IMAGE;
+    }
     else if(key == "width"){
         return OSS_KEY::WIDTH;
     }
@@ -96,6 +102,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
     switch(key){
         case OSS_KEY::BACKGROUND_COLOR:
             keyString = "background-color";
+            break;
+        case OSS_KEY::BACKGROUND_IMAGE:
+            keyString = "background-image";
             break;
         case OSS_KEY::WIDTH:
             keyString = "width";

@@ -4,6 +4,21 @@
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
     stylesheet = new ofxOSS();
+    backgroundImageReadyToDraw = false;
+    backgroundImage = new ofTexture(); //create your own texture, it will be cleared so be sure its empty
+    
+    //setup the loader by giving it a texture to load into, and a resizing quality
+    //CV_INTER_LINEAR, CV_INTER_NN, CV_INTER_CUBIC, CV_INTER_AREA
+    progressiveTextureLoader.setup(backgroundImage, CV_INTER_CUBIC);
+    
+    //these 2 settings control how long it takes for the tex to load
+    progressiveTextureLoader.setScanlinesPerLoop(512);//see header for explanation
+    progressiveTextureLoader.setTargetTimePerFrame(10.0f); //how long to spend uploading data per frame, in ms
+    
+    //add a listener to get notified when tex is fully loaded
+    //and one to let you know when the texture is drawable
+    ofAddListener(progressiveTextureLoader.textureReady, this, &ofxLayoutElement::backgroundImageReady);
+    ofAddListener(progressiveTextureLoader.textureDrawable, this, &ofxLayoutElement::backgroundImageDrawable);
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -22,6 +37,7 @@ void ofxLayoutElement::update(){
     
     updateDimensions();
     updatePosition();
+    updateBackgroundImage();
     
     for(int i = 0; i < childNodes.size(); i++){
         childNodes[i]->update();
@@ -34,7 +50,7 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     
-    applyStyles();
+    drawStyles();
     
     for(int i = 0; i < childNodes.size(); i++){
         childNodes[i]->draw();
@@ -138,13 +154,33 @@ void ofxLayoutElement::updatePosition(){
     }
 }
 
-void ofxLayoutElement::applyStyles(){
+void ofxLayoutElement::updateBackgroundImage(){
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+        ofxOSS* backgroundImageOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_IMAGE);
+        string src = backgroundImageOSS->getStyle(OSS_KEY::BACKGROUND_IMAGE);
+        if(src != backgroundImageName){
+            backgroundImageName = src;
+            //start loading the texture!
+            progressiveTextureLoader.loadTexture(backgroundImageName, true /*create mipmaps*/);
+        }
+        
+
+    }
+}
+
+void ofxLayoutElement::drawStyles(){
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofxOSS* backgroundColorOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_COLOR);
         ofSetColor(backgroundColorOSS->getColorStyle(OSS_KEY::BACKGROUND_COLOR));
         ofFill();
         ofRect(0,0,boundary.width,boundary.height);
     }
+    
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && backgroundImageReadyToDraw){
+        ofSetColor(255);
+        backgroundImage->drawSubsection(0,0,boundary.width,boundary.height, 1.0, 1.0);
+    }
+    
 }
 
 ofxOSS* ofxLayoutElement::getOverridingStylesheet(OSS_KEY::ENUM styleKey){
@@ -168,4 +204,21 @@ void ofxLayoutElement::addChildElement(ofxLayoutElement* childElement){
     childElement->parentNode = this;
     childElement->stylesheet = this->stylesheet;
     childNodes.push_back(childElement);
+}
+
+/// |   Background Image   | ///
+/// | -------------------- | ///
+
+void ofxLayoutElement::backgroundImageDrawable(ofxProgressiveTextureLoad::textureEvent& arg){
+    ofLogNotice() << "background image drawable!";
+    backgroundImageReadyToDraw = true;
+}
+
+void ofxLayoutElement::backgroundImageReady(ofxProgressiveTextureLoad::textureEvent& arg){
+    if (arg.loaded){
+        ofLogNotice() << "background image ready!";
+        backgroundImageReadyToDraw = true;
+    }else{
+        ofLogError() << "background image load failed!" << arg.texturePath;
+    }
 }

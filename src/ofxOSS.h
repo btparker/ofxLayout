@@ -3,12 +3,12 @@
 
 // Types of styles
 namespace OSS_TYPE{
-    enum ENUM{INVALID, COLOR, NUMBER, POSITION};
+    enum ENUM{INVALID, COLOR, NUMBER, POSITION, IMAGE};
 };
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, ORIGIN};
 };
 
 class ofxOSS{
