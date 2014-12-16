@@ -15,8 +15,8 @@ class ofxOSS{
 
 public:
     
-    /// |   Basic Setters/Getters   | ///
-    /// | ------------------------- | ///
+    /// |   Setters/Getters   | ///
+    /// | ------------------- | ///
     
     string getStyle(OSS_KEY::ENUM key);
     string getStyle(string key);

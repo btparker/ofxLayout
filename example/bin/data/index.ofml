@@ -1,9 +1,9 @@
 <element id="container">
-	<element style="background-color:rgb(255,0,0);position: 15px center; width:75%;height:75%;" id="child0">
-		<element style="background-color:rgb(0,255,0); position: 15px center; width: 75%; height : 75%;" id="child1">
+	<element style="background-color:rgb(255,0,0);position: -50px; width:100px;height:100px;" id="child0">
+		<!-- <element style="background-color:rgb(0,255,0); position: 15px center; width: 75%; height : 75%;" id="child1">
 			<element style="background-color:rgb(0,0,255);position: 15px center; width:75%;height:75%" id="child2">
 				<element style="background-color:rgb(255,0,255); position: 15px center; width: 75%; height : 75%;" id="child3"></element>
 			</element>
-		</element>
+		</element> -->
 	</element>
 </element>

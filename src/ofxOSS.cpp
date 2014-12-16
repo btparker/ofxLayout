@@ -1,7 +1,7 @@
 #include "ofxOSS.h"
 
-/// |   Basic Setters/Getters   | ///
-/// | ------------------------- | ///
+/// |   Setters/Getters   | ///
+/// | ------------------- | ///
 
 string ofxOSS::getStyle(string key){
     return getStyle(getEnumFromString(key));
