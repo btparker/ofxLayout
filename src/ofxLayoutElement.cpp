@@ -1,8 +1,16 @@
 #include "ofxLayoutElement.h"
 
+/// |   Constructor/Destructor   | ///
+/// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
     stylesheet = new ofxOSS();
 }
+
+ofxLayoutElement::~ofxLayoutElement(){
+}
+
+/// |   Cycle Functions  | ///
+/// | ------------------ | ///
 
 void ofxLayoutElement::update(){
     if(!parentNode){
@@ -20,6 +28,65 @@ void ofxLayoutElement::update(){
     }
 }
 
+void ofxLayoutElement::draw(){
+    // Saving the scissor state
+    glPushAttrib(GL_SCISSOR_BIT);
+    ofPushMatrix();
+    ofTranslate(boundary.x, boundary.y, 0);
+    
+    applyStyles();
+    
+    for(int i = 0; i < childNodes.size(); i++){
+        childNodes[i]->draw();
+    }
+    
+    ofPopMatrix();
+    glPopAttrib();
+}
+
+/// |   Setters/Getters   | ///
+/// | ------------------- | ///
+
+string ofxLayoutElement::getID(){
+    return ID;
+}
+
+void ofxLayoutElement::setID(string _ID){
+    ID = _ID;
+}
+
+string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
+    ofxOSS* oss = getOverridingStylesheet(styleKey);
+    if(oss != NULL){
+        return oss->getStyle(styleKey);
+    }
+    else{
+        return "";
+    }
+    
+}
+
+string ofxLayoutElement::getStyle(string key){
+    return getStyle(ofxOSS::getEnumFromString(key));
+}
+
+bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
+    ofxOSS* idStyles = stylesheet->getStylesByID(getID());
+    return elementStyles.hasStyle(styleKey) || (idStyles != NULL && idStyles->hasStyle(styleKey));
+}
+
+bool ofxLayoutElement::hasStyle(string styleKey){
+    return hasStyle(ofxOSS::getEnumFromString(styleKey));
+}
+
+void ofxLayoutElement::setStyle(OSS_KEY::ENUM styleKey, string styleValue){
+    elementStyles.setStyle(styleKey, styleValue);
+}
+
+void ofxLayoutElement::setStyle(string styleKey, string styleValue){
+    return setStyle(ofxOSS::getEnumFromString(styleKey), styleValue);
+}
+
 void ofxLayoutElement::loadFromFile(string filename){
     ofxXmlSettings layout;
     layout.loadFile(filename);
@@ -28,14 +95,6 @@ void ofxLayoutElement::loadFromFile(string filename){
 
 void ofxLayoutElement::setStylesheet(ofxOSS *_stylesheet){
     stylesheet = _stylesheet;
-}
-
-string ofxLayoutElement::getID(){
-    return ID;
-}
-
-void ofxLayoutElement::setID(string _ID){
-    ID = _ID;
 }
 
 void ofxLayoutElement::loadFromLayout(ofxXmlSettings *layout, int which){
@@ -79,22 +138,6 @@ void ofxLayoutElement::updatePosition(){
     }
 }
 
-void ofxLayoutElement::draw(){
-    // Saving the scissor state
-    glPushAttrib(GL_SCISSOR_BIT);
-    ofPushMatrix();
-    ofTranslate(boundary.x, boundary.y, 0);
-    
-    applyStyles();
-    
-    for(int i = 0; i < childNodes.size(); i++){
-        childNodes[i]->draw();
-    }
-    
-    ofPopMatrix();
-    glPopAttrib();
-}
-
 void ofxLayoutElement::applyStyles(){
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofxOSS* backgroundColorOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_COLOR);
@@ -102,29 +145,6 @@ void ofxLayoutElement::applyStyles(){
         ofFill();
         ofRect(0,0,boundary.width,boundary.height);
     }
-}
-
-void ofxLayoutElement::setStyle(string styleKey, string styleValue){
-    return setStyle(ofxOSS::getEnumFromString(styleKey), styleValue);
-}
-
-void ofxLayoutElement::setStyle(OSS_KEY::ENUM styleKey, string styleValue){
-    elementStyles.setStyle(styleKey, styleValue);
-}
-
-string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    ofxOSS* oss = getOverridingStylesheet(styleKey);
-    if(oss != NULL){
-        return oss->getStyle(styleKey);
-    }
-    else{
-        return "";
-    }
-    
-}
-
-string ofxLayoutElement::getStyle(string key){
-    return getStyle(ofxOSS::getEnumFromString(key));
 }
 
 ofxOSS* ofxLayoutElement::getOverridingStylesheet(OSS_KEY::ENUM styleKey){
@@ -138,15 +158,6 @@ ofxOSS* ofxLayoutElement::getOverridingStylesheet(OSS_KEY::ENUM styleKey){
     else{
         return NULL;
     }
-}
-
-bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
-    ofxOSS* idStyles = stylesheet->getStylesByID(getID());
-    return elementStyles.hasStyle(styleKey) || (idStyles != NULL && idStyles->hasStyle(styleKey));
-}
-
-bool ofxLayoutElement::hasStyle(string styleKey){
-    return hasStyle(ofxOSS::getEnumFromString(styleKey));
 }
 
 ofxOSS* ofxLayoutElement::getOverridingStylesheet(string styleKey){

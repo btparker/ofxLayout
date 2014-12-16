@@ -15,6 +15,33 @@ class ofxOSS{
 
 public:
     
+    /// |   Setters/Getters   | ///
+    /// | ------------------- | ///
+    
+    string getStyle(OSS_KEY::ENUM key);
+    string getStyle(string key);
+    
+    bool hasStyle(string key);
+    bool hasStyle(OSS_KEY::ENUM key);
+    
+    void setStyle(OSS_KEY::ENUM key, string value);
+    void setStyle(string key, string value);
+    
+    /// \brief Returns TYPE enum of key provided
+    ///
+    /// Example: 'background-color' yields TYPE::COLOR. Returns warning and INVALID type if none found.
+    ///
+    /// \param key
+    static OSS_TYPE::ENUM getType(OSS_KEY::ENUM key);
+    static OSS_TYPE::ENUM getType(string key);
+    
+    /// \brief Returns a pointer to the styles associated with a given ID
+    ///
+    /// \param string _ID Element ID
+    ofxOSS* getStylesByID(string _ID);
+    
+    
+    
     /// |   Utilities   | ///
     /// | ------------- | ///
     
@@ -33,28 +60,10 @@ public:
     /// \param key The enum of the css-like key
     static string getStringFromEnum(OSS_KEY::ENUM key);
     
-    /// \brief Returns TYPE enum of key provided
+    /// \brief Loads and parses an OSS file, stores in relevant styles
     ///
-    /// Example: 'background-color' yields TYPE::COLOR. Returns warning and INVALID type if none found.
-    ///
-    /// \param key
-    static OSS_TYPE::ENUM getType(string key);
-    static OSS_TYPE::ENUM getType(OSS_KEY::ENUM key);
-    
-    
-    
-    
-    /// |   Basic Styles   | ///
-    /// | ---------------- | ///
-    
-    string getStyle(OSS_KEY::ENUM key);
-    string getStyle(string key);
-    
-    bool hasStyle(string key);
-    bool hasStyle(OSS_KEY::ENUM key);
-    
-    void setStyle(OSS_KEY::ENUM key, string value);
-    void setStyle(string key, string value);
+    /// \param string filename
+    void loadFromFile(string filename);
     
     
     
@@ -90,6 +99,8 @@ public:
     
     /// |   Transformation Styles   | ///
     /// | ------------------------- | ///
+    
+    
     /// \brief Based on the parent dimension and current display modes, returns the absolute value
     /// for the dimension given.
     ///
@@ -97,34 +108,41 @@ public:
     ///
     /// \param dimensionKey WIDTH, HEIGHT, etc
     /// \param parentDimension Bounding box width, height, etc of the parent
-
     float getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension);
     
     /// \brief Based on the boundary and current display modes, returns the absolute value
     /// for the [x,y] position given.
     ///
     /// \param ofRectangle boundary
-    
     ofPoint getPosition(ofRectangle boundary, ofRectangle parentBoundary);
     
-    /// \brief Loads and parses an oss file
-    ///
-    /// \param string filename
     
-    void loadFromFile(string filename);
-    
-    ofxOSS* getStylesByID(string _ID);
     
     
 private:
-    // Where all of the styles are stored
+    /// \brief Where the computational styles (by element) are stored
+    ///
+    /// \key OSS_KEY (POSITION, WIDTH, etc)
+    /// \value string Style text rule ('center 50%', '#FF00FF', etc)
     map<OSS_KEY::ENUM, string> stylesMap;
     
+    /// \brief Where the styles by id (say from an external OSS file) are stored
+    ///
+    /// \key id
+    /// \value ofxOSS stylesheet
     map<string, ofxOSS> idStyles;
     
-    //
+    /// \brief Calculates the x position (from the left) given a style string and relevant boundary information
+    ///
+    /// \param string xStr Describes the x position ('center', 50px, 25%)
+    /// \param ofRectangle boundary The boundary of the element which the style is to be applied to
+    /// \param ofRectangle parentBoundary The boundary of the parent element of the element which the style is to be applied
     float computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary);
     
-    //
+    /// \brief Calculates the y position (from the top) given a style string and relevant boundary information
+    ///
+    /// \param string yStr Describes the y position ('center', 50px, 25%)
+    /// \param ofRectangle boundary The boundary of the element which the style is to be applied to
+    /// \param ofRectangle parentBoundary The boundary of the parent element of the element which the style is to be applied
     float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
 };
