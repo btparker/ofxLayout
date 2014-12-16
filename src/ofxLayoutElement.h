@@ -77,6 +77,8 @@ protected:
     ofxOSS* stylesheet;
     string ID;
     
+    ofFbo* elementFbo;
+    
     ofTexture * backgroundImage;
     string backgroundImageName;
     bool backgroundImageReadyToDraw;

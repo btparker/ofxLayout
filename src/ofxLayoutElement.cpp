@@ -19,9 +19,14 @@ ofxLayoutElement::ofxLayoutElement(){
     //and one to let you know when the texture is drawable
     ofAddListener(progressiveTextureLoader.textureReady, this, &ofxLayoutElement::backgroundImageReady);
     ofAddListener(progressiveTextureLoader.textureDrawable, this, &ofxLayoutElement::backgroundImageDrawable);
+    
+    elementFbo = new ofFbo();
+    elementFbo->allocate();
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
+    delete backgroundImage;
+    delete elementFbo;
 }
 
 /// |   Cycle Functions  | ///
@@ -49,9 +54,10 @@ void ofxLayoutElement::draw(){
     glPushAttrib(GL_SCISSOR_BIT);
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
-    
+    elementFbo->begin();
     drawStyles();
-    
+    elementFbo->end();
+    elementFbo->draw(0,0,boundary.width,boundary.height);
     for(int i = 0; i < childNodes.size(); i++){
         childNodes[i]->draw();
     }
@@ -143,6 +149,10 @@ void ofxLayoutElement::updateDimensions(){
     
     ofxOSS* heightOSS = getOverridingStylesheet(OSS_KEY::HEIGHT);
     boundary.height = heightOSS->getDimensionStyleValue(OSS_KEY::HEIGHT,parentBoundary.height);
+    
+    if(boundary.height != elementFbo->getHeight() || boundary.width != elementFbo->getWidth()){
+        elementFbo->allocate(boundary.width, boundary.height);
+    }
 }
 
 void ofxLayoutElement::updatePosition(){
@@ -160,6 +170,7 @@ void ofxLayoutElement::updateBackgroundImage(){
         string src = backgroundImageOSS->getStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(src != backgroundImageName){
             backgroundImageName = src;
+            
             //start loading the texture!
             progressiveTextureLoader.loadTexture(backgroundImageName, true /*create mipmaps*/);
         }
@@ -178,7 +189,13 @@ void ofxLayoutElement::drawStyles(){
     
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && backgroundImageReadyToDraw){
         ofSetColor(255);
-        backgroundImage->drawSubsection(0,0,boundary.width,boundary.height, 1.0, 1.0);
+        ofRectangle backgroundImageDimensions = ofRectangle(0,0,backgroundImage->getWidth(), backgroundImage->getHeight());
+        if(hasStyle(OSS_KEY::BACKGROUND_SIZE)){
+            ofxOSS* backgroundSizeOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_SIZE);
+
+            backgroundImageDimensions = backgroundSizeOSS->getBackgroundSizeDimensions(backgroundImageDimensions, boundary);
+        }
+        backgroundImage->draw(backgroundImageDimensions);
     }
     
 }

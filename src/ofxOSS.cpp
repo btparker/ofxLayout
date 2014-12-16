@@ -42,6 +42,9 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_IMAGE:
             type = OSS_TYPE::IMAGE;
             break;
+        case OSS_KEY::BACKGROUND_SIZE:
+            type = OSS_TYPE::IMAGE;
+            break;
         case OSS_KEY::WIDTH:
             type = OSS_TYPE::NUMBER;
             break;
@@ -64,7 +67,7 @@ OSS_TYPE::ENUM ofxOSS::getType(string key){
 
 ofxOSS* ofxOSS::getStylesByID(string _ID){
     if(idStyles.count(_ID) > 0){
-        return &idStyles[_ID];
+        return idStyles[_ID];
     }
     else{
         return NULL;
@@ -81,6 +84,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     }
     else if(key == "background-image"){
         return OSS_KEY::BACKGROUND_IMAGE;
+    }
+    else if(key == "background-size"){
+        return OSS_KEY::BACKGROUND_SIZE;
     }
     else if(key == "width"){
         return OSS_KEY::WIDTH;
@@ -105,6 +111,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BACKGROUND_IMAGE:
             keyString = "background-image";
+            break;
+        case OSS_KEY::BACKGROUND_SIZE:
+            keyString = "background-size";
             break;
         case OSS_KEY::WIDTH:
             keyString = "width";
@@ -131,13 +140,14 @@ void ofxOSS::loadFromFile(string filename){
         for(int i = 0; i < ossElementNames.size(); i++){
             string ossElementName = ossElementNames[i];
             if(ossElementName.substr(0,1) == "#"){
+                // Skipping the hashtag
                 string id = ossElementName.substr(1);
-                idStyles[id] = ofxOSS();
+                idStyles[id] = new ofxOSS();
                 vector<string> styleKeys = result[ossElementName].getMemberNames();
                 for(int k = 0; k < styleKeys.size(); k++){
                     string styleKey = styleKeys[k];
                     string styleValue = result[ossElementName][styleKey].asString();
-                    idStyles[id].setStyle(styleKey, styleValue);
+                    idStyles[id]->setStyle(styleKey, styleValue);
                 }
             }
         }
@@ -260,6 +270,44 @@ ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
         return ofPoint();
     }
 }
+
+ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageDimensions, ofRectangle elementBoundary){
+    ofRectangle result = ofRectangle(imageDimensions);
+    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
+    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
+    
+    
+    
+    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
+    // Doing this so there is no untrimmed space
+    
+    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
+    
+    if(isSizeStyleSingleRule && bgSizeStr == "auto"){
+        // Don't bother doing anything
+    }
+    if(isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain")){
+        float wRatio = imageDimensions.getWidth()/elementBoundary.getWidth();
+        float hRatio = imageDimensions.getHeight()/elementBoundary.getHeight();
+        
+        float scale;
+        
+        if(bgSizeStr == "cover"){
+            scale = 1.0/min(wRatio,hRatio);
+        }
+        else{
+            scale = 1.0/max(wRatio,hRatio);
+        }
+        
+        result.scale(scale);
+    }
+    else{
+        string xSizeStr = bgSizeStrSplit[0];
+        string ySizeStr = (bgSizeStrSplit.size() == 1) ? xSizeStr : bgSizeStrSplit[1];
+    }
+    return result;
+}
+
 
 /// |   Private Functions   | ///
 /// | --------------------- | ///

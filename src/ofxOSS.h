@@ -8,7 +8,11 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, ORIGIN};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_SIZE, ORIGIN};
+};
+
+namespace OSS_VALUE{
+    enum ENUM{CENTER, COVER, CONTAIN, AUTO};
 };
 
 class ofxOSS{
@@ -116,6 +120,12 @@ public:
     /// \param ofRectangle boundary
     ofPoint getPosition(ofRectangle boundary, ofRectangle parentBoundary);
     
+    /// \brief Based on the background size style, image dimensions, and the element boundary, returns the computed draw dimensions of the image.
+    ///
+    /// \param ofRectangle imageDimensions
+    /// \param ofRectangle elementBoundary
+    ofRectangle getBackgroundSizeDimensions(ofRectangle imageDimensions, ofRectangle elementBoundary);
+
     
     
     
@@ -130,7 +140,7 @@ private:
     ///
     /// \key id
     /// \value ofxOSS stylesheet
-    map<string, ofxOSS> idStyles;
+    map<string, ofxOSS*> idStyles;
     
     /// \brief Calculates the x position (from the left) given a style string and relevant boundary information
     ///
