@@ -45,6 +45,9 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_SIZE:
             type = OSS_TYPE::IMAGE;
             break;
+        case OSS_KEY::BACKGROUND_POSITION:
+            type = OSS_TYPE::IMAGE;
+            break;
         case OSS_KEY::WIDTH:
             type = OSS_TYPE::NUMBER;
             break;
@@ -88,6 +91,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     else if(key == "background-size"){
         return OSS_KEY::BACKGROUND_SIZE;
     }
+    else if(key == "background-position"){
+        return OSS_KEY::BACKGROUND_POSITION;
+    }
     else if(key == "width"){
         return OSS_KEY::WIDTH;
     }
@@ -114,6 +120,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BACKGROUND_SIZE:
             keyString = "background-size";
+            break;
+        case OSS_KEY::BACKGROUND_POSITION:
+            keyString = "background-position";
             break;
         case OSS_KEY::WIDTH:
             keyString = "width";
@@ -226,7 +235,10 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
 
 float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension){
     string dimensionValue = getStyle(dimensionKey);
-    
+    return getDimensionStyleValue(dimensionValue, parentDimension);
+}
+
+float ofxOSS::getDimensionStyleValue(string dimensionValue, float parentDimension){
     // If dimension not found, return parent's
     if(dimensionValue == ""){
         return parentDimension;
@@ -243,8 +255,6 @@ float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDim
         return ofToFloat(dimensionValue);
     }
 }
-
-
 
 ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
     string posString = getStyle(OSS_KEY::POSITION);
@@ -271,12 +281,10 @@ ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
     }
 }
 
-ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageDimensions, ofRectangle elementBoundary){
-    ofRectangle result = ofRectangle(imageDimensions);
+ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageTransform, ofRectangle elementBoundary){
+    ofRectangle result = ofRectangle(imageTransform);
     string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
     vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
-    
-    
     
     bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
     // Doing this so there is no untrimmed space
@@ -287,8 +295,8 @@ ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageDimensions, ofR
         // Don't bother doing anything
     }
     if(isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain")){
-        float wRatio = imageDimensions.getWidth()/elementBoundary.getWidth();
-        float hRatio = imageDimensions.getHeight()/elementBoundary.getHeight();
+        float wRatio = (imageTransform.getWidth())/elementBoundary.getWidth();
+        float hRatio = (imageTransform.getHeight())/elementBoundary.getHeight();
         
         float scale;
         
@@ -302,9 +310,49 @@ ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageDimensions, ofR
         result.scale(scale);
     }
     else{
-        string xSizeStr = bgSizeStrSplit[0];
-        string ySizeStr = (bgSizeStrSplit.size() == 1) ? xSizeStr : bgSizeStrSplit[1];
+        string wSizeStr = bgSizeStrSplit[0];
+        string hSizeStr = isSizeStyleSingleRule ? wSizeStr : bgSizeStrSplit[1];
+        
+        result.setWidth(getDimensionStyleValue(wSizeStr, elementBoundary.getWidth()));
+        result.setHeight(getDimensionStyleValue(hSizeStr, elementBoundary.getHeight()));
     }
+    return result;
+}
+
+bool ofxOSS::isBackgroundSizeDynamic(){
+    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
+    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
+    
+    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
+    // Doing this so there is no untrimmed space
+    
+    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
+    
+    return isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain");
+}
+
+ofRectangle ofxOSS::getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary){
+    ofRectangle result = ofRectangle(imageTransform);
+    string bgPosStr = getStyle(OSS_KEY::BACKGROUND_POSITION);
+    vector<string> bgPosStrSplit = ofSplitString(bgPosStr, " ",true, true);
+    
+    bool isPosStyleSingleRule = bgPosStrSplit.size() == 1;
+    
+    // Doing this so there is no untrimmed space
+    bgPosStr = isPosStyleSingleRule ? bgPosStrSplit[0] : bgPosStr;
+    
+    string xPosStr = bgPosStrSplit[0];
+    string yPosStr = isPosStyleSingleRule ? xPosStr : bgPosStrSplit[1];
+    
+    if(isBackgroundSizeDynamic()){
+        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
+        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
+    }
+    else{
+        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
+        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
+    }
+    
     return result;
 }
 

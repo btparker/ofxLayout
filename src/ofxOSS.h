@@ -8,7 +8,7 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_SIZE, ORIGIN};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_SIZE, BACKGROUND_POSITION};
 };
 
 namespace OSS_VALUE{
@@ -110,8 +110,8 @@ public:
     ///
     /// Accepts percent ( '100%' ), and absolute values ( '50px', '50')
     ///
-    /// \param dimensionKey WIDTH, HEIGHT, etc
     /// \param parentDimension Bounding box width, height, etc of the parent
+    float getDimensionStyleValue(string dimensionValue, float parentDimension);
     float getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension);
     
     /// \brief Based on the boundary and current display modes, returns the absolute value
@@ -124,8 +124,15 @@ public:
     ///
     /// \param ofRectangle imageDimensions
     /// \param ofRectangle elementBoundary
-    ofRectangle getBackgroundSizeDimensions(ofRectangle imageDimensions, ofRectangle elementBoundary);
-
+    ofRectangle getBackgroundSizeDimensions(ofRectangle imageTransform, ofRectangle elementBoundary);
+    
+    /// \brief Based on the background position style, (update) image dimensions, and the element boundary, returns the computed background transform of the image
+    ///
+    /// \param ofRectangle imageDimensions
+    /// \param ofRectangle elementBoundary
+    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
+    
+    bool isBackgroundSizeDynamic();
     
     
     

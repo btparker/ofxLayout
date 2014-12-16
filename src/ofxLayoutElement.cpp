@@ -189,13 +189,21 @@ void ofxLayoutElement::drawStyles(){
     
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && backgroundImageReadyToDraw){
         ofSetColor(255);
-        ofRectangle backgroundImageDimensions = ofRectangle(0,0,backgroundImage->getWidth(), backgroundImage->getHeight());
+        
+        ofRectangle backgroundImageTransform = ofRectangle(0,0,backgroundImage->getWidth(), backgroundImage->getHeight());
+        
+        
         if(hasStyle(OSS_KEY::BACKGROUND_SIZE)){
             ofxOSS* backgroundSizeOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_SIZE);
-
-            backgroundImageDimensions = backgroundSizeOSS->getBackgroundSizeDimensions(backgroundImageDimensions, boundary);
+            backgroundImageTransform = backgroundSizeOSS->getBackgroundSizeDimensions(backgroundImageTransform, boundary);
         }
-        backgroundImage->draw(backgroundImageDimensions);
+        
+        if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+            ofxOSS* backgroundPositionOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_POSITION);
+            backgroundImageTransform = backgroundPositionOSS->getBackgroundPosition(backgroundImageTransform, boundary);
+        }
+        
+        backgroundImage->draw(backgroundImageTransform.x, backgroundImageTransform.y, 0, backgroundImageTransform.width,backgroundImageTransform.height);
     }
     
 }
