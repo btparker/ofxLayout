@@ -12,6 +12,8 @@
 	<dict>
 		<key>12DFF02CF5C9C72708B200DCDDC2EE4EF0E5A36A</key>
 		<string>https://github.com/armadillu/ofxThreadedVideoPlayer.git</string>
+		<key>2559BBC2C6F846687D7E9F4E42C98FC44D06AE4C</key>
+		<string>https://github.com/bakercp/ofxUnicode.git</string>
 		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
 		<string>https://github.com/local-projects/openFrameworks.git</string>
 		<key>372D5C591D3C88479F79A8FE47B1CBABCDBCA325</key>
@@ -20,6 +22,8 @@
 		<string>https://github.com/armadillu/ofxProgressiveTextureLoad.git</string>
 		<key>5DB7C332A3A89035E93556A2A38BF414005BA671</key>
 		<string>https://github.com/jefftimesten/ofxJSON.git</string>
+		<key>9B774B0323186B2BCB6A3C5ECEB04025E7DCF467</key>
+		<string>https://github.com/armadillu/ofxFontStash.git</string>
 		<key>C244CE38817BC3508587E19FA66F16144386E30C</key>
 		<string>git.assembla.com:brookfield-production.brookfield-place-of.git</string>
 		<key>E0CB4C1C2522C94E4D03AC595BB2CF0D7F09B508</key>
@@ -33,6 +37,8 @@
 	<dict>
 		<key>12DFF02CF5C9C72708B200DCDDC2EE4EF0E5A36A</key>
 		<string>../../../../ofxThreadedVideoPlayer</string>
+		<key>2559BBC2C6F846687D7E9F4E42C98FC44D06AE4C</key>
+		<string>../../../../ofxUnicode</string>
 		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
 		<string>../../../../projects/brookfield/brookfield-place-of/openFrameworks</string>
 		<key>372D5C591D3C88479F79A8FE47B1CBABCDBCA325</key>
@@ -41,6 +47,8 @@
 		<string>../../../../ofxProgressiveTextureLoad</string>
 		<key>5DB7C332A3A89035E93556A2A38BF414005BA671</key>
 		<string>../../../../ofxJSON</string>
+		<key>9B774B0323186B2BCB6A3C5ECEB04025E7DCF467</key>
+		<string>../../../../ofxFontStash</string>
 		<key>C244CE38817BC3508587E19FA66F16144386E30C</key>
 		<string>../../../../projects/brookfield/brookfield-place-of</string>
 		<key>E0CB4C1C2522C94E4D03AC595BB2CF0D7F09B508</key>
@@ -71,6 +79,14 @@
 			<string>EBC5E2A29F125165AEBCAA19E4D8FC06D99494BA</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxAVFVideoPlayer</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9B774B0323186B2BCB6A3C5ECEB04025E7DCF467</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxFontStash</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -111,6 +127,14 @@
 			<string>12DFF02CF5C9C72708B200DCDDC2EE4EF0E5A36A</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxThreadedVideoPlayer</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2559BBC2C6F846687D7E9F4E42C98FC44D06AE4C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxUnicode</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
