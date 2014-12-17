@@ -20,6 +20,9 @@
 		77C609BE1A40BEE900093728 /* ofxCvShortImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608C01A40BEE900093728 /* ofxCvShortImage.cpp */; };
 		77C609BF1A40BEE900093728 /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C6098A1A40BEE900093728 /* opencv.a */; };
 		77C609C41A40BF8500093728 /* ofxMSATimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C609C21A40BF8500093728 /* ofxMSATimer.cpp */; };
+		77C609C81A411EAE00093728 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609C71A411EAD00093728 /* AVFoundation.framework */; };
+		77C609CA1A411EBA00093728 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609C91A411EBA00093728 /* QuartzCore.framework */; };
+		77C609CC1A411ECA00093728 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609CB1A411ECA00093728 /* CoreMedia.framework */; };
 		77E916101A3B32B000C1362E /* ofxLayoutElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E9160E1A3B32B000C1362E /* ofxLayoutElement.cpp */; };
 		77E916131A3B4B3E00C1362E /* ofxOSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E916111A3B4B3E00C1362E /* ofxOSS.cpp */; };
 		77E9161F1A3F5FF300C1362E /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E916181A3F5FF300C1362E /* ofxXmlSettings.cpp */; };
@@ -190,6 +193,9 @@
 		77C6098A1A40BEE900093728 /* opencv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = opencv.a; sourceTree = "<group>"; };
 		77C609C21A40BF8500093728 /* ofxMSATimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMSATimer.cpp; sourceTree = "<group>"; };
 		77C609C31A40BF8500093728 /* ofxMSATimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxMSATimer.h; sourceTree = "<group>"; };
+		77C609C71A411EAD00093728 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		77C609C91A411EBA00093728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		77C609CB1A411ECA00093728 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		77E9160E1A3B32B000C1362E /* ofxLayoutElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLayoutElement.cpp; sourceTree = "<group>"; };
 		77E9160F1A3B32B000C1362E /* ofxLayoutElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLayoutElement.h; sourceTree = "<group>"; };
 		77E916111A3B4B3E00C1362E /* ofxOSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOSS.cpp; sourceTree = "<group>"; };
@@ -230,6 +236,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77C609CC1A411ECA00093728 /* CoreMedia.framework in Frameworks */,
+				77C609CA1A411EBA00093728 /* QuartzCore.framework in Frameworks */,
+				77C609C81A411EAE00093728 /* AVFoundation.framework in Frameworks */,
 				E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */,
 				E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */,
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
@@ -744,6 +753,9 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
+				77C609CB1A411ECA00093728 /* CoreMedia.framework */,
+				77C609C91A411EBA00093728 /* QuartzCore.framework */,
+				77C609C71A411EAD00093728 /* AVFoundation.framework */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,

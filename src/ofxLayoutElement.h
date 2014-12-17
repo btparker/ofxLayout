@@ -68,6 +68,7 @@ protected:
     void updateDimensions();
     void updatePosition();
     void updateBackgroundImage();
+    void updateBackgroundVideo();
     
     ofRectangle boundary;
     ofRectangle parentBoundary;
@@ -83,6 +84,10 @@ protected:
     string backgroundImageName;
     bool backgroundImageReadyToDraw;
     ofxProgressiveTextureLoad progressiveTextureLoader;
+    
+    ofVideoPlayer backgroundVideo;
+    bool backgroundVideoReadyToDraw;
+    string backgroundVideoName;
     
     void backgroundImageReady(ofxProgressiveTextureLoad::textureEvent& arg);
     void backgroundImageDrawable(ofxProgressiveTextureLoad::textureEvent& arg);

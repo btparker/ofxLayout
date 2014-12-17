@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(60);
+    ofSetVerticalSync(true);
     ofEnableAlphaBlending();
     loadExternalLayout();
 }

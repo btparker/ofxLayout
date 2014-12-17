@@ -42,6 +42,9 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_IMAGE:
             type = OSS_TYPE::IMAGE;
             break;
+        case OSS_KEY::BACKGROUND_VIDEO:
+            type = OSS_TYPE::IMAGE;
+            break;
         case OSS_KEY::BACKGROUND_SIZE:
             type = OSS_TYPE::IMAGE;
             break;
@@ -88,6 +91,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     else if(key == "background-image"){
         return OSS_KEY::BACKGROUND_IMAGE;
     }
+    else if(key == "background-video"){
+        return OSS_KEY::BACKGROUND_VIDEO;
+    }
     else if(key == "background-size"){
         return OSS_KEY::BACKGROUND_SIZE;
     }
@@ -114,6 +120,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
     switch(key){
         case OSS_KEY::BACKGROUND_COLOR:
             keyString = "background-color";
+            break;
+        case OSS_KEY::BACKGROUND_VIDEO:
+            keyString = "background-video";
             break;
         case OSS_KEY::BACKGROUND_IMAGE:
             keyString = "background-image";

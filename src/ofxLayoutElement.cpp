@@ -3,6 +3,8 @@
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
+    backgroundVideoReadyToDraw = false;
+    
     stylesheet = new ofxOSS();
     backgroundImageReadyToDraw = false;
     backgroundImage = new ofTexture(); //create your own texture, it will be cleared so be sure its empty
@@ -43,6 +45,7 @@ void ofxLayoutElement::update(){
     updateDimensions();
     updatePosition();
     updateBackgroundImage();
+    updateBackgroundVideo();
     
     for(int i = 0; i < childNodes.size(); i++){
         childNodes[i]->update();
@@ -179,6 +182,23 @@ void ofxLayoutElement::updateBackgroundImage(){
     }
 }
 
+void ofxLayoutElement::updateBackgroundVideo(){
+    if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
+        ofxOSS* backgroundVideoOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_VIDEO);
+        string src = backgroundVideoOSS->getStyle(OSS_KEY::BACKGROUND_VIDEO);
+        if(src != backgroundVideoName){
+            backgroundVideoName = src;
+            backgroundVideo.loadMovie(backgroundVideoName);
+            backgroundVideo.play();
+            backgroundVideo.setVolume(0.0);
+        }
+    
+        
+        backgroundVideo.update();
+    
+    }
+}
+
 void ofxLayoutElement::drawStyles(){
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofxOSS* backgroundColorOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_COLOR);
@@ -187,23 +207,34 @@ void ofxLayoutElement::drawStyles(){
         ofRect(0,0,boundary.width,boundary.height);
     }
     
-    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && backgroundImageReadyToDraw){
+    if((hasStyle(OSS_KEY::BACKGROUND_IMAGE) && backgroundImageReadyToDraw) || (hasStyle(OSS_KEY::BACKGROUND_VIDEO))){
         ofSetColor(255);
         
-        ofRectangle backgroundImageTransform = ofRectangle(0,0,backgroundImage->getWidth(), backgroundImage->getHeight());
+        ofRectangle backgroundTransform;
+        if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+            backgroundTransform = ofRectangle(0,0,backgroundImage->getWidth(), backgroundImage->getHeight());
+        }
+        else if (hasStyle(OSS_KEY::BACKGROUND_VIDEO)) {
+            backgroundTransform = ofRectangle(0,0,backgroundVideo.getWidth(), backgroundVideo.getHeight());
+        }
+        
         
         
         if(hasStyle(OSS_KEY::BACKGROUND_SIZE)){
             ofxOSS* backgroundSizeOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_SIZE);
-            backgroundImageTransform = backgroundSizeOSS->getBackgroundSizeDimensions(backgroundImageTransform, boundary);
+            backgroundTransform = backgroundSizeOSS->getBackgroundSizeDimensions(backgroundTransform, boundary);
         }
         
         if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
             ofxOSS* backgroundPositionOSS = getOverridingStylesheet(OSS_KEY::BACKGROUND_POSITION);
-            backgroundImageTransform = backgroundPositionOSS->getBackgroundPosition(backgroundImageTransform, boundary);
+            backgroundTransform = backgroundPositionOSS->getBackgroundPosition(backgroundTransform, boundary);
         }
-        
-        backgroundImage->draw(backgroundImageTransform.x, backgroundImageTransform.y, 0, backgroundImageTransform.width,backgroundImageTransform.height);
+        if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+            backgroundImage->draw(backgroundTransform.x, backgroundTransform.y, 0, backgroundTransform.width,backgroundTransform.height);
+        }
+        else if (hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
+            backgroundVideo.draw(backgroundTransform.x, backgroundTransform.y, backgroundTransform.width, backgroundTransform.height);
+        }
     }
     
 }
@@ -247,3 +278,7 @@ void ofxLayoutElement::backgroundImageReady(ofxProgressiveTextureLoad::textureEv
         ofLogError() << "background image load failed!" << arg.texturePath;
     }
 }
+
+/// |   Background Video   | ///
+/// | -------------------- | ///
+
