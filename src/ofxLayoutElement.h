@@ -1,6 +1,7 @@
 #include "ofMain.h"
 #include "ofxOSS.h"
 #include "ofxXmlSettings.h"
+#include "ofxProgressiveTextureLoad.h"
 
 class ofxLayoutElement{
     
@@ -61,8 +62,13 @@ public:
     /// \param ofxXmlSettings* layout
     /// \paramt int which (optional) If there are multiple elements at the current level, specifies which to recurse into
     void loadFromLayout(ofxXmlSettings* layout, int which = 0);
+
+protected:
+    void drawStyles();
+    void updateDimensions();
+    void updatePosition();
+    void updateBackgroundImage();
     
-private:
     ofRectangle boundary;
     ofRectangle parentBoundary;
     ofxLayoutElement* parentNode;
@@ -71,7 +77,13 @@ private:
     ofxOSS* stylesheet;
     string ID;
     
-    void applyStyles();
-    void updateDimensions();
-    void updatePosition();
+    ofFbo* elementFbo;
+    
+    ofTexture * backgroundImage;
+    string backgroundImageName;
+    bool backgroundImageReadyToDraw;
+    ofxProgressiveTextureLoad progressiveTextureLoader;
+    
+    void backgroundImageReady(ofxProgressiveTextureLoad::textureEvent& arg);
+    void backgroundImageDrawable(ofxProgressiveTextureLoad::textureEvent& arg);
 };
