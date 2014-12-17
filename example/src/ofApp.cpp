@@ -4,9 +4,7 @@
 void ofApp::setup(){
     ofSetFrameRate(60);
     ofEnableAlphaBlending();
-    container.loadFromFile("index.ofml");
-    stylesheet.loadFromFile("styles.oss");
-    container.setStylesheet(&stylesheet);
+    loadExternalLayout();
 }
 
 //--------------------------------------------------------------
@@ -20,6 +18,11 @@ void ofApp::draw(){
     container.draw();
 }
 
+void ofApp::loadExternalLayout(){
+    container.loadFromFile("index.ofml");
+    stylesheet.loadFromFile("styles.oss");
+    container.setStylesheet(&stylesheet);
+}
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
@@ -27,7 +30,9 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    if(key == 'r'){
+        loadExternalLayout();
+    }
 }
 
 //--------------------------------------------------------------
