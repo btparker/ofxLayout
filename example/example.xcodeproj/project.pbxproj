@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */; };
+		77560CFB1A41BC4600A05C1C /* fontstash.c in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF61A41BC4600A05C1C /* fontstash.c */; };
+		77560CFC1A41BC4600A05C1C /* stb_truetype.c in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF81A41BC4600A05C1C /* stb_truetype.c */; };
+		77560D181A41BC8700A05C1C /* ofTextConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560CFF1A41BC8700A05C1C /* ofTextConverter.cpp */; };
+		77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D011A41BC8700A05C1C /* ofUnicode.cpp */; };
+		77560D1A1A41BC8700A05C1C /* ofUTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D031A41BC8700A05C1C /* ofUTF8.cpp */; };
 		77C6089C1A3F8AF700093728 /* ofxJSONElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608921A3F8AF700093728 /* ofxJSONElement.cpp */; };
 		77C6089D1A3F8AF700093728 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C6089B1A3F8AF700093728 /* jsoncpp.cpp */; };
 		77C608AE1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608AA1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp */; };
@@ -81,6 +87,28 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFontStash.cpp; sourceTree = "<group>"; };
+		77560CF21A41BC4600A05C1C /* ofxFontStash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxFontStash.h; sourceTree = "<group>"; };
+		77560CF61A41BC4600A05C1C /* fontstash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fontstash.c; sourceTree = "<group>"; };
+		77560CF71A41BC4600A05C1C /* fontstash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fontstash.h; sourceTree = "<group>"; };
+		77560CF81A41BC4600A05C1C /* stb_truetype.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stb_truetype.c; sourceTree = "<group>"; };
+		77560CF91A41BC4600A05C1C /* stb_truetype.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_truetype.h; sourceTree = "<group>"; };
+		77560CFF1A41BC8700A05C1C /* ofTextConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofTextConverter.cpp; sourceTree = "<group>"; };
+		77560D001A41BC8700A05C1C /* ofTextConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofTextConverter.h; sourceTree = "<group>"; };
+		77560D011A41BC8700A05C1C /* ofUnicode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofUnicode.cpp; sourceTree = "<group>"; };
+		77560D021A41BC8700A05C1C /* ofUnicode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofUnicode.h; sourceTree = "<group>"; };
+		77560D031A41BC8700A05C1C /* ofUTF8.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofUTF8.cpp; sourceTree = "<group>"; };
+		77560D041A41BC8700A05C1C /* ofUTF8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofUTF8.h; sourceTree = "<group>"; };
+		77560D091A41BC8700A05C1C /* checked.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checked.h; sourceTree = "<group>"; };
+		77560D0A1A41BC8700A05C1C /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
+		77560D0B1A41BC8700A05C1C /* unchecked.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unchecked.h; sourceTree = "<group>"; };
+		77560D0C1A41BC8700A05C1C /* utf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utf8.h; sourceTree = "<group>"; };
+		77560D101A41BC8700A05C1C /* ReleaseNotes */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReleaseNotes; sourceTree = "<group>"; };
+		77560D111A41BC8700A05C1C /* utf8cpp.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = utf8cpp.html; sourceTree = "<group>"; };
+		77560D141A41BC8700A05C1C /* checked.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = checked.h; sourceTree = "<group>"; };
+		77560D151A41BC8700A05C1C /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
+		77560D161A41BC8700A05C1C /* unchecked.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unchecked.h; sourceTree = "<group>"; };
+		77560D171A41BC8700A05C1C /* utf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utf8.h; sourceTree = "<group>"; };
 		77C608911A3F8AF700093728 /* ofxJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJSON.h; sourceTree = "<group>"; };
 		77C608921A3F8AF700093728 /* ofxJSONElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxJSONElement.cpp; sourceTree = "<group>"; };
 		77C608931A3F8AF700093728 /* ofxJSONElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJSONElement.h; sourceTree = "<group>"; };
@@ -262,6 +290,158 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		77560CEF1A41BC4600A05C1C /* ofxFontStash */ = {
+			isa = PBXGroup;
+			children = (
+				77560CF01A41BC4600A05C1C /* src */,
+				77560CF31A41BC4600A05C1C /* libs */,
+			);
+			name = ofxFontStash;
+			sourceTree = "<group>";
+		};
+		77560CF01A41BC4600A05C1C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */,
+				77560CF21A41BC4600A05C1C /* ofxFontStash.h */,
+			);
+			name = src;
+			path = ../../ofxFontStash/src;
+			sourceTree = "<group>";
+		};
+		77560CF31A41BC4600A05C1C /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				77560CF41A41BC4600A05C1C /* fontstash */,
+			);
+			name = libs;
+			path = ../../ofxFontStash/libs;
+			sourceTree = "<group>";
+		};
+		77560CF41A41BC4600A05C1C /* fontstash */ = {
+			isa = PBXGroup;
+			children = (
+				77560CF51A41BC4600A05C1C /* src */,
+			);
+			path = fontstash;
+			sourceTree = "<group>";
+		};
+		77560CF51A41BC4600A05C1C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				77560CF61A41BC4600A05C1C /* fontstash.c */,
+				77560CF71A41BC4600A05C1C /* fontstash.h */,
+				77560CF81A41BC4600A05C1C /* stb_truetype.c */,
+				77560CF91A41BC4600A05C1C /* stb_truetype.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		77560CFD1A41BC8700A05C1C /* ofxUnicode */ = {
+			isa = PBXGroup;
+			children = (
+				77560CFE1A41BC8700A05C1C /* src */,
+				77560D051A41BC8700A05C1C /* libs */,
+			);
+			name = ofxUnicode;
+			sourceTree = "<group>";
+		};
+		77560CFE1A41BC8700A05C1C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				77560CFF1A41BC8700A05C1C /* ofTextConverter.cpp */,
+				77560D001A41BC8700A05C1C /* ofTextConverter.h */,
+				77560D011A41BC8700A05C1C /* ofUnicode.cpp */,
+				77560D021A41BC8700A05C1C /* ofUnicode.h */,
+				77560D031A41BC8700A05C1C /* ofUTF8.cpp */,
+				77560D041A41BC8700A05C1C /* ofUTF8.h */,
+			);
+			name = src;
+			path = ../../ofxUnicode/src;
+			sourceTree = "<group>";
+		};
+		77560D051A41BC8700A05C1C /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				77560D061A41BC8700A05C1C /* utf8cpp */,
+			);
+			name = libs;
+			path = ../../ofxUnicode/libs;
+			sourceTree = "<group>";
+		};
+		77560D061A41BC8700A05C1C /* utf8cpp */ = {
+			isa = PBXGroup;
+			children = (
+				77560D071A41BC8700A05C1C /* include */,
+				77560D0D1A41BC8700A05C1C /* src */,
+			);
+			path = utf8cpp;
+			sourceTree = "<group>";
+		};
+		77560D071A41BC8700A05C1C /* include */ = {
+			isa = PBXGroup;
+			children = (
+				77560D081A41BC8700A05C1C /* utf8 */,
+				77560D0C1A41BC8700A05C1C /* utf8.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		77560D081A41BC8700A05C1C /* utf8 */ = {
+			isa = PBXGroup;
+			children = (
+				77560D091A41BC8700A05C1C /* checked.h */,
+				77560D0A1A41BC8700A05C1C /* core.h */,
+				77560D0B1A41BC8700A05C1C /* unchecked.h */,
+			);
+			path = utf8;
+			sourceTree = "<group>";
+		};
+		77560D0D1A41BC8700A05C1C /* src */ = {
+			isa = PBXGroup;
+			children = (
+				77560D0E1A41BC8700A05C1C /* utf8_v2_3_1 */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		77560D0E1A41BC8700A05C1C /* utf8_v2_3_1 */ = {
+			isa = PBXGroup;
+			children = (
+				77560D0F1A41BC8700A05C1C /* doc */,
+				77560D121A41BC8700A05C1C /* source */,
+			);
+			path = utf8_v2_3_1;
+			sourceTree = "<group>";
+		};
+		77560D0F1A41BC8700A05C1C /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				77560D101A41BC8700A05C1C /* ReleaseNotes */,
+				77560D111A41BC8700A05C1C /* utf8cpp.html */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		77560D121A41BC8700A05C1C /* source */ = {
+			isa = PBXGroup;
+			children = (
+				77560D131A41BC8700A05C1C /* utf8 */,
+				77560D171A41BC8700A05C1C /* utf8.h */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
+		77560D131A41BC8700A05C1C /* utf8 */ = {
+			isa = PBXGroup;
+			children = (
+				77560D141A41BC8700A05C1C /* checked.h */,
+				77560D151A41BC8700A05C1C /* core.h */,
+				77560D161A41BC8700A05C1C /* unchecked.h */,
+			);
+			path = utf8;
+			sourceTree = "<group>";
+		};
 		77C6088F1A3F8AF700093728 /* ofxJSON */ = {
 			isa = PBXGroup;
 			children = (
@@ -694,6 +874,8 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				77560CFD1A41BC8700A05C1C /* ofxUnicode */,
+				77560CEF1A41BC4600A05C1C /* ofxFontStash */,
 				77C609C01A40BF8500093728 /* ofxMSATimer */,
 				77C608B01A40BEE900093728 /* ofxOpenCv */,
 				77C608A81A40BE0200093728 /* ofxProgressiveTextureLoad */,
@@ -873,7 +1055,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				77560D1A1A41BC8700A05C1C /* ofUTF8.cpp in Sources */,
 				77E916201A3F5FF300C1362E /* tinyxml.cpp in Sources */,
+				77560CFB1A41BC4600A05C1C /* fontstash.c in Sources */,
 				77C609BD1A40BEE900093728 /* ofxCvImage.cpp in Sources */,
 				77C609BC1A40BEE900093728 /* ofxCvHaarFinder.cpp in Sources */,
 				77E916131A3B4B3E00C1362E /* ofxOSS.cpp in Sources */,
@@ -888,10 +1072,14 @@
 				77E916211A3F5FF300C1362E /* tinyxmlerror.cpp in Sources */,
 				77C609B81A40BEE900093728 /* ofxCvColorImage.cpp in Sources */,
 				77C609BB1A40BEE900093728 /* ofxCvGrayscaleImage.cpp in Sources */,
+				77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */,
+				77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */,
 				77C609B91A40BEE900093728 /* ofxCvContourFinder.cpp in Sources */,
 				77C608AE1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				77C609C41A40BF8500093728 /* ofxMSATimer.cpp in Sources */,
+				77560D181A41BC8700A05C1C /* ofTextConverter.cpp in Sources */,
+				77560CFC1A41BC4600A05C1C /* stb_truetype.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1058,7 +1246,7 @@
 					"/Users/tylerparker/Dropbox/work/local-projects/addons/openFrameworks/addons/ofxOpenCv/libs/opencv/lib/osx",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
-				USER_HEADER_SEARCH_PATHS = "../../ofxJSON/libs/jsoncpp/include/ ../../openFrameworks/addons/ofxOpenCv/libs/opencv/include/";
+				USER_HEADER_SEARCH_PATHS = "../../ofxUnicode/libs/utf8cpp/include/ ../../ofxJSON/libs/jsoncpp/include/ ../../openFrameworks/addons/ofxOpenCv/libs/opencv/include/";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1145,7 +1333,7 @@
 					"/Users/tylerparker/Dropbox/work/local-projects/addons/openFrameworks/addons/ofxOpenCv/libs/opencv/lib/osx",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "../../ofxJSON/libs/jsoncpp/include/ ../../openFrameworks/addons/ofxOpenCv/libs/opencv/include/";
+				USER_HEADER_SEARCH_PATHS = "../../ofxUnicode/libs/utf8cpp/include/ ../../ofxJSON/libs/jsoncpp/include/ ../../openFrameworks/addons/ofxOpenCv/libs/opencv/include/";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

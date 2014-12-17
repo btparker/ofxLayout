@@ -8,7 +8,12 @@ string ofxOSS::getStyle(string key){
 }
 
 string ofxOSS::getStyle(OSS_KEY::ENUM key){
-    return stylesMap[key];
+    if(stylesMap.count(key) > 0){
+        return stylesMap[key];
+    }
+    else{
+        return "";
+    }
 }
 
 bool ofxOSS::hasStyle(OSS_KEY::ENUM key){
