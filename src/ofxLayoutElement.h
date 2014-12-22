@@ -22,9 +22,12 @@ public:
     
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
+    
+    string getTag();
+    void setTag(string tag);
 
     string getID();
-    void setID(string _ID);
+    void setID(string ID);
     
     string getStyle(OSS_KEY::ENUM styleKey);
     string getStyle(string styleKey);
@@ -68,6 +71,7 @@ protected:
     ofxOSS* stylesheet;
     
     string ID;
+    string tag;
     
     ofFbo* elementFbo;
     

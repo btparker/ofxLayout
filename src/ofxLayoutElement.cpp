@@ -77,12 +77,20 @@ void ofxLayoutElement::draw(){
 /// |   Setters/Getters   | ///
 /// | ------------------- | ///
 
-string ofxLayoutElement::getID(){
-    return ID;
+string ofxLayoutElement::getTag(){
+    return this->tag;
 }
 
-void ofxLayoutElement::setID(string _ID){
-    ID = _ID;
+void ofxLayoutElement::setTag(string tag){
+    this->tag = tag;
+}
+
+string ofxLayoutElement::getID(){
+    return this->ID;
+}
+
+void ofxLayoutElement::setID(string ID){
+    this->ID = ID;
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){

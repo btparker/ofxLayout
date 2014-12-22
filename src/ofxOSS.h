@@ -136,7 +136,6 @@ public:
     bool isBackgroundSizeDynamic();
     
     
-    
 private:
     /// \brief Where the computational styles (by element) are stored
     ///
