@@ -24,6 +24,8 @@ ofxLayoutElement::ofxLayoutElement(){
     
     elementFbo = new ofFbo();
     elementFbo->allocate();
+    
+    parentNode = NULL;
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -112,38 +114,19 @@ void ofxLayoutElement::setStyle(string styleKey, string styleValue){
     return setStyle(ofxOSS::getEnumFromString(styleKey), styleValue);
 }
 
-void ofxLayoutElement::loadFromFile(string filename){
-    ofxXmlSettings layout;
-    layout.loadFile(filename);
-    loadFromLayout(&layout);
-}
+
 
 void ofxLayoutElement::setStylesheet(ofxOSS *_stylesheet){
     stylesheet = _stylesheet;
 }
 
-void ofxLayoutElement::loadFromLayout(ofxXmlSettings *layout, int which){
-    string id = layout->getAttribute("element","id", "", which);
-    setID(id);
-    
-    string style = layout->getAttribute("element","style", "", which);
-    vector<string> styles;
-    if(style != ""){
-        styles = ofSplitString(style, ";", true, false);
-    }
-    for(int i = 0; i < styles.size(); i++){
-        vector<string> stylePair = ofSplitString(styles[i], ":", true, true);
-        this->setStyle(stylePair[0], stylePair[1]);
-    }
-    
-    layout->pushTag("element",which);
-    int numChildren = layout->getNumTags("element");
-    for(int i = 0; i < numChildren; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        addChildElement(child);
-        child->loadFromLayout(layout,i);
-    }
-    layout->popTag();
+/// |   Utilities   | ///
+/// | ------------- | ///
+
+void ofxLayoutElement::addChildElement(ofxLayoutElement* childElement){
+    childElement->parentNode = this;
+    childElement->stylesheet = this->stylesheet;
+    childNodes.push_back(childElement);
 }
 
 void ofxLayoutElement::updateDimensions(){
@@ -192,10 +175,8 @@ void ofxLayoutElement::updateBackgroundVideo(){
             backgroundVideo.play();
             backgroundVideo.setVolume(0.0);
         }
-    
         
         backgroundVideo.update();
-    
     }
 }
 
@@ -256,11 +237,6 @@ ofxOSS* ofxLayoutElement::getOverridingStylesheet(string styleKey){
     return getOverridingStylesheet(ofxOSS::getEnumFromString(styleKey));
 }
 
-void ofxLayoutElement::addChildElement(ofxLayoutElement* childElement){
-    childElement->parentNode = this;
-    childElement->stylesheet = this->stylesheet;
-    childNodes.push_back(childElement);
-}
 
 /// |   Background Image   | ///
 /// | -------------------- | ///

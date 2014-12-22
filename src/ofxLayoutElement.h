@@ -40,7 +40,6 @@ public:
     
     void setStylesheet(ofxOSS* _stylesheet);
     
-    
     /// |   Utilities   | ///
     /// | ------------- | ///
     
@@ -50,18 +49,8 @@ public:
     ///
     /// \param ofxLayoutElement* Pointer to an element
     void addChildElement(ofxLayoutElement* childElement);
+
     
-    /// \brief Loads an external OFML file (basically, xml or html), ties this element to the root element described in the file,
-    /// and generates all child elements as well
-    ///
-    /// \param string filename Location of the OFML file
-    void loadFromFile(string filename);
-    
-    /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
-    ///
-    /// \param ofxXmlSettings* layout
-    /// \paramt int which (optional) If there are multiple elements at the current level, specifies which to recurse into
-    void loadFromLayout(ofxXmlSettings* layout, int which = 0);
 
 protected:
     void drawStyles();
@@ -74,8 +63,10 @@ protected:
     ofRectangle parentBoundary;
     ofxLayoutElement* parentNode;
     vector<ofxLayoutElement*> childNodes;
+    
     ofxOSS elementStyles;
     ofxOSS* stylesheet;
+    
     string ID;
     
     ofFbo* elementFbo;

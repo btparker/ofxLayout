@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxLayoutElement.h"
+#include "ofxLayout.h"
 
 class ofApp : public ofBaseApp{
 
@@ -22,6 +22,5 @@ class ofApp : public ofBaseApp{
     
         void loadExternalLayout();
     
-        ofxLayoutElement container;
-        ofxOSS stylesheet;
+        ofxLayout layout;
 };

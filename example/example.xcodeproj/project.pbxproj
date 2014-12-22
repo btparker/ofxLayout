@@ -13,6 +13,7 @@
 		77560D181A41BC8700A05C1C /* ofTextConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560CFF1A41BC8700A05C1C /* ofTextConverter.cpp */; };
 		77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D011A41BC8700A05C1C /* ofUnicode.cpp */; };
 		77560D1A1A41BC8700A05C1C /* ofUTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D031A41BC8700A05C1C /* ofUTF8.cpp */; };
+		77560D281A487D2300A05C1C /* ofxLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D261A487D2200A05C1C /* ofxLayout.cpp */; };
 		77C6089C1A3F8AF700093728 /* ofxJSONElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608921A3F8AF700093728 /* ofxJSONElement.cpp */; };
 		77C6089D1A3F8AF700093728 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C6089B1A3F8AF700093728 /* jsoncpp.cpp */; };
 		77C608AE1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608AA1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp */; };
@@ -109,6 +110,8 @@
 		77560D151A41BC8700A05C1C /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		77560D161A41BC8700A05C1C /* unchecked.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unchecked.h; sourceTree = "<group>"; };
 		77560D171A41BC8700A05C1C /* utf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utf8.h; sourceTree = "<group>"; };
+		77560D261A487D2200A05C1C /* ofxLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLayout.cpp; sourceTree = "<group>"; };
+		77560D271A487D2300A05C1C /* ofxLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLayout.h; sourceTree = "<group>"; };
 		77C608911A3F8AF700093728 /* ofxJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJSON.h; sourceTree = "<group>"; };
 		77C608921A3F8AF700093728 /* ofxJSONElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxJSONElement.cpp; sourceTree = "<group>"; };
 		77C608931A3F8AF700093728 /* ofxJSONElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJSONElement.h; sourceTree = "<group>"; };
@@ -835,6 +838,8 @@
 				77E9160F1A3B32B000C1362E /* ofxLayoutElement.h */,
 				77E916111A3B4B3E00C1362E /* ofxOSS.cpp */,
 				77E916121A3B4B3E00C1362E /* ofxOSS.h */,
+				77560D261A487D2200A05C1C /* ofxLayout.cpp */,
+				77560D271A487D2300A05C1C /* ofxLayout.h */,
 			);
 			name = src;
 			path = ../src;
@@ -1069,6 +1074,7 @@
 				77C6089C1A3F8AF700093728 /* ofxJSONElement.cpp in Sources */,
 				77C608AF1A40BE0200093728 /* ProgressiveTextureLoadQueue.cpp in Sources */,
 				77E9161F1A3F5FF300C1362E /* ofxXmlSettings.cpp in Sources */,
+				77560D281A487D2300A05C1C /* ofxLayout.cpp in Sources */,
 				77E916211A3F5FF300C1362E /* tinyxmlerror.cpp in Sources */,
 				77C609B81A40BEE900093728 /* ofxCvColorImage.cpp in Sources */,
 				77C609BB1A40BEE900093728 /* ofxCvGrayscaleImage.cpp in Sources */,
