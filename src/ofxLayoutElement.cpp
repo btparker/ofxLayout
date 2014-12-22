@@ -31,6 +31,9 @@ ofxLayoutElement::ofxLayoutElement(){
 ofxLayoutElement::~ofxLayoutElement(){
     delete backgroundImage;
     delete elementFbo;
+    for(int i = 0; i < childNodes.size(); i++){
+        delete childNodes[i];
+    }
 }
 
 /// |   Cycle Functions  | ///
@@ -116,8 +119,8 @@ void ofxLayoutElement::setStyle(string styleKey, string styleValue){
 
 
 
-void ofxLayoutElement::setStylesheet(ofxOSS *_stylesheet){
-    stylesheet = _stylesheet;
+void ofxLayoutElement::setStylesheet(ofxOSS *stylesheet){
+    this->stylesheet = stylesheet;
 }
 
 /// |   Utilities   | ///

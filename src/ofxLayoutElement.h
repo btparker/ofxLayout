@@ -38,7 +38,7 @@ public:
     ofxOSS* getOverridingStylesheet(OSS_KEY::ENUM styleKey);
     ofxOSS* getOverridingStylesheet(string styleKey);
     
-    void setStylesheet(ofxOSS* _stylesheet);
+    void setStylesheet(ofxOSS* stylesheet);
     
     /// |   Utilities   | ///
     /// | ------------- | ///
