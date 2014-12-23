@@ -16,6 +16,20 @@ namespace OSS_VALUE{
     enum ENUM{CENTER, COVER, CONTAIN, AUTO};
 };
 
+struct ofxOssRule{
+    
+};
+
+
+struct ofxOssObject{
+    ofxOssObject* parent;
+    map<string, ofxOssObject*> children;
+    
+    map<string,ofxOssRule*> idRuleMap;
+    map<string,ofxOssRule*> classRuleMap;
+    map<string,ofxOssRule*> tagRuleMap;
+};
+
 class ofxOSS{
 
 public:

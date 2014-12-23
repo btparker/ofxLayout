@@ -2,6 +2,9 @@
 #include "ofxLayoutElement.h"
 #include "ofxXmlSettings.h"
 
+
+
+
 class ofxLayout{
     
 public:
@@ -35,5 +38,6 @@ public:
     
 protected:
     ofxLayoutElement* contextTreeRoot;
+    ofxOssObject* rootStyle;
     ofxOSS* stylesheet;
 };
