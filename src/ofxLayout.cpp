@@ -127,8 +127,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     
     string tag = "element";
     
-    string inlineStyle = element->getInlineStyle();
-    
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
         if(styleObject->classMap.count(classes[i])){
@@ -140,6 +138,9 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(styleObject->idMap.count(id)){
         element->overrideStyles(styleObject->idMap[id]);
     }
+    
+    ofxOSS* inlineStyles = element->getInlineStyles();
+    element->overrideStyles(inlineStyles);
     
     for(int i = 0; i < element->children.size(); i++){
         applyStyles(element->children[i], styleObject);

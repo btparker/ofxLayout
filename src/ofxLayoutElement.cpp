@@ -99,6 +99,22 @@ string ofxLayoutElement::getInlineStyle(){
     return this->inlineStyle;
 }
 
+ofxOSS* ofxLayoutElement::getInlineStyles(){
+    ofxOSS* inlineStyles = new ofxOSS();
+    vector<string> stylesVec = ofSplitString(this->inlineStyle, ";", true, true);
+    for(int i = 0; i < stylesVec.size(); i++){
+        vector<string> styleKeyValueVec = ofSplitString(stylesVec[i], ":", true, true);
+        string styleKey = styleKeyValueVec[0];
+        string styleValue = styleKeyValueVec[1];
+        if(ofxOSS::validKey(styleKey)){
+            ofxOssRule* rule = new ofxOssRule();
+            rule->value = styleValue;
+            inlineStyles->rules[ofxOSS::getEnumFromString(styleKey)] = rule;
+        }
+    }
+    return inlineStyles;
+}
+
 void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
 }

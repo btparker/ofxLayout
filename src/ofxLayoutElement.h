@@ -35,6 +35,7 @@ public:
     bool hasStyle(OSS_KEY::ENUM styleKey);
     string getStyle(OSS_KEY::ENUM styleKey);
     string getInlineStyle();
+    ofxOSS* getInlineStyles();
     void setInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
