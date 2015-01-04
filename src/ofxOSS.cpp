@@ -1,5 +1,21 @@
 #include "ofxOSS.h"
 
+ofxOSS::ofxOSS(){
+    
+}
+
+void ofxOSS::setDefaults(){
+    // Create defaults
+    ofxOssRule* backgroundColorDefault = new ofxOssRule();
+    backgroundColorDefault->type = OSS_TYPE::COLOR;
+    backgroundColorDefault->value = "rgba(0,0,0,0)";
+    this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
+}
+
+ofxOSS::~ofxOSS(){
+    
+}
+
 /// |   Setters/Getters   | ///
 /// | ------------------- | ///
 
@@ -16,12 +32,8 @@ string ofxOSS::getStyle(OSS_KEY::ENUM key){
     }
 }
 
-bool ofxOSS::hasStyle(OSS_KEY::ENUM key){
-    return stylesMap.count(key) > 0;
-}
-
-bool ofxOSS::hasStyle(string key){
-    return hasStyle(getEnumFromString(key));
+bool ofxOSS::validKey(string key){
+    return getEnumFromString(key) != OSS_KEY::INVALID;
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, string value){
@@ -151,34 +163,6 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
     }
     return keyString;
-}
-
-void ofxOSS::loadFromFile(string filename){
-    ofxJSONElement result;
-    // Now parse the OSS (but really, it's JSON)
-    bool parsingSuccessful = result.open(filename);
-    
-    if (parsingSuccessful){
-        vector<string> ossElementNames = result.getMemberNames();
-        for(int i = 0; i < ossElementNames.size(); i++){
-            string ossElementName = ossElementNames[i];
-            if(ossElementName.substr(0,1) == "#"){
-                // Skipping the hashtag
-                string id = ossElementName.substr(1);
-                idStyles[id] = new ofxOSS();
-                vector<string> styleKeys = result[ossElementName].getMemberNames();
-                for(int k = 0; k < styleKeys.size(); k++){
-                    string styleKey = styleKeys[k];
-                    string styleValue = result[ossElementName][styleKey].asString();
-                    idStyles[id]->setStyle(styleKey, styleValue);
-                }
-            }
-        }
-    }
-    else
-    {
-        ofLogError("ofxOSS::loadFromFile")  << "Failed to parse OSS" << endl;
-    }
 }
 
 /// |   Color Styles   | ///

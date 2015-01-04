@@ -1,4 +1,10 @@
-<element id="container">
-	<element style="background-color:rgba(20,20,20,200); position: center; width:80%; height:100px;" id="child">
+<element>
+	<!-- <element style="FUCK YO SHIT" class="baby">
+		<element style="background-color : rgba(20,20,20,200); position: center; width:80%; height:100px;" class="child baby">
+		</element>
+	</element> -->
+	<element style="FUCK YO SHIT" id="container">
+		<element style="background-color : rgba(20,20,20,200); position: center; width:80%; height:100px;" class="child baby">
+		</element>
 	</element>
 </element>

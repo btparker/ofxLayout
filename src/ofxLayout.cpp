@@ -5,12 +5,13 @@
 
 ofxLayout::ofxLayout(){
     contextTreeRoot = new ofxLayoutElement();
-    stylesheet = new ofxOSS();
+    styleRulesRoot = new ofxOSS();
+    contextTreeRoot->styles = styleRulesRoot;
 }
 
 ofxLayout::~ofxLayout(){
     delete contextTreeRoot;
-    delete stylesheet;
+    delete styleRulesRoot;
 }
 
 /// |   Cycle Functions  | ///
@@ -27,38 +28,120 @@ void ofxLayout::draw(){
 /// |   Utilities   | ///
 /// | ------------- | ///
 
-void ofxLayout::loadFromFile(string ofmlFilename, string ossFilename){
+void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
-    xmlLayout.loadFile(ofmlFilename);
-    loadFromXmlLayout(&xmlLayout, contextTreeRoot);
-    if (ossFilename != "") {
-        stylesheet->loadFromFile(ossFilename);
-        contextTreeRoot->setStylesheet(stylesheet);
+    bool ofmlParsingSuccessful = xmlLayout.loadFile(ofmlFilename);
+    if(ofmlParsingSuccessful){
+        loadFromXmlLayout(&xmlLayout, contextTreeRoot);
+    }
+    else{
+        ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+ofmlFilename+".");
+    }
+    
+    applyStyles();
+}
+
+void ofxLayout::loadOssFromFile(string ossFilename){
+    styleRulesRoot->setDefaults();
+    
+    ofxJSONElement ossStylesheet;
+    bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
+    if(ossParsingSuccessful){
+        loadFromOss(&ossStylesheet, styleRulesRoot);
+        applyStyles();
+    }
+    else{
+        ofLogError("ofxLayout::loadFromFile","Unable to parse OSS file "+ossFilename+".");
     }
 }
 
 void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, int which){
-    string id = xmlLayout->getAttribute("element","id", "", which);
+    string tag = "element";
+    
+    string id = xmlLayout->getAttribute(tag,"id", "", which);
     element->setID(id);
     
-    string style = xmlLayout->getAttribute("element","style", "", which);
-    vector<string> styles;
-    if(style != ""){
-        styles = ofSplitString(style, ";", true, false);
-    }
-    for(int i = 0; i < styles.size(); i++){
-        vector<string> stylePair = ofSplitString(styles[i], ":", true, true);
-        element->setStyle(stylePair[0], stylePair[1]);
-    }
+    string classes = xmlLayout->getAttribute(tag,"class", "", which);
+    element->setClasses(classes);
     
-    xmlLayout->pushTag("element",which);
-    int numChildren = xmlLayout->getNumTags("element");
-    for(int i = 0; i < numChildren; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        element->addChildElement(child);
-        loadFromXmlLayout(xmlLayout,child,i);
+    string style = xmlLayout->getAttribute(tag,"style", "", which);
+    element->setInlineStyle(style);
+    
+    xmlLayout->pushTag(tag);
+    int numElements = xmlLayout->getNumTags(tag);
+    for(int i = 0; i < numElements; i++){
+        ofxLayoutElement* childElement = new ofxLayoutElement();
+        element->children.push_back(childElement);
+        loadFromXmlLayout(xmlLayout, childElement,i);
     }
     xmlLayout->popTag();
 }
 
+void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
+    vector<string> keys = jsonElement->getMemberNames();
+    for(int i = 0; i < keys.size(); i++){
+        string key = keys[i];
+        ofxJSONElement value = (*jsonElement)[key];
+        bool keyIsId = key.substr(0,1) == "#";
+        bool keyIsClass = key.substr(0,1) == ".";
+        if(keyIsId){
+            string idName = key.substr(1);
+            bool idExists = styleObject->idMap.count(idName) > 0;
+            
+            if(!idExists){
+                styleObject->idMap[idName] = new ofxOSS();
+            }
+            
+            loadFromOss(&value, styleObject->idMap[idName]);
+        }
+        else if(keyIsClass){
+            string className = key.substr(1);
+            bool classExists = styleObject->classMap.count(className) > 0;
+            
+            if(!classExists){
+                styleObject->classMap[className] = new ofxOSS();
+            }
+            
+            loadFromOss(&value, styleObject->classMap[className]);
+        }
+        else if(ofxOSS::validKey(key)){
+            ofxOssRule* ossRule = new ofxOssRule();
+            ossRule->type = ofxOSS::getType(key);
+            ossRule->value = (*jsonElement)[key].asString();
+            
+            styleObject->rules[ofxOSS::getEnumFromString(key)] = ossRule;
+        }
+        else{
+            ofLogWarning("ofxLayout::loadFromOss","Unable to parse key "+key+".");
+        }
+    }
+}
 
+void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
+    if(element == NULL){
+        element = contextTreeRoot;
+    }
+    if(styleObject == NULL){
+        styleObject = styleRulesRoot;
+    }
+    
+    string tag = "element";
+    
+    string inlineStyle = element->getInlineStyle();
+    
+    vector<string> classes = ofSplitString(element->getClasses(), " ");
+    for(int i = 0; i < classes.size(); i++){
+        if(styleObject->classMap.count(classes[i])){
+            element->overrideStyles(styleObject->classMap[classes[i]]);
+        }
+    }
+    
+    string id = element->getID();
+    if(styleObject->idMap.count(id)){
+        element->overrideStyles(styleObject->idMap[id]);
+    }
+    
+    for(int i = 0; i < element->children.size(); i++){
+        applyStyles(element->children[i], styleObject);
+    }
+}

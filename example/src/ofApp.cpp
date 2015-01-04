@@ -20,7 +20,8 @@ void ofApp::draw(){
 }
 
 void ofApp::loadExternalLayout(){
-    layout.loadFromFile("index.ofml","styles.oss");
+    layout.loadOfmlFromFile("index.ofml");
+    layout.loadOssFromFile("styles.oss");
 }
 
 //--------------------------------------------------------------

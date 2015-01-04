@@ -17,22 +17,15 @@ namespace OSS_VALUE{
 };
 
 struct ofxOssRule{
-    
-};
-
-
-struct ofxOssObject{
-    ofxOssObject* parent;
-    map<string, ofxOssObject*> children;
-    
-    map<string,ofxOssRule*> idRuleMap;
-    map<string,ofxOssRule*> classRuleMap;
-    map<string,ofxOssRule*> tagRuleMap;
+    OSS_TYPE::ENUM type;
+    string value;
 };
 
 class ofxOSS{
 
 public:
+    ofxOSS();
+    ~ofxOSS();
     
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
@@ -40,11 +33,13 @@ public:
     string getStyle(OSS_KEY::ENUM key);
     string getStyle(string key);
     
-    bool hasStyle(string key);
-    bool hasStyle(OSS_KEY::ENUM key);
+    static bool validKey(string key);
+    static bool validKey(OSS_KEY::ENUM key);
     
     void setStyle(OSS_KEY::ENUM key, string value);
     void setStyle(string key, string value);
+    
+    void setDefaults();
     
     /// \brief Returns TYPE enum of key provided
     ///
@@ -149,6 +144,14 @@ public:
     
     bool isBackgroundSizeDynamic();
     
+    ofxOSS* parent = NULL;
+    
+    map<OSS_KEY::ENUM, ofxOssRule*> rules;
+    
+    map<string,ofxOSS*> idMap;
+    map<string,ofxOSS*> classMap;
+    map<string,ofxOSS*> tagMap;
+    
     
 private:
     /// \brief Where the computational styles (by element) are stored
@@ -178,4 +181,6 @@ private:
     float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
     
     map<string,ofxFontStash*> fonts;
+    
+    
 };

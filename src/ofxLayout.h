@@ -28,16 +28,27 @@ public:
     ///
     /// \param string ofmlFilename Location of the OFML file
     /// \param string ossFilename (optional) Location of the OSS file
-    void loadFromFile(string ofmlFilename, string ossFilename = "");
+    void loadOfmlFromFile(string ofmlFilename);
+    
+    void loadOssFromFile(string ossFilename);
+    void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
+    
+    
+protected:
+    ofxLayoutElement* contextTreeRoot;
+    ofxOSS* styleRulesRoot;
     
     /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
     ///
     /// \param ofxXmlSettings* layout
-    /// \paramt int which (optional) If there are multiple elements at the current level, specifies which to recurse into
+    /// \param int which (optional) If there are multiple elements at the current level, specifies which to recurse into
     void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, int which = 0);
     
-protected:
-    ofxLayoutElement* contextTreeRoot;
-    ofxOssObject* rootStyle;
-    ofxOSS* stylesheet;
+    
+    /// \brief
+    ///
+    /// \param
+    /// \param
+    void loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
+
 };
