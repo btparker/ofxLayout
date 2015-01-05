@@ -39,8 +39,7 @@ void ofxLayoutElement::update(){
         boundary.height = ofGetHeight();
     }
     else{
-        boundary = ofRectangle(parent->boundary);
-        boundary.setPosition(styles->getPosition(boundary, parent->boundary));
+        boundary = styles->computeElementTransform(parent->boundary);
     }
     
     if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){

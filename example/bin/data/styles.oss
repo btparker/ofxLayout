@@ -5,10 +5,16 @@
 		"background-size" : "cover",
 		"background-position" : "center",
 		"position" : "0",
-		"width" : "100%",
+		"width" : "50%",
 		"height" : "100%"
 	},
-	".child" : {
-		"background-color" : "rgba(0,255,0,190)"
+	"#container2" : {
+		"background-color" : "rgba(50,50,50,255)",
+		"background-image" : "images/legs.jpg",
+		"background-size" : "cover",
+		"background-position" : "center",
+		"position" : "50% 0",
+		"width" : "50%",
+		"height" : "100%"
 	}
 }

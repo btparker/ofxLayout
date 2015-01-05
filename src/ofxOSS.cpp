@@ -10,6 +10,21 @@ void ofxOSS::setDefaults(){
     backgroundColorDefault->type = OSS_TYPE::COLOR;
     backgroundColorDefault->value = "rgba(0,0,0,0)";
     this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
+    
+    ofxOssRule* positionDefault = new ofxOssRule();
+    positionDefault->type = OSS_TYPE::POSITION;
+    positionDefault->value = "0";
+    this->rules[OSS_KEY::POSITION] = positionDefault;
+    
+    ofxOssRule* widthDefault = new ofxOssRule();
+    widthDefault->type = OSS_TYPE::NUMBER;
+    widthDefault->value = "0";
+    this->rules[OSS_KEY::WIDTH] = widthDefault;
+    
+    ofxOssRule* heightDefault = new ofxOssRule();
+    heightDefault->type = OSS_TYPE::NUMBER;
+    heightDefault->value = "0";
+    this->rules[OSS_KEY::HEIGHT] = heightDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -47,7 +62,7 @@ OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
             type = OSS_TYPE::IMAGE;
             break;
         case OSS_KEY::BACKGROUND_POSITION:
-            type = OSS_TYPE::IMAGE;
+            type = OSS_TYPE::POSITION;
             break;
         case OSS_KEY::WIDTH:
             type = OSS_TYPE::NUMBER;
@@ -190,6 +205,16 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
 
 /// |   Transformation Styles   | ///
 /// | ------------------------- | ///
+ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
+    ofRectangle transform = ofRectangle();
+    float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH), parentBoundary.width);
+    transform.setWidth(width);
+    float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT), parentBoundary.height);
+    transform.setHeight(height);
+    ofPoint pos = getPosition(transform, parentBoundary);
+    transform.setPosition(pos);
+    return transform;
+}
 
 float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension){
     string dimensionValue = getStyle(dimensionKey);

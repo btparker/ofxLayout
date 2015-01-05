@@ -128,6 +128,8 @@ public:
     
     static ofxOssRule* generateRule(string key, string value);
     
+    ofRectangle computeElementTransform(ofRectangle parentBoundary);
+    
 //    bool isBackgroundSizeDynamic();
     
     ofxOSS* parent = NULL;
