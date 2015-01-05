@@ -13,6 +13,7 @@
 		77560D181A41BC8700A05C1C /* ofTextConverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560CFF1A41BC8700A05C1C /* ofTextConverter.cpp */; };
 		77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D011A41BC8700A05C1C /* ofUnicode.cpp */; };
 		77560D1A1A41BC8700A05C1C /* ofUTF8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D031A41BC8700A05C1C /* ofUTF8.cpp */; };
+		77560D281A487D2300A05C1C /* ofxLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560D261A487D2200A05C1C /* ofxLayout.cpp */; };
 		77C6089C1A3F8AF700093728 /* ofxJSONElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608921A3F8AF700093728 /* ofxJSONElement.cpp */; };
 		77C6089D1A3F8AF700093728 /* jsoncpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C6089B1A3F8AF700093728 /* jsoncpp.cpp */; };
 		77C608AE1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77C608AA1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp */; };
@@ -29,6 +30,8 @@
 		77C609C81A411EAE00093728 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609C71A411EAD00093728 /* AVFoundation.framework */; };
 		77C609CA1A411EBA00093728 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609C91A411EBA00093728 /* QuartzCore.framework */; };
 		77C609CC1A411ECA00093728 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609CB1A411ECA00093728 /* CoreMedia.framework */; };
+		77E846C21A5AFDDD00DF11CB /* ofxLoaderBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E846BE1A5AFDDD00DF11CB /* ofxLoaderBatch.cpp */; };
+		77E846C31A5AFDDD00DF11CB /* ofxLoaderSpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E846C01A5AFDDD00DF11CB /* ofxLoaderSpool.cpp */; };
 		77E916101A3B32B000C1362E /* ofxLayoutElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E9160E1A3B32B000C1362E /* ofxLayoutElement.cpp */; };
 		77E916131A3B4B3E00C1362E /* ofxOSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E916111A3B4B3E00C1362E /* ofxOSS.cpp */; };
 		77E9161F1A3F5FF300C1362E /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E916181A3F5FF300C1362E /* ofxXmlSettings.cpp */; };
@@ -109,6 +112,8 @@
 		77560D151A41BC8700A05C1C /* core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
 		77560D161A41BC8700A05C1C /* unchecked.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unchecked.h; sourceTree = "<group>"; };
 		77560D171A41BC8700A05C1C /* utf8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utf8.h; sourceTree = "<group>"; };
+		77560D261A487D2200A05C1C /* ofxLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLayout.cpp; sourceTree = "<group>"; };
+		77560D271A487D2300A05C1C /* ofxLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLayout.h; sourceTree = "<group>"; };
 		77C608911A3F8AF700093728 /* ofxJSON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJSON.h; sourceTree = "<group>"; };
 		77C608921A3F8AF700093728 /* ofxJSONElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxJSONElement.cpp; sourceTree = "<group>"; };
 		77C608931A3F8AF700093728 /* ofxJSONElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxJSONElement.h; sourceTree = "<group>"; };
@@ -224,6 +229,10 @@
 		77C609C71A411EAD00093728 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		77C609C91A411EBA00093728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		77C609CB1A411ECA00093728 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		77E846BE1A5AFDDD00DF11CB /* ofxLoaderBatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLoaderBatch.cpp; sourceTree = "<group>"; };
+		77E846BF1A5AFDDD00DF11CB /* ofxLoaderBatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLoaderBatch.h; sourceTree = "<group>"; };
+		77E846C01A5AFDDD00DF11CB /* ofxLoaderSpool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLoaderSpool.cpp; sourceTree = "<group>"; };
+		77E846C11A5AFDDD00DF11CB /* ofxLoaderSpool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLoaderSpool.h; sourceTree = "<group>"; };
 		77E9160E1A3B32B000C1362E /* ofxLayoutElement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLayoutElement.cpp; sourceTree = "<group>"; };
 		77E9160F1A3B32B000C1362E /* ofxLayoutElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLayoutElement.h; sourceTree = "<group>"; };
 		77E916111A3B4B3E00C1362E /* ofxOSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOSS.cpp; sourceTree = "<group>"; };
@@ -820,6 +829,26 @@
 			path = ../../ofxMSATimer/src;
 			sourceTree = "<group>";
 		};
+		77E846BC1A5AFDDD00DF11CB /* ofxLoaderSpool */ = {
+			isa = PBXGroup;
+			children = (
+				77E846BD1A5AFDDD00DF11CB /* src */,
+			);
+			name = ofxLoaderSpool;
+			sourceTree = "<group>";
+		};
+		77E846BD1A5AFDDD00DF11CB /* src */ = {
+			isa = PBXGroup;
+			children = (
+				77E846BE1A5AFDDD00DF11CB /* ofxLoaderBatch.cpp */,
+				77E846BF1A5AFDDD00DF11CB /* ofxLoaderBatch.h */,
+				77E846C01A5AFDDD00DF11CB /* ofxLoaderSpool.cpp */,
+				77E846C11A5AFDDD00DF11CB /* ofxLoaderSpool.h */,
+			);
+			name = src;
+			path = ../../ofxLoaderSpool/src;
+			sourceTree = "<group>";
+		};
 		77E9160C1A3B32B000C1362E /* ofxLayout */ = {
 			isa = PBXGroup;
 			children = (
@@ -835,6 +864,8 @@
 				77E9160F1A3B32B000C1362E /* ofxLayoutElement.h */,
 				77E916111A3B4B3E00C1362E /* ofxOSS.cpp */,
 				77E916121A3B4B3E00C1362E /* ofxOSS.h */,
+				77560D261A487D2200A05C1C /* ofxLayout.cpp */,
+				77560D271A487D2300A05C1C /* ofxLayout.h */,
 			);
 			name = src;
 			path = ../src;
@@ -874,6 +905,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				77E846BC1A5AFDDD00DF11CB /* ofxLoaderSpool */,
 				77560CFD1A41BC8700A05C1C /* ofxUnicode */,
 				77560CEF1A41BC4600A05C1C /* ofxFontStash */,
 				77C609C01A40BF8500093728 /* ofxMSATimer */,
@@ -1063,17 +1095,20 @@
 				77E916131A3B4B3E00C1362E /* ofxOSS.cpp in Sources */,
 				77C609BA1A40BEE900093728 /* ofxCvFloatImage.cpp in Sources */,
 				77E916101A3B32B000C1362E /* ofxLayoutElement.cpp in Sources */,
+				77E846C21A5AFDDD00DF11CB /* ofxLoaderBatch.cpp in Sources */,
 				77E916221A3F5FF300C1362E /* tinyxmlparser.cpp in Sources */,
 				77C6089D1A3F8AF700093728 /* jsoncpp.cpp in Sources */,
 				77C609BE1A40BEE900093728 /* ofxCvShortImage.cpp in Sources */,
 				77C6089C1A3F8AF700093728 /* ofxJSONElement.cpp in Sources */,
 				77C608AF1A40BE0200093728 /* ProgressiveTextureLoadQueue.cpp in Sources */,
 				77E9161F1A3F5FF300C1362E /* ofxXmlSettings.cpp in Sources */,
+				77560D281A487D2300A05C1C /* ofxLayout.cpp in Sources */,
 				77E916211A3F5FF300C1362E /* tinyxmlerror.cpp in Sources */,
 				77C609B81A40BEE900093728 /* ofxCvColorImage.cpp in Sources */,
 				77C609BB1A40BEE900093728 /* ofxCvGrayscaleImage.cpp in Sources */,
 				77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */,
 				77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */,
+				77E846C31A5AFDDD00DF11CB /* ofxLoaderSpool.cpp in Sources */,
 				77C609B91A40BEE900093728 /* ofxCvContourFinder.cpp in Sources */,
 				77C608AE1A40BE0200093728 /* ofxProgressiveTextureLoad.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,

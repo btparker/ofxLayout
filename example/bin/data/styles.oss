@@ -1,11 +1,20 @@
 {
 	"#container" : {
-		"background-color" : "rgba(80,80,80,240)",
-		"background-video" : "video/bulb.mp4",
+		"background-color" : "rgba(50,50,50,255)",
+		"background-image" : "images/bf.jpg",
 		"background-size" : "cover",
 		"background-position" : "center",
 		"position" : "0",
-		"width" : "100%",
+		"width" : "50%",
+		"height" : "100%"
+	},
+	"#container2" : {
+		"background-color" : "rgba(50,50,50,255)",
+		"background-image" : "images/legs.jpg",
+		"background-size" : "cover",
+		"background-position" : "center",
+		"position" : "50% 0",
+		"width" : "50%",
 		"height" : "100%"
 	}
 }

@@ -1,4 +1,6 @@
-<element id="container">
-	<element style="background-color:rgba(20,20,20,200); position: center; width:80%; height:100px;" id="child">
+<element>
+	<element id="container">
+	</element>
+	<element id="container2">
 	</element>
 </element>

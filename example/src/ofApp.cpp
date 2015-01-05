@@ -10,19 +10,18 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    container.update();
+    layout.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
-    container.draw();
+    layout.draw();
 }
 
 void ofApp::loadExternalLayout(){
-    container.loadFromFile("index.ofml");
-    stylesheet.loadFromFile("styles.oss");
-    container.setStylesheet(&stylesheet);
+    layout.loadOfmlFromFile("index.ofml");
+    layout.loadOssFromFile("styles.oss");
 }
 
 //--------------------------------------------------------------
