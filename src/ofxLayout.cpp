@@ -71,7 +71,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     int numElements = xmlLayout->getNumTags(tag);
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement();
-        element->children.push_back(childElement);
+        element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement,i);
     }
     xmlLayout->popTag();
@@ -105,9 +105,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             loadFromOss(&value, styleObject->classMap[className]);
         }
         else if(ofxOSS::validKey(key)){
-            ofxOssRule* ossRule = new ofxOssRule();
-            ossRule->type = ofxOSS::getType(key);
-            ossRule->value = (*jsonElement)[key].asString();
+            ofxOssRule* ossRule = ofxOSS::generateRule(key, (*jsonElement)[key].asString());
             
             styleObject->rules[ofxOSS::getEnumFromString(key)] = ossRule;
         }

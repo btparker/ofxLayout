@@ -39,6 +39,7 @@ public:
     void setInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
+    void addChild(ofxLayoutElement* childElement);
     
     ofxOSS* styles;
     

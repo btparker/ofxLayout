@@ -396,5 +396,10 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
     return y;
 }
 
-
+ofxOssRule* ofxOSS::generateRule(string key, string value){
+    ofxOssRule* ossRule = new ofxOssRule();
+    ossRule->type = ofxOSS::getType(key);
+    ossRule->value = value;
+    return ossRule;
+}
 

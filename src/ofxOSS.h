@@ -142,6 +142,8 @@ public:
     /// \param ofRectangle elementBoundary
     ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
+    static ofxOssRule* generateRule(string key, string value);
+    
     bool isBackgroundSizeDynamic();
     
     ofxOSS* parent = NULL;

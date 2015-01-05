@@ -3,7 +3,9 @@
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
-    boundary = ofRectangle(0,0,ofGetWidth(),ofGetHeight());
+    parent = NULL;
+    
+    boundary = ofRectangle();
     elementFbo = new ofFbo();
     elementFbo->allocate();
     
@@ -18,22 +20,41 @@ ofxLayoutElement::~ofxLayoutElement(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
+    if(parent == NULL){
+        boundary.x = 0;
+        boundary.y = 0;
+        boundary.width = ofGetWidth();
+        boundary.height = ofGetHeight();
+    }
+    else{
+        boundary = ofRectangle(parent->boundary);
+    }
+    
+    if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
+        elementFbo->allocate(boundary.width, boundary.height);
+    }
+
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
+}
+
+void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
+    childElement->parent = this;
+    children.push_back(childElement);
 }
 
 void ofxLayoutElement::draw(){
     // Saving the scissor state
     glPushAttrib(GL_SCISSOR_BIT);
     ofPushMatrix();
+    ofScale(1.0,1.0);
     ofTranslate(boundary.x, boundary.y, 0);
     elementFbo->begin();
     ofClear(ofColor(0,0,0,0));
     drawStyles();
     elementFbo->end();
-    elementFbo->draw(0,0,boundary.width,boundary.height);
-    
+    elementFbo->draw(0,0);
     ofPopMatrix();
     glPopAttrib();
     for(int i = 0 ; i < children.size(); i++){
@@ -85,8 +106,6 @@ void ofxLayoutElement::drawStyles(){
         ofFill();
         ofRect(0,0,boundary.width,boundary.height);
     }
-
-    
 }
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
@@ -107,8 +126,7 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
         string styleKey = styleKeyValueVec[0];
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
-            ofxOssRule* rule = new ofxOssRule();
-            rule->value = styleValue;
+            ofxOssRule* rule = ofxOSS::generateRule(styleKey, styleValue);
             inlineStyles->rules[ofxOSS::getEnumFromString(styleKey)] = rule;
         }
     }
