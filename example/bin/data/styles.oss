@@ -1,7 +1,7 @@
 {
 	"#container" : {
-		"background-color" : "rgba(255,0,0,255)",
-		"background-video" : "video/bulb.mp4",
+		"background-color" : "rgba(50,50,50,255)",
+		"background-image" : "images/bf.jpg",
 		"background-size" : "cover",
 		"background-position" : "center",
 		"position" : "0",

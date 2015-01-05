@@ -23,31 +23,12 @@ string ofxOSS::getStyle(string key){
     return getStyle(getEnumFromString(key));
 }
 
-string ofxOSS::getStyle(OSS_KEY::ENUM key){
-    if(stylesMap.count(key) > 0){
-        return stylesMap[key];
-    }
-    else{
-        return "";
-    }
+string ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
+    return this->rules[styleKey]->value;
 }
 
 bool ofxOSS::validKey(string key){
     return getEnumFromString(key) != OSS_KEY::INVALID;
-}
-
-void ofxOSS::setStyle(OSS_KEY::ENUM key, string value){
-    switch (getType(key)) {
-        case OSS_TYPE::COLOR:
-            stylesMap[key] = ofToString(parseColor(value));
-            break;
-        default:
-            stylesMap[key] = value;
-    }
-}
-
-void ofxOSS::setStyle(string key, string value){
-    setStyle(getEnumFromString(key), value);
 }
 
 OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
@@ -88,14 +69,6 @@ OSS_TYPE::ENUM ofxOSS::getType(string key){
     return getType(getEnumFromString(key));
 }
 
-ofxOSS* ofxOSS::getStylesByID(string _ID){
-    if(idStyles.count(_ID) > 0){
-        return idStyles[_ID];
-    }
-    else{
-        return NULL;
-    }
-}
 
 /// |   Utilities   | ///
 /// | ------------- | ///
@@ -168,19 +141,6 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
 /// |   Color Styles   | ///
 /// | ---------------- | ///
 
-ofColor ofxOSS::getColorStyle(string key){
-    return getColorStyle(getEnumFromString(key));
-}
-
-ofColor ofxOSS::getColorStyle(OSS_KEY::ENUM key){
-    if(getType(key) == OSS_TYPE::COLOR){
-        return parseColorChannels(stylesMap[key]);
-    }
-    else{
-        ofLogWarning("ofxOSS::getColor","No color found for key provided.");
-        return ofColor::black;
-    }
-}
 
 ofColor ofxOSS::parseColor(string colorValue){
     ofColor color;
@@ -279,9 +239,12 @@ ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
     }
 }
 
-ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageTransform, ofRectangle elementBoundary){
-    ofRectangle result = ofRectangle(imageTransform);
+ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectangle boundary){
+    ofRectangle result = ofRectangle(dimensions);
+    
     string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
+    
+    
     vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
     
     bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
@@ -293,8 +256,8 @@ ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageTransform, ofRe
         // Don't bother doing anything
     }
     if(isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain")){
-        float wRatio = (imageTransform.getWidth())/elementBoundary.getWidth();
-        float hRatio = (imageTransform.getHeight())/elementBoundary.getHeight();
+        float wRatio = (dimensions.getWidth())/boundary.getWidth();
+        float hRatio = (dimensions.getHeight())/boundary.getHeight();
         
         float scale;
         
@@ -311,48 +274,51 @@ ofRectangle ofxOSS::getBackgroundSizeDimensions(ofRectangle imageTransform, ofRe
         string wSizeStr = bgSizeStrSplit[0];
         string hSizeStr = isSizeStyleSingleRule ? wSizeStr : bgSizeStrSplit[1];
         
-        result.setWidth(getDimensionStyleValue(wSizeStr, elementBoundary.getWidth()));
-        result.setHeight(getDimensionStyleValue(hSizeStr, elementBoundary.getHeight()));
+        result.setWidth(getDimensionStyleValue(wSizeStr, boundary.getWidth()));
+        result.setHeight(getDimensionStyleValue(hSizeStr, boundary.getHeight()));
     }
+    
+    
+    
     return result;
 }
 
-bool ofxOSS::isBackgroundSizeDynamic(){
-    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
-    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
-    
-    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
-    // Doing this so there is no untrimmed space
-    
-    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
-    
-    return isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain");
-}
+//bool ofxOSS::isBackgroundSizeDynamic(){
+//    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
+//    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
+//    
+//    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
+//    // Doing this so there is no untrimmed space
+//    
+//    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
+//    
+//    return isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain");
+//}
 
-ofRectangle ofxOSS::getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary){
-    ofRectangle result = ofRectangle(imageTransform);
-    string bgPosStr = getStyle(OSS_KEY::BACKGROUND_POSITION);
-    vector<string> bgPosStrSplit = ofSplitString(bgPosStr, " ",true, true);
-    
-    bool isPosStyleSingleRule = bgPosStrSplit.size() == 1;
-    
-    // Doing this so there is no untrimmed space
-    bgPosStr = isPosStyleSingleRule ? bgPosStrSplit[0] : bgPosStr;
-    
-    string xPosStr = bgPosStrSplit[0];
-    string yPosStr = isPosStyleSingleRule ? xPosStr : bgPosStrSplit[1];
-    
-    if(isBackgroundSizeDynamic()){
-        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
-        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
-    }
-    else{
-        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
-        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
-    }
-    
-    return result;
-}
+//ofRectangle ofxOSS::getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary){
+//    ofRectangle result = ofRectangle(imageTransform);
+//    string bgPosStr = getStyle(OSS_KEY::BACKGROUND_POSITION);
+//    vector<string> bgPosStrSplit = ofSplitString(bgPosStr, " ",true, true);
+//    
+//    bool isPosStyleSingleRule = bgPosStrSplit.size() == 1;
+//    
+//    // Doing this so there is no untrimmed space
+//    bgPosStr = isPosStyleSingleRule ? bgPosStrSplit[0] : bgPosStr;
+//    
+//    string xPosStr = bgPosStrSplit[0];
+//    string yPosStr = isPosStyleSingleRule ? xPosStr : bgPosStrSplit[1];
+//    
+//    if(isBackgroundSizeDynamic()){
+//        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
+//        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
+//    }
+//    else{
+//        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
+//        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
+//    }
+//    
+//    return result;
+//}
 
 
 /// |   Private Functions   | ///

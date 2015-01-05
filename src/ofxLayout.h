@@ -1,7 +1,7 @@
 #include "ofMain.h"
 #include "ofxLayoutElement.h"
 #include "ofxXmlSettings.h"
-
+#include "ofxLoaderSpool.h"
 
 
 
@@ -32,6 +32,8 @@ public:
     
     void loadOssFromFile(string ossFilename);
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
+    
+    ofxLoaderSpool assets;
     
     
 protected:

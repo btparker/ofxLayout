@@ -2,6 +2,7 @@
 #include "ofxOSS.h"
 #include "ofxXmlSettings.h"
 #include "ofxProgressiveTextureLoad.h"
+#include "ofxLoaderSpool.h"
 
 class ofxLayoutElement{
     
@@ -10,6 +11,7 @@ public:
     /// | -------------------------- | ///
     
     ofxLayoutElement();
+    ofxLayoutElement(ofxLoaderSpool* assetsPtr);
     ~ofxLayoutElement();
     
     
@@ -58,4 +60,5 @@ protected:
     
     string inlineStyle;
     
+    ofxLoaderSpool* assetsPtr;
 };

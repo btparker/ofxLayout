@@ -12,6 +12,18 @@ ofxLayoutElement::ofxLayoutElement(){
     styles = new ofxOSS();
 }
 
+ofxLayoutElement::ofxLayoutElement(ofxLoaderSpool* assetsPtr){
+    this->assetsPtr = assetsPtr;
+    
+    parent = NULL;
+    
+    boundary = ofRectangle();
+    elementFbo = new ofFbo();
+    elementFbo->allocate();
+    
+    styles = new ofxOSS();
+}
+
 ofxLayoutElement::~ofxLayoutElement(){
     delete elementFbo;
 }
@@ -28,6 +40,7 @@ void ofxLayoutElement::update(){
     }
     else{
         boundary = ofRectangle(parent->boundary);
+        boundary.setPosition(styles->getPosition(boundary, parent->boundary));
     }
     
     if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
@@ -105,6 +118,20 @@ void ofxLayoutElement::drawStyles(){
         ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
         ofFill();
         ofRect(0,0,boundary.width,boundary.height);
+    }
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+        ofSetColor(255);
+        ofxLoaderBatch* imagesBatch = assetsPtr->getBatch("images");
+        string imageID = getStyle(OSS_KEY::BACKGROUND_IMAGE);
+        if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureDrawable(imageID)){
+            ofRectangle imageTransform = ofRectangle();
+            imageTransform.setWidth(imagesBatch->getTexture(imageID)->getWidth());
+            imageTransform.setHeight(imagesBatch->getTexture(imageID)->getHeight());
+            
+            imageTransform = styles->computeBackgroundTransform(imageTransform, boundary);
+            
+            imagesBatch->getTexture(imageID)->draw(imageTransform);
+        }
     }
 }
 

@@ -4,9 +4,10 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    contextTreeRoot = new ofxLayoutElement();
+    contextTreeRoot = new ofxLayoutElement(&assets);
     styleRulesRoot = new ofxOSS();
     contextTreeRoot->styles = styleRulesRoot;
+    assets.addBatch("images");
 }
 
 ofxLayout::~ofxLayout(){
@@ -39,6 +40,7 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     }
     
     applyStyles();
+    assets.loadBatch("images");
 }
 
 void ofxLayout::loadOssFromFile(string ossFilename){
@@ -49,6 +51,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, styleRulesRoot);
         applyStyles();
+        assets.loadBatch("images");
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OSS file "+ossFilename+".");
@@ -70,7 +73,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     xmlLayout->pushTag(tag);
     int numElements = xmlLayout->getNumTags(tag);
     for(int i = 0; i < numElements; i++){
-        ofxLayoutElement* childElement = new ofxLayoutElement();
+        ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement,i);
     }
@@ -140,7 +143,16 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     ofxOSS* inlineStyles = element->getInlineStyles();
     element->overrideStyles(inlineStyles);
     
+    // Get assets
+    if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+        string imageFilename = element->getStyle(OSS_KEY::BACKGROUND_IMAGE);
+        ofxLoaderBatch* imagesBatch = assets.getBatch("images");
+        if(!imagesBatch->hasTexture(imageFilename)){
+            imagesBatch->addTexture(imageFilename, imageFilename);
+        }
+    }
+    
     for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i], styleObject);
+        applyStyles(element->children[i], element->styles);
     }
 }

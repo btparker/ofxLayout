@@ -36,9 +36,6 @@ public:
     static bool validKey(string key);
     static bool validKey(OSS_KEY::ENUM key);
     
-    void setStyle(OSS_KEY::ENUM key, string value);
-    void setStyle(string key, string value);
-    
     void setDefaults();
     
     /// \brief Returns TYPE enum of key provided
@@ -48,13 +45,6 @@ public:
     /// \param key
     static OSS_TYPE::ENUM getType(OSS_KEY::ENUM key);
     static OSS_TYPE::ENUM getType(string key);
-    
-    /// \brief Returns a pointer to the styles associated with a given ID
-    ///
-    /// \param string _ID Element ID
-    ofxOSS* getStylesByID(string _ID);
-    
-    
     
     /// |   Utilities   | ///
     /// | ------------- | ///
@@ -84,12 +74,6 @@ public:
     
     /// |   Color Styles   | ///
     /// | ---------------- | ///
-    
-    /// \brief Get the ofColor from the corresponding style key (example: 'background-color')
-    ///
-    /// \param key The key to get a value
-    ofColor getColorStyle(string key);
-    ofColor getColorStyle(OSS_KEY::ENUM key);
     
     /// \brief Create an ofColor from a css-like string value input, supports alpha ( rgba() ).
     ///
@@ -132,19 +116,19 @@ public:
     
     /// \brief Based on the background size style, image dimensions, and the element boundary, returns the computed draw dimensions of the image.
     ///
-    /// \param ofRectangle imageDimensions
-    /// \param ofRectangle elementBoundary
-    ofRectangle getBackgroundSizeDimensions(ofRectangle imageTransform, ofRectangle elementBoundary);
+    /// \param ofRectangle dimensions
+    /// \param ofRectangle boundary
+    ofRectangle computeBackgroundTransform(ofRectangle dimensions, ofRectangle boundary);
     
     /// \brief Based on the background position style, (update) image dimensions, and the element boundary, returns the computed background transform of the image
     ///
     /// \param ofRectangle imageDimensions
     /// \param ofRectangle elementBoundary
-    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
+//    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
     static ofxOssRule* generateRule(string key, string value);
     
-    bool isBackgroundSizeDynamic();
+//    bool isBackgroundSizeDynamic();
     
     ofxOSS* parent = NULL;
     
@@ -156,18 +140,6 @@ public:
     
     
 private:
-    /// \brief Where the computational styles (by element) are stored
-    ///
-    /// \key OSS_KEY (POSITION, WIDTH, etc)
-    /// \value string Style text rule ('center 50%', '#FF00FF', etc)
-    map<OSS_KEY::ENUM, string> stylesMap;
-    
-    /// \brief Where the styles by id (say from an external OSS file) are stored
-    ///
-    /// \key id
-    /// \value ofxOSS stylesheet
-    map<string, ofxOSS*> idStyles;
-    
     /// \brief Calculates the x position (from the left) given a style string and relevant boundary information
     ///
     /// \param string xStr Describes the x position ('center', 50px, 25%)
@@ -183,6 +155,4 @@ private:
     float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
     
     map<string,ofxFontStash*> fonts;
-    
-    
 };
