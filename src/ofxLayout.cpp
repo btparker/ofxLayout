@@ -28,6 +28,35 @@ void ofxLayout::draw(){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
+string ofxLayout::getTagString(TAG_TYPE::ENUM tagEnum){
+    string tag = "";
+    switch (tagEnum) {
+        case TAG_TYPE::BODY:
+            tag = "body";
+            break;
+        case TAG_TYPE::ELEMENT:
+            tag = "element";
+            break;
+        default:
+            ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
+            break;
+    }
+    return tag;
+}
+
+TAG_TYPE::ENUM ofxLayout::getTagEnum(string tagString){
+    TAG_TYPE::ENUM tag = TAG_TYPE::INVALID;
+    if(tagString == "body"){
+        return TAG_TYPE::BODY;
+    }
+    else if(tagString == "element") {
+        return TAG_TYPE::ELEMENT;
+    }
+    else{
+        ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
+        return TAG_TYPE::INVALID;
+    }
+}
 
 void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
@@ -58,9 +87,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     }
 }
 
-void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, int which){
-    string tag = "element";
-    
+void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, string tag, int which){
     string id = xmlLayout->getAttribute(tag,"id", "", which);
     element->setID(id);
     
@@ -75,7 +102,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
         element->addChild(childElement);
-        loadFromXmlLayout(xmlLayout, childElement,i);
+        loadFromXmlLayout(xmlLayout, childElement,tag, i);
     }
     xmlLayout->popTag();
 }
@@ -125,8 +152,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(styleObject == NULL){
         styleObject = styleRulesRoot;
     }
-    
-    string tag = "element";
     
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
