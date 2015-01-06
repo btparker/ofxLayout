@@ -49,6 +49,7 @@ protected:
     /// \param int which (optional) If there are multiple elements at the current level, specifies which to recurse into
     void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, TAG::ENUM tagEnum, int which = 0);
     
+    void loadTags(ofxXmlSettings* xmlLayout, ofxLayoutElement* element);
     
     /// \brief
     ///

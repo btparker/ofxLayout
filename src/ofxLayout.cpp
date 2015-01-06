@@ -100,14 +100,19 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     
     xmlLayout->pushTag(tag, which);
     
+    loadTags(xmlLayout, element);
+    
+    
+    xmlLayout->popTag();
+}
+
+void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
-    
-    xmlLayout->popTag();
 }
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
