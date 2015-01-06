@@ -175,7 +175,6 @@ ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
     transform.height = height;
     ofPoint pos = getPosition(transform, parentBoundary);
     transform.setPosition(pos);
-    cout << pos << endl;
     return transform;
 }
 
