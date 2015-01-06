@@ -13,17 +13,17 @@ void ofxOSS::setDefaults(){
     
     ofxOssRule* positionDefault = new ofxOssRule();
     positionDefault->type = OSS_TYPE::POSITION;
-    positionDefault->value = "0";
+    positionDefault->value = "0px 0px";
     this->rules[OSS_KEY::POSITION] = positionDefault;
     
     ofxOssRule* widthDefault = new ofxOssRule();
     widthDefault->type = OSS_TYPE::NUMBER;
-    widthDefault->value = "0";
+    widthDefault->value = "100%";
     this->rules[OSS_KEY::WIDTH] = widthDefault;
     
     ofxOssRule* heightDefault = new ofxOssRule();
     heightDefault->type = OSS_TYPE::NUMBER;
-    heightDefault->value = "0";
+    heightDefault->value = "100%";
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
 }
 
@@ -170,11 +170,12 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
 ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
     ofRectangle transform = ofRectangle();
     float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH), parentBoundary.width);
-    transform.setWidth(width);
+    transform.width = width;
     float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT), parentBoundary.height);
-    transform.setHeight(height);
+    transform.height = height;
     ofPoint pos = getPosition(transform, parentBoundary);
     transform.setPosition(pos);
+    cout << pos << endl;
     return transform;
 }
 

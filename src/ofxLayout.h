@@ -4,7 +4,7 @@
 #include "ofxLoaderSpool.h"
 
 namespace TAG {
-    enum ENUM{BODY, ELEMENT, INVALID};
+    enum ENUM{BODY, ELEMENT, TEXT, INVALID};
 };
 
 class ofxLayout{

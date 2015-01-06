@@ -43,6 +43,9 @@ string ofxLayout::getTagString(TAG::ENUM tagEnum){
         case TAG::ELEMENT:
             tag = "element";
             break;
+        case TAG::TEXT:
+            tag = "text";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -57,6 +60,9 @@ TAG::ENUM ofxLayout::getTagEnum(string tagString){
     }
     else if(tagString == "element") {
         return TAG::ELEMENT;
+    }
+    else if(tagString == "text") {
+        return TAG::TEXT;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
@@ -120,6 +126,13 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
+    
+    int numTextElements = xmlLayout->getNumTags(getTagString(TAG::TEXT));
+    for(int i = 0; i < numTextElements; i++){
+        ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
+        element->addChild(childElement);
+        loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
+    }
 }
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
@@ -169,17 +182,16 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
-    
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
-        if(styleObject->classMap.count(classes[i])){
-            element->overrideStyles(styleObject->classMap[classes[i]]);
+        if(styleRulesRoot->classMap.count(classes[i])){
+            element->overrideStyles(styleRulesRoot->classMap[classes[i]]);
         }
     }
     
     string id = element->getID();
-    if(styleObject->idMap.count(id)){
-        element->overrideStyles(styleObject->idMap[id]);
+    if(styleRulesRoot->idMap.count(id)){
+        element->overrideStyles(styleRulesRoot->idMap[id]);
     }
     
     ofxOSS* inlineStyles = element->getInlineStyles();
@@ -195,6 +207,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i], element->styles);
+        applyStyles(element->children[i], styleRulesRoot);
     }
 }

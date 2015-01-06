@@ -10,6 +10,7 @@ ofxLayoutElement::ofxLayoutElement(){
     elementFbo->allocate();
     
     styles = new ofxOSS();
+    styles->setDefaults();
 }
 
 ofxLayoutElement::ofxLayoutElement(ofxLoaderSpool* assetsPtr){
@@ -22,6 +23,7 @@ ofxLayoutElement::ofxLayoutElement(ofxLoaderSpool* assetsPtr){
     elementFbo->allocate();
     
     styles = new ofxOSS();
+    styles->setDefaults();
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -41,7 +43,6 @@ void ofxLayoutElement::update(){
     else{
         boundary = styles->computeElementTransform(parent->boundary);
     }
-    
     if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
         elementFbo->allocate(boundary.width, boundary.height);
     }
@@ -57,21 +58,17 @@ void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
 }
 
 void ofxLayoutElement::draw(){
-    // Saving the scissor state
-    glPushAttrib(GL_SCISSOR_BIT);
     ofPushMatrix();
-    ofScale(1.0,1.0);
     ofTranslate(boundary.x, boundary.y, 0);
     elementFbo->begin();
     ofClear(ofColor(0,0,0,0));
     drawStyles();
     elementFbo->end();
     elementFbo->draw(0,0);
-    ofPopMatrix();
-    glPopAttrib();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
+    ofPopMatrix();
 }
 
 /// |   Setters/Getters   | ///
