@@ -46,44 +46,6 @@ bool ofxOSS::validKey(string key){
     return getEnumFromString(key) != OSS_KEY::INVALID;
 }
 
-OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
-    OSS_TYPE::ENUM type;
-    switch(key){
-        case OSS_KEY::BACKGROUND_COLOR:
-            type = OSS_TYPE::COLOR;
-            break;
-        case OSS_KEY::BACKGROUND_IMAGE:
-            type = OSS_TYPE::IMAGE;
-            break;
-        case OSS_KEY::BACKGROUND_VIDEO:
-            type = OSS_TYPE::IMAGE;
-            break;
-        case OSS_KEY::BACKGROUND_SIZE:
-            type = OSS_TYPE::IMAGE;
-            break;
-        case OSS_KEY::BACKGROUND_POSITION:
-            type = OSS_TYPE::POSITION;
-            break;
-        case OSS_KEY::WIDTH:
-            type = OSS_TYPE::NUMBER;
-            break;
-        case OSS_KEY::HEIGHT:
-            type = OSS_TYPE::NUMBER;
-            break;
-        case OSS_KEY::POSITION:
-            type = OSS_TYPE::POSITION;
-            break;
-        default:
-            ofLogWarning("ofxOSS::getType","No type found for value provided.");
-            type = OSS_TYPE::INVALID;
-    }
-    return type;
-}
-
-OSS_TYPE::ENUM ofxOSS::getType(string key){
-    return getType(getEnumFromString(key));
-}
-
 
 /// |   Utilities   | ///
 /// | ------------- | ///
@@ -92,7 +54,7 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     OSS_KEY::ENUM keyEnum;
     if(key == "background-color"){
         return OSS_KEY::BACKGROUND_COLOR;
-    }
+    } 
     else if(key == "background-image"){
         return OSS_KEY::BACKGROUND_IMAGE;
     }
@@ -303,8 +265,6 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
         result.setHeight(getDimensionStyleValue(hSizeStr, boundary.getHeight()));
     }
     
-    
-    
     return result;
 }
 
@@ -389,7 +349,6 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 
 ofxOssRule* ofxOSS::generateRule(string key, string value){
     ofxOssRule* ossRule = new ofxOssRule();
-    ossRule->type = ofxOSS::getType(key);
     ossRule->value = value;
     return ossRule;
 }

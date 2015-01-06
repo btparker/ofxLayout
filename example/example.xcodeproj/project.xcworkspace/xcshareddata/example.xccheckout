@@ -12,6 +12,8 @@
 	<dict>
 		<key>12DFF02CF5C9C72708B200DCDDC2EE4EF0E5A36A</key>
 		<string>https://github.com/armadillu/ofxThreadedVideoPlayer.git</string>
+		<key>134F07AADD70EEF614231C9CFB994E551EA9ABD0</key>
+		<string>https://github.com/btparker/ofxLoaderSpool.git</string>
 		<key>2559BBC2C6F846687D7E9F4E42C98FC44D06AE4C</key>
 		<string>https://github.com/bakercp/ofxUnicode.git</string>
 		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
@@ -37,6 +39,8 @@
 	<dict>
 		<key>12DFF02CF5C9C72708B200DCDDC2EE4EF0E5A36A</key>
 		<string>../../../../ofxThreadedVideoPlayer</string>
+		<key>134F07AADD70EEF614231C9CFB994E551EA9ABD0</key>
+		<string>../../../../ofxLoaderSpool</string>
 		<key>2559BBC2C6F846687D7E9F4E42C98FC44D06AE4C</key>
 		<string>../../../../ofxUnicode</string>
 		<key>2DE9C8846D9375EAACFABA8963120E8E7719BAF5</key>
@@ -103,6 +107,14 @@
 			<string>372D5C591D3C88479F79A8FE47B1CBABCDBCA325</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxLayout</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>134F07AADD70EEF614231C9CFB994E551EA9ABD0</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxLoaderSpool</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>

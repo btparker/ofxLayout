@@ -38,14 +38,6 @@ public:
     
     void setDefaults();
     
-    /// \brief Returns TYPE enum of key provided
-    ///
-    /// Example: 'background-color' yields TYPE::COLOR. Returns warning and INVALID type if none found.
-    ///
-    /// \param key
-    static OSS_TYPE::ENUM getType(OSS_KEY::ENUM key);
-    static OSS_TYPE::ENUM getType(string key);
-    
     /// |   Utilities   | ///
     /// | ------------- | ///
     
