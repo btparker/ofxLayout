@@ -3,7 +3,7 @@
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 
-namespace TAG_TYPE {
+namespace TAG {
     enum ENUM{BODY, ELEMENT, INVALID};
 };
 
@@ -24,8 +24,8 @@ public:
     
     /// |   Utilities   | ///
     /// | ------------- | ///
-    string getTagString(TAG_TYPE::ENUM tagEnum);
-    TAG_TYPE::ENUM getTagEnum(string tagString);
+    static string getTagString(TAG::ENUM tagEnum);
+    static TAG::ENUM getTagEnum(string tagString);
     /// \brief Loads an external OFML file (basically, xml or html), ties this element to the root element described in the file,
     /// and generates all child elements as well
     ///
@@ -47,7 +47,7 @@ protected:
     ///
     /// \param ofxXmlSettings* layout
     /// \param int which (optional) If there are multiple elements at the current level, specifies which to recurse into
-    void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, string tag = "element", int which = 0);
+    void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, TAG::ENUM tagEnum, int which = 0);
     
     
     /// \brief

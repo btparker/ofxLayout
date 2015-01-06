@@ -1,6 +1,6 @@
-<element>
+<body>
 	<element id="container">
 	</element>
 	<element id="container2">
 	</element>
-</element>
+</body>

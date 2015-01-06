@@ -28,13 +28,13 @@ void ofxLayout::draw(){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
-string ofxLayout::getTagString(TAG_TYPE::ENUM tagEnum){
+string ofxLayout::getTagString(TAG::ENUM tagEnum){
     string tag = "";
     switch (tagEnum) {
-        case TAG_TYPE::BODY:
+        case TAG::BODY:
             tag = "body";
             break;
-        case TAG_TYPE::ELEMENT:
+        case TAG::ELEMENT:
             tag = "element";
             break;
         default:
@@ -44,17 +44,17 @@ string ofxLayout::getTagString(TAG_TYPE::ENUM tagEnum){
     return tag;
 }
 
-TAG_TYPE::ENUM ofxLayout::getTagEnum(string tagString){
-    TAG_TYPE::ENUM tag = TAG_TYPE::INVALID;
+TAG::ENUM ofxLayout::getTagEnum(string tagString){
+    TAG::ENUM tag = TAG::INVALID;
     if(tagString == "body"){
-        return TAG_TYPE::BODY;
+        return TAG::BODY;
     }
     else if(tagString == "element") {
-        return TAG_TYPE::ELEMENT;
+        return TAG::ELEMENT;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
-        return TAG_TYPE::INVALID;
+        return TAG::INVALID;
     }
 }
 
@@ -62,7 +62,7 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
     bool ofmlParsingSuccessful = xmlLayout.loadFile(ofmlFilename);
     if(ofmlParsingSuccessful){
-        loadFromXmlLayout(&xmlLayout, contextTreeRoot);
+        loadFromXmlLayout(&xmlLayout, contextTreeRoot, TAG::BODY);
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+ofmlFilename+".");
@@ -87,7 +87,8 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     }
 }
 
-void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, string tag, int which){
+void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, TAG::ENUM tagEnum, int which){
+    string tag = getTagString(tagEnum);
     string id = xmlLayout->getAttribute(tag,"id", "", which);
     element->setID(id);
     
@@ -98,12 +99,14 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     element->setInlineStyle(style);
     
     xmlLayout->pushTag(tag, which);
-    int numElements = xmlLayout->getNumTags(tag);
+    
+    int numElements = xmlLayout->getNumTags(getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
         element->addChild(childElement);
-        loadFromXmlLayout(xmlLayout, childElement,tag, i);
+        loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
+    
     xmlLayout->popTag();
 }
 
