@@ -7,7 +7,9 @@ ofxLayout::ofxLayout(){
     contextTreeRoot = new ofxLayoutElement(&assets);
     styleRulesRoot = new ofxOSS();
     contextTreeRoot->styles = styleRulesRoot;
-    assets.addBatch("images");
+    
+    // This is so that the functionality can be overwritten in the case of adding new tag types
+    init();
 }
 
 ofxLayout::~ofxLayout(){
@@ -28,6 +30,10 @@ void ofxLayout::draw(){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
+void ofxLayout::init(){
+    assets.addBatch("images");
+}
+
 string ofxLayout::getTagString(TAG::ENUM tagEnum){
     string tag = "";
     switch (tagEnum) {
@@ -67,7 +73,10 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+ofmlFilename+".");
     }
-    
+    applyChanges();
+}
+
+void ofxLayout::applyChanges(){
     applyStyles();
     assets.loadBatch("images");
 }
@@ -79,8 +88,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, styleRulesRoot);
-        applyStyles();
-        assets.loadBatch("images");
+        applyChanges();
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OSS file "+ossFilename+".");
@@ -89,6 +97,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
 
 void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, TAG::ENUM tagEnum, int which){
     string tag = getTagString(tagEnum);
+    
     string id = xmlLayout->getAttribute(tag,"id", "", which);
     element->setID(id);
     
@@ -98,11 +107,9 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     element->setInlineStyle(style);
     
+    // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
-    
     loadTags(xmlLayout, element);
-    
-    
     xmlLayout->popTag();
 }
 
@@ -160,6 +167,8 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(styleObject == NULL){
         styleObject = styleRulesRoot;
     }
+    
+    // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){

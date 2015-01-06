@@ -22,8 +22,11 @@ public:
     void update();
     void draw();
     
+    
     /// |   Utilities   | ///
     /// | ------------- | ///
+    void init();
+    void applyChanges();
     static string getTagString(TAG::ENUM tagEnum);
     static TAG::ENUM getTagEnum(string tagString);
     /// \brief Loads an external OFML file (basically, xml or html), ties this element to the root element described in the file,
