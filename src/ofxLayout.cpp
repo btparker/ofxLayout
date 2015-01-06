@@ -45,42 +45,6 @@ bool ofxLayout::drawable(){
     return assets.isBatchDrawable("images");
 }
 
-string ofxLayout::getTagString(TAG::ENUM tagEnum){
-    string tag = "";
-    switch (tagEnum) {
-        case TAG::BODY:
-            tag = "body";
-            break;
-        case TAG::ELEMENT:
-            tag = "element";
-            break;
-        case TAG::TEXT:
-            tag = "text";
-            break;
-        default:
-            ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
-            break;
-    }
-    return tag;
-}
-
-TAG::ENUM ofxLayout::getTagEnum(string tagString){
-    TAG::ENUM tag = TAG::INVALID;
-    if(tagString == "body"){
-        return TAG::BODY;
-    }
-    else if(tagString == "element") {
-        return TAG::ELEMENT;
-    }
-    else if(tagString == "text") {
-        return TAG::TEXT;
-    }
-    else{
-        ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
-        return TAG::INVALID;
-    }
-}
-
 void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
     bool ofmlParsingSuccessful = xmlLayout.loadFile(ofmlFilename);
@@ -113,7 +77,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
 }
 
 void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, TAG::ENUM tagEnum, int which){
-    string tag = getTagString(tagEnum);
+    string tag = ofxLayoutElement::getTagString(tagEnum);
     
     string id = xmlLayout->getAttribute(tag,"id", "", which);
     element->setID(id);
@@ -134,7 +98,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 }
 
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
-    int numElements = xmlLayout->getNumTags(getTagString(TAG::ELEMENT));
+    int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement();
         childElement->setAssets(&assets);
@@ -142,7 +106,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
     
-    int numTextElements = xmlLayout->getNumTags(getTagString(TAG::TEXT));
+    int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
         ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
         childElement->setAssets(&assets);

@@ -5,6 +5,10 @@
 #include "ofxProgressiveTextureLoad.h"
 #include "ofxLoaderSpool.h"
 
+namespace TAG {
+    enum ENUM{BODY, ELEMENT, TEXT, INVALID};
+};
+
 class ofxLayoutElement{
     
 public:
@@ -25,8 +29,12 @@ public:
     /// | ------------------- | ///
     
     void setAssets(ofxLoaderSpool* assetsPtr);
-    string getTag();
+    TAG::ENUM getTag();
+    void setTag(TAG::ENUM tag);
     void setTag(string tag);
+    
+    static string getTagString(TAG::ENUM tagEnum);
+    static TAG::ENUM getTagEnum(string tagString);
 
     string getID();
     void setID(string ID);
@@ -53,12 +61,14 @@ public:
 
 protected:
     void drawStyles();
+    virtual void drawTag(){};
+    
     ofRectangle boundary;
     
     string ID;
-    string tag;
+    TAG::ENUM tag;
     string classes;
-    string value;
+    string elementValue;
     
     ofFbo* elementFbo;
     

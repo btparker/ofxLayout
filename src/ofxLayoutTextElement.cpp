@@ -8,3 +8,5 @@ ofxLayoutTextElement::~ofxLayoutTextElement(){
     ofxLayoutElement::~ofxLayoutElement();
 }
 
+void ofxLayoutTextElement::drawTag(){
+}

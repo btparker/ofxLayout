@@ -54,6 +54,7 @@ void ofxLayoutElement::draw(){
     elementFbo->begin();
     ofClear(ofColor(0,0,0,0));
     drawStyles();
+    drawTag();
     elementFbo->end();
     elementFbo->draw(0,0);
     for(int i = 0 ; i < children.size(); i++){
@@ -65,21 +66,63 @@ void ofxLayoutElement::draw(){
 /// |   Setters/Getters   | ///
 /// | ------------------- | ///
 string ofxLayoutElement::getValue(){
-    return this->value;
+    return this->elementValue;
 }
 
 void ofxLayoutElement::setValue(string value){
-    this->value = value;
+    this->elementValue = value;
 }
 
 
-string ofxLayoutElement::getTag(){
+TAG::ENUM ofxLayoutElement::getTag(){
     return this->tag;
 }
 
 void ofxLayoutElement::setTag(string tag){
+    setTag(getTagEnum(tag));
+}
+
+void ofxLayoutElement::setTag(TAG::ENUM tag){
     this->tag = tag;
 }
+
+
+string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
+    string tag = "";
+    switch (tagEnum) {
+        case TAG::BODY:
+            tag = "body";
+            break;
+        case TAG::ELEMENT:
+            tag = "element";
+            break;
+        case TAG::TEXT:
+            tag = "text";
+            break;
+        default:
+            ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
+            break;
+    }
+    return tag;
+}
+
+TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
+    TAG::ENUM tag = TAG::INVALID;
+    if(tagString == "body"){
+        return TAG::BODY;
+    }
+    else if(tagString == "element") {
+        return TAG::ELEMENT;
+    }
+    else if(tagString == "text") {
+        return TAG::TEXT;
+    }
+    else{
+        ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
+        return TAG::INVALID;
+    }
+}
+
 
 string ofxLayoutElement::getClasses(){
     return this->classes;
@@ -129,6 +172,7 @@ void ofxLayoutElement::drawStyles(){
         }
     }
 }
+
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){

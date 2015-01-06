@@ -4,4 +4,7 @@ class ofxLayoutTextElement : public ofxLayoutElement{
 public:
     ofxLayoutTextElement();
     ~ofxLayoutTextElement();
+    
+protected:
+    void drawTag();
 };
