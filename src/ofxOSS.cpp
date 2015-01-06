@@ -54,7 +54,7 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     OSS_KEY::ENUM keyEnum;
     if(key == "background-color"){
         return OSS_KEY::BACKGROUND_COLOR;
-    } 
+    }
     else if(key == "background-image"){
         return OSS_KEY::BACKGROUND_IMAGE;
     }

@@ -70,7 +70,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     element->setInlineStyle(style);
     
-    xmlLayout->pushTag(tag);
+    xmlLayout->pushTag(tag, which);
     int numElements = xmlLayout->getNumTags(tag);
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
