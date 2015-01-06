@@ -1,3 +1,4 @@
+#pragma once
 #include "ofMain.h"
 #include "ofxOSS.h"
 #include "ofxXmlSettings.h"
@@ -11,7 +12,6 @@ public:
     /// | -------------------------- | ///
     
     ofxLayoutElement();
-    ofxLayoutElement(ofxLoaderSpool* assetsPtr);
     ~ofxLayoutElement();
     
     
@@ -21,15 +21,18 @@ public:
     void update();
     void draw();
     
-    
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
     
+    void setAssets(ofxLoaderSpool* assetsPtr);
     string getTag();
     void setTag(string tag);
 
     string getID();
     void setID(string ID);
+    
+    string getValue();
+    void setValue(string value);
     
     string getClasses();
     void setClasses(string classes);
@@ -55,6 +58,7 @@ protected:
     string ID;
     string tag;
     string classes;
+    string value;
     
     ofFbo* elementFbo;
     

@@ -1,3 +1,4 @@
+#pragma once
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxFontStash.h"

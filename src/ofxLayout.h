@@ -1,5 +1,6 @@
 #include "ofMain.h"
 #include "ofxLayoutElement.h"
+#include "ofxLayoutTextElement.h"
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 
@@ -25,6 +26,8 @@ public:
     
     /// |   Utilities   | ///
     /// | ------------- | ///
+    bool ready();
+    bool drawable();
     void init();
     void applyChanges();
     static string getTagString(TAG::ENUM tagEnum);
@@ -45,6 +48,8 @@ public:
 protected:
     ofxLayoutElement* contextTreeRoot;
     ofxOSS* styleRulesRoot;
+    
+    
     
     /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
     ///

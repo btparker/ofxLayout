@@ -13,17 +13,8 @@ ofxLayoutElement::ofxLayoutElement(){
     styles->setDefaults();
 }
 
-ofxLayoutElement::ofxLayoutElement(ofxLoaderSpool* assetsPtr){
+void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
     this->assetsPtr = assetsPtr;
-    
-    parent = NULL;
-    
-    boundary = ofRectangle();
-    elementFbo = new ofFbo();
-    elementFbo->allocate();
-    
-    styles = new ofxOSS();
-    styles->setDefaults();
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -73,6 +64,14 @@ void ofxLayoutElement::draw(){
 
 /// |   Setters/Getters   | ///
 /// | ------------------- | ///
+string ofxLayoutElement::getValue(){
+    return this->value;
+}
+
+void ofxLayoutElement::setValue(string value){
+    this->value = value;
+}
+
 
 string ofxLayoutElement::getTag(){
     return this->tag;

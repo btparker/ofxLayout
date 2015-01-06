@@ -4,7 +4,8 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    contextTreeRoot = new ofxLayoutElement(&assets);
+    contextTreeRoot = new ofxLayoutElement();
+    contextTreeRoot->setAssets(&assets);
     styleRulesRoot = new ofxOSS();
     contextTreeRoot->styles = styleRulesRoot;
     
@@ -25,13 +26,23 @@ void ofxLayout::update(){
 }
 
 void ofxLayout::draw(){
-    contextTreeRoot->draw();
+    if(drawable()){
+        contextTreeRoot->draw();
+    }
 }
 
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayout::init(){
     assets.addBatch("images");
+}
+
+bool ofxLayout::ready(){
+    return assets.isBatchReady("images");
+}
+
+bool ofxLayout::drawable(){
+    return assets.isBatchDrawable("images");
 }
 
 string ofxLayout::getTagString(TAG::ENUM tagEnum){
@@ -113,6 +124,9 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     element->setInlineStyle(style);
     
+    string value = xmlLayout->getValue(tag,"", which);
+    element->setValue(value);
+    
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
     loadTags(xmlLayout, element);
@@ -122,14 +136,16 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
-        ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
+        ofxLayoutElement* childElement = new ofxLayoutElement();
+        childElement->setAssets(&assets);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
     
     int numTextElements = xmlLayout->getNumTags(getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
-        ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
+        ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
+        childElement->setAssets(&assets);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
     }

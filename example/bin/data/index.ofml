@@ -1,9 +1,7 @@
 <body>
 	<element id="container2">
 		<element id="container">
-			<element id="container3">
-				<text></text>
-			</element>
+			<text id="container3"></text>
 		</element>
 	</element>
 </body>
