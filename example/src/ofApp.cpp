@@ -19,7 +19,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
-    activeFbo.draw(0,0);
+    layout.draw();
 }
 
 void ofApp::loadExternalLayout(){
