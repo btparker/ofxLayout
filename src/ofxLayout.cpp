@@ -148,7 +148,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
         else if(ofxOSS::validKey(key)){
             ofxOssRule* ossRule = ofxOSS::generateRule(key, (*jsonElement)[key].asString());
             
-            styleObject->rules[ofxOSS::getEnumFromString(key)] = ossRule;
+            styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
         }
         else{
             ofLogWarning("ofxLayout::loadFromOss","Unable to parse key "+key+".");

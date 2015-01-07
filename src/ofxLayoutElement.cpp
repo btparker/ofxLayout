@@ -215,7 +215,7 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
             ofxOssRule* rule = ofxOSS::generateRule(styleKey, styleValue);
-            inlineStyles->rules[ofxOSS::getEnumFromString(styleKey)] = rule;
+            inlineStyles->rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
         }
     }
     return inlineStyles;
