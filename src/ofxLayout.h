@@ -1,8 +1,10 @@
+#pragma once
 #include "ofMain.h"
 #include "ofxLayoutElement.h"
 #include "ofxLayoutTextElement.h"
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
+#include "ofxFontStash.h"
 
 
 
@@ -24,6 +26,8 @@ public:
     
     /// |   Utilities   | ///
     /// | ------------- | ///
+    void computeFbo(ofFbo* fboPtr, vector<string>* filters = new vector<string>());
+    void filterElements(vector<string>* filters, ofxLayoutElement* element);
     bool ready();
     bool drawable();
     void init();
@@ -40,6 +44,7 @@ public:
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
     
     ofxLoaderSpool assets;
+    map<string, ofxFontStash*> fonts;
     
     
 protected:

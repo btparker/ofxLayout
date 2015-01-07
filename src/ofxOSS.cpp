@@ -76,6 +76,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     else if(key == "position"){
         return OSS_KEY::POSITION;
     }
+    else if(key == "font-family"){
+        return OSS_KEY::FONT_FAMILY;
+    }
     else{
         ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -108,6 +111,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::POSITION:
             keyString = "position";
+            break;
+        case OSS_KEY::FONT_FAMILY:
+            keyString = "font-family";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");

@@ -17,6 +17,10 @@ void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
     this->assetsPtr = assetsPtr;
 }
 
+void ofxLayoutElement::setFonts(map<string, ofxFontStash *>* fontsPtr){
+    this->fontsPtr = fontsPtr;
+}
+
 ofxLayoutElement::~ofxLayoutElement(){
     delete elementFbo;
 }
@@ -35,12 +39,31 @@ void ofxLayoutElement::update(){
         boundary = styles->computeElementTransform(parent->boundary);
     }
     if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
-        elementFbo->allocate(boundary.width, boundary.height);
+        elementFbo->allocate(boundary.width, boundary.height,GL_RGBA,4);
     }
 
+    ofPushMatrix();
+    ofTranslate(boundary.x, boundary.y, 0);
+    elementFbo->begin();
+    ofClear(ofColor(0,0,0,0));
+    drawStyles();
+    // For subclasses
+    drawTag();
+    elementFbo->end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
+    ofPopMatrix();
+
+}
+
+void ofxLayoutElement::pushTransforms(){
+    ofPushMatrix();
+    ofTranslate(boundary.x, boundary.y, 0);
+}
+
+void ofxLayoutElement::popTransforms(){
+    ofPopMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
@@ -51,11 +74,6 @@ void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
 void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
-    elementFbo->begin();
-    ofClear(ofColor(0,0,0,0));
-    drawStyles();
-    drawTag();
-    elementFbo->end();
     elementFbo->draw(0,0);
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
@@ -201,4 +219,12 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
 
 void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
+}
+
+ofFbo* ofxLayoutElement::getFbo(){
+    return elementFbo;
+}
+
+ofRectangle ofxLayoutElement::getBoundary(){
+    return boundary;
 }

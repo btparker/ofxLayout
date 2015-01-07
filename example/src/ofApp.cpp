@@ -5,18 +5,21 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
+    ofEnableSmoothing();
     loadExternalLayout();
+    filters.push_back(".show");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     layout.update();
+    layout.computeFbo(&activeFbo, &filters);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
-    layout.draw();
+    activeFbo.draw(0,0);
 }
 
 void ofApp::loadExternalLayout(){
@@ -31,9 +34,6 @@ void ofApp::keyPressed(int key){
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    if(key == 'r'){
-        loadExternalLayout();
-    }
 }
 
 //--------------------------------------------------------------

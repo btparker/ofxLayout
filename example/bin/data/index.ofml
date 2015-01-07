@@ -1,7 +1,7 @@
 <body>
-	<element id="container2">
+	<element id="container2" class="show">
 		<element id="container">
-			<text id="container3">HAHAH</text>
+			<text class="container3 show">HAH*AH*AAH</text>
 		</element>
 	</element>
 </body>

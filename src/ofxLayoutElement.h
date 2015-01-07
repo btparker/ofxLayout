@@ -29,6 +29,8 @@ public:
     /// | ------------------- | ///
     
     void setAssets(ofxLoaderSpool* assetsPtr);
+    void setFonts(map<string, ofxFontStash*>* fontsPtr);
+    
     TAG::ENUM getTag();
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
@@ -45,6 +47,8 @@ public:
     string getClasses();
     void setClasses(string classes);
     
+    ofRectangle getBoundary();
+    
     bool hasStyle(OSS_KEY::ENUM styleKey);
     string getStyle(OSS_KEY::ENUM styleKey);
     string getInlineStyle();
@@ -58,6 +62,11 @@ public:
     
     vector<ofxLayoutElement*> children;
     ofxLayoutElement* parent;
+    
+    ofFbo* getFbo();
+    
+    void pushTransforms();
+    void popTransforms();
 
 protected:
     void drawStyles();
@@ -75,4 +84,5 @@ protected:
     string inlineStyle;
     
     ofxLoaderSpool* assetsPtr;
+    map<string, ofxFontStash*>* fontsPtr;
 };

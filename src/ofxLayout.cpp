@@ -102,6 +102,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement();
         childElement->setAssets(&assets);
+        childElement->setFonts(&fonts);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
@@ -110,6 +111,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     for(int i = 0; i < numTextElements; i++){
         ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
         childElement->setAssets(&assets);
+        childElement->setFonts(&fonts);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
     }
@@ -186,7 +188,60 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         }
     }
     
+    // Get fonts
+    if(element->hasStyle(OSS_KEY::FONT_FAMILY)){
+        string fontFilename = element->getStyle(OSS_KEY::FONT_FAMILY);
+        
+        if(fonts.count(fontFilename) == 0){
+            fonts[fontFilename] = new ofxFontStash();
+            fonts[fontFilename]->setup(fontFilename);
+        }
+    }
+    
     for(int i = 0; i < element->children.size(); i++){
         applyStyles(element->children[i], styleRulesRoot);
     }
+}
+
+void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters){
+    fboPtr->allocate(contextTreeRoot->getFbo()->getWidth(), contextTreeRoot->getFbo()->getHeight());
+    fboPtr->begin();
+    ofClear(0,0,0,0);
+    filterElements(filters, contextTreeRoot);
+    fboPtr->end();
+}
+
+void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *element){
+    vector<string> classes = ofSplitString(element->getClasses()," ",true,true);
+    string elementID = element->getID();
+    bool hasFilterID = false;
+    bool hasFilterClass = false;
+    for(vector<string>::iterator filter = filters->begin(); filter != filters->end(); ++filter) {
+        bool filterIsId = filter->substr(0,1) == "#";
+        bool filterIsClass = filter->substr(0,1) == ".";
+        
+        if(filterIsId){
+            string idFilter = filter->substr(1,filter->length());
+            hasFilterID = elementID == idFilter;
+        }
+        if(filterIsClass){
+            string classFilter = filter->substr(1,filter->length());
+            if (find(classes.begin(), classes.end(), classFilter) != classes.end()){
+                hasFilterClass = true;
+            }
+        }
+    }
+    
+    bool noFilters = filters->size() == 0;
+    bool drawElement = noFilters || hasFilterID || hasFilterClass;
+   
+    element->pushTransforms();
+    if(drawElement){
+        element->getFbo()->draw(0,0);
+    }
+    for(int i = 0 ; i < element->children.size(); i++){
+        filterElements(filters, element->children[i]);
+    }
+    element->popTransforms();
+    
 }
