@@ -67,6 +67,12 @@ public:
     
     void pushTransforms();
     void popTransforms();
+    
+    void drawBackgroundImage();
+    void drawBackgroundColor();
+    
+    bool beginBackgroundBlendMode();
+    void endBackgroundBlendMode();
 
 protected:
     void drawStyles();

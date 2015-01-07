@@ -174,11 +174,65 @@ string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
 /// | ------------- | ///
 
 void ofxLayoutElement::drawStyles(){
-    if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
-        ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
-        ofFill();
-        ofRect(0,0,boundary.width,boundary.height);
+    bool blendModeActive = beginBackgroundBlendMode();
+    
+    // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
+    // based on whether blend mode is enabled or disabled
+    if(blendModeActive){
+        drawBackgroundImage();
+        drawBackgroundColor();
     }
+    else{
+        drawBackgroundColor();
+        drawBackgroundImage();
+    }
+    endBackgroundBlendMode();
+}
+
+bool ofxLayoutElement::beginBackgroundBlendMode(){
+    bool blendModeActive = true;
+    
+    if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
+        OSS_BLEND_MODE::ENUM bgBlendMode = ofxOSS::getBlendModeFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
+        switch (bgBlendMode) {
+            case OSS_BLEND_MODE::DISABLED:
+                blendModeActive = false;
+                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+                break;
+            case OSS_BLEND_MODE::ALPHA:
+                ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+                break;
+            case OSS_BLEND_MODE::ADD:
+                ofEnableBlendMode(OF_BLENDMODE_ADD);
+                break;
+            case OSS_BLEND_MODE::SUBTRACT:
+                ofEnableBlendMode(OF_BLENDMODE_SUBTRACT);
+                break;
+            case OSS_BLEND_MODE::SCREEN:
+                ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+                break;
+            case OSS_BLEND_MODE::MULTIPLY:
+                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+                break;
+            default:
+                blendModeActive = false;
+                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+        }
+        if(blendModeActive){
+            ofBackground(0);
+        }
+    }
+    
+    return blendModeActive;
+}
+
+void ofxLayoutElement::endBackgroundBlendMode(){
+    if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
+        ofDisableBlendMode();
+    }
+}
+
+void ofxLayoutElement::drawBackgroundImage(){
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
         ofxLoaderBatch* imagesBatch = assetsPtr->getBatch("images");
@@ -195,6 +249,13 @@ void ofxLayoutElement::drawStyles(){
     }
 }
 
+void ofxLayoutElement::drawBackgroundColor(){
+    if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
+        ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
+        ofFill();
+        ofRect(0,0,boundary.width,boundary.height);
+    }
+}
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
@@ -215,7 +276,7 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
             ofxOssRule* rule = ofxOSS::generateRule(styleKey, styleValue);
-            inlineStyles->rules[ofxOSS::getEnumFromString(styleKey)] = rule;
+            inlineStyles->rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
         }
     }
     return inlineStyles;

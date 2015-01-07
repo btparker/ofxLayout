@@ -1,9 +1,11 @@
 {
 	"#container" : {
-		"background-color" : "rgba(255,0,0,255)",
+		"background-color" : "rgba(255,0,0,150)",
+		"background-image" : "images/bf.jpg",
 		"position" : "center",
 		"width" : "50%",
-		"height" : "50%"
+		"height" : "50%",
+		"background-blend-mode" : "multiply"
 	},
 	".container3" : {
 		"font-family" : "fonts/Graphik-Black.ttf",
