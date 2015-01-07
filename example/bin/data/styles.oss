@@ -5,6 +5,7 @@
 		"position" : "center",
 		"width" : "50%",
 		"height" : "50%",
+		"opacity" : "0.5f",
 		"background-blend-mode" : "multiply"
 	},
 	".container3" : {

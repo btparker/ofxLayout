@@ -37,6 +37,10 @@ void ofxOSS::setDefaults(){
     ofxOssRule* bgBlendModeDefault = new ofxOssRule();
     bgBlendModeDefault->value = "disabled";
     this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
+    
+    ofxOssRule* opacityDefault = new ofxOssRule();
+    opacityDefault->value = "1.0f";
+    this->rules[OSS_KEY::OPACITY] = opacityDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -100,8 +104,11 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "font-size"){
         return OSS_KEY::FONT_SIZE;
     }
+    else if(key == "opacity"){
+        return OSS_KEY::OPACITY;
+    }
     else{
-        ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
+        ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
     }
 }
@@ -144,6 +151,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::FONT_SIZE:
             keyString = "font-size";
+            break;
+        case OSS_KEY::OPACITY:
+            keyString = "opacity";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
