@@ -25,6 +25,11 @@ void ofxOSS::setDefaults(){
     heightDefault->type = OSS_TYPE::NUMBER;
     heightDefault->value = "100%";
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
+    
+    ofxOssRule* textAlignDefault = new ofxOssRule();
+    textAlignDefault->type = OSS_TYPE::POSITION;
+    textAlignDefault->value = "left";
+    this->rules[OSS_KEY::TEXT_ALIGN] = textAlignDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -79,6 +84,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     else if(key == "font-family"){
         return OSS_KEY::FONT_FAMILY;
     }
+    else if(key == "text-align"){
+        return OSS_KEY::TEXT_ALIGN;
+    }
     else{
         ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -114,6 +122,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::FONT_FAMILY:
             keyString = "font-family";
+            break;
+        case OSS_KEY::TEXT_ALIGN:
+            keyString = "text-align";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
