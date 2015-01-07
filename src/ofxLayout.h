@@ -41,10 +41,12 @@ public:
     void loadOfmlFromFile(string ofmlFilename);
     
     void loadOssFromFile(string ossFilename);
+    void loadDataFromFile(string dataFilename);
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
     
     ofxLoaderSpool assets;
     map<string, ofxFontStash*> fonts;
+    map<string, string> data;
     
     
 protected:

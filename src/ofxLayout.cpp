@@ -6,6 +6,8 @@
 ofxLayout::ofxLayout(){
     contextTreeRoot = new ofxLayoutElement();
     contextTreeRoot->setAssets(&assets);
+    contextTreeRoot->setData(&data);
+    contextTreeRoot->setFonts(&fonts);
     styleRulesRoot = new ofxOSS();
     contextTreeRoot->styles = styleRulesRoot;
     
@@ -44,6 +46,22 @@ bool ofxLayout::ready(){
 
 bool ofxLayout::drawable(){
     return assets.isBatchDrawable("images");
+}
+
+void ofxLayout::loadDataFromFile(string dataFilename){
+    ofxJSONElement jsonData;
+    bool dataParsingSuccessful = jsonData.open(dataFilename);
+    if(dataParsingSuccessful){
+        vector<string> keys = jsonData.getMemberNames();
+        for(int i = 0; i < keys.size(); i++){
+            string key = keys[i];
+            ofxJSONElement value = jsonData[key];
+            data[key] = value.asString();
+        }
+    }
+    else{
+        ofLogError("ofxLayout::loadData","Unable to parse data json "+dataFilename+".");
+    }
 }
 
 void ofxLayout::loadOfmlFromFile(string ofmlFilename){
@@ -104,6 +122,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         ofxLayoutElement* childElement = new ofxLayoutElement();
         childElement->setAssets(&assets);
         childElement->setFonts(&fonts);
+        childElement->setData(&data);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
@@ -113,6 +132,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
         childElement->setAssets(&assets);
         childElement->setFonts(&fonts);
+        childElement->setData(&data);
         element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
     }
@@ -146,7 +166,16 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             loadFromOss(&value, styleObject->classMap[className]);
         }
         else if(ofxOSS::validKey(key)){
-            ofxOssRule* ossRule = ofxOSS::generateRule(key, (*jsonElement)[key].asString());
+            string value = (*jsonElement)[key].asString();
+            if(ofStringTimesInString(value, "{{") > 0){
+                string dataKey = value.substr(2,value.size()-4);
+                
+                if(data.count(dataKey) > 0){
+                    value = data[dataKey];
+                }
+            }
+
+            ofxOssRule* ossRule = ofxOSS::generateRule(key, value);
             
             styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
         }

@@ -21,6 +21,10 @@ void ofxLayoutElement::setFonts(map<string, ofxFontStash *>* fontsPtr){
     this->fontsPtr = fontsPtr;
 }
 
+void ofxLayoutElement::setData(map<string, string>* dataPtr){
+    this->dataPtr = dataPtr;
+}
+
 ofxLayoutElement::~ofxLayoutElement(){
     delete elementFbo;
 }
@@ -94,6 +98,13 @@ string ofxLayoutElement::getValue(){
 }
 
 void ofxLayoutElement::setValue(string value){
+    if(ofStringTimesInString(value, "{{") > 0){
+        string dataKey = value.substr(2,value.size()-4);
+        
+        if(dataPtr->count(dataKey) > 0){
+            value = dataPtr->at(dataKey);
+        }
+    }
     this->elementValue = value;
 }
 

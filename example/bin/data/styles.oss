@@ -1,7 +1,7 @@
 {
 	"#container" : {
 		"background-color" : "rgba(255,0,0,150)",
-		"background-image" : "images/bf.jpg",
+		"background-image" : "{{bf}}",
 		"position" : "center",
 		"width" : "50%",
 		"height" : "50%",
