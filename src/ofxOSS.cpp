@@ -13,17 +13,17 @@ void ofxOSS::setDefaults(){
     
     ofxOssRule* positionDefault = new ofxOssRule();
     positionDefault->type = OSS_TYPE::POSITION;
-    positionDefault->value = "0";
+    positionDefault->value = "0px 0px";
     this->rules[OSS_KEY::POSITION] = positionDefault;
     
     ofxOssRule* widthDefault = new ofxOssRule();
     widthDefault->type = OSS_TYPE::NUMBER;
-    widthDefault->value = "0";
+    widthDefault->value = "100%";
     this->rules[OSS_KEY::WIDTH] = widthDefault;
     
     ofxOssRule* heightDefault = new ofxOssRule();
     heightDefault->type = OSS_TYPE::NUMBER;
-    heightDefault->value = "0";
+    heightDefault->value = "100%";
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
 }
 
@@ -44,44 +44,6 @@ string ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
 
 bool ofxOSS::validKey(string key){
     return getEnumFromString(key) != OSS_KEY::INVALID;
-}
-
-OSS_TYPE::ENUM ofxOSS::getType(OSS_KEY::ENUM key){
-    OSS_TYPE::ENUM type;
-    switch(key){
-        case OSS_KEY::BACKGROUND_COLOR:
-            type = OSS_TYPE::COLOR;
-            break;
-        case OSS_KEY::BACKGROUND_IMAGE:
-            type = OSS_TYPE::IMAGE;
-            break;
-        case OSS_KEY::BACKGROUND_VIDEO:
-            type = OSS_TYPE::IMAGE;
-            break;
-        case OSS_KEY::BACKGROUND_SIZE:
-            type = OSS_TYPE::IMAGE;
-            break;
-        case OSS_KEY::BACKGROUND_POSITION:
-            type = OSS_TYPE::POSITION;
-            break;
-        case OSS_KEY::WIDTH:
-            type = OSS_TYPE::NUMBER;
-            break;
-        case OSS_KEY::HEIGHT:
-            type = OSS_TYPE::NUMBER;
-            break;
-        case OSS_KEY::POSITION:
-            type = OSS_TYPE::POSITION;
-            break;
-        default:
-            ofLogWarning("ofxOSS::getType","No type found for value provided.");
-            type = OSS_TYPE::INVALID;
-    }
-    return type;
-}
-
-OSS_TYPE::ENUM ofxOSS::getType(string key){
-    return getType(getEnumFromString(key));
 }
 
 
@@ -113,6 +75,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     }
     else if(key == "position"){
         return OSS_KEY::POSITION;
+    }
+    else if(key == "font-family"){
+        return OSS_KEY::FONT_FAMILY;
     }
     else{
         ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
@@ -146,6 +111,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::POSITION:
             keyString = "position";
+            break;
+        case OSS_KEY::FONT_FAMILY:
+            keyString = "font-family";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
@@ -208,9 +176,9 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
 ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
     ofRectangle transform = ofRectangle();
     float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH), parentBoundary.width);
-    transform.setWidth(width);
+    transform.width = width;
     float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT), parentBoundary.height);
-    transform.setHeight(height);
+    transform.height = height;
     ofPoint pos = getPosition(transform, parentBoundary);
     transform.setPosition(pos);
     return transform;
@@ -303,8 +271,6 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
         result.setHeight(getDimensionStyleValue(hSizeStr, boundary.getHeight()));
     }
     
-    
-    
     return result;
 }
 
@@ -389,7 +355,6 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 
 ofxOssRule* ofxOSS::generateRule(string key, string value){
     ofxOssRule* ossRule = new ofxOssRule();
-    ossRule->type = ofxOSS::getType(key);
     ossRule->value = value;
     return ossRule;
 }

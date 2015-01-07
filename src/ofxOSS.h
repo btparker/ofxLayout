@@ -1,3 +1,4 @@
+#pragma once
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxFontStash.h"
@@ -9,7 +10,7 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY};
 };
 
 namespace OSS_VALUE{
@@ -37,14 +38,6 @@ public:
     static bool validKey(OSS_KEY::ENUM key);
     
     void setDefaults();
-    
-    /// \brief Returns TYPE enum of key provided
-    ///
-    /// Example: 'background-color' yields TYPE::COLOR. Returns warning and INVALID type if none found.
-    ///
-    /// \param key
-    static OSS_TYPE::ENUM getType(OSS_KEY::ENUM key);
-    static OSS_TYPE::ENUM getType(string key);
     
     /// |   Utilities   | ///
     /// | ------------- | ///

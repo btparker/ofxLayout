@@ -10,18 +10,15 @@ ofxLayoutElement::ofxLayoutElement(){
     elementFbo->allocate();
     
     styles = new ofxOSS();
+    styles->setDefaults();
 }
 
-ofxLayoutElement::ofxLayoutElement(ofxLoaderSpool* assetsPtr){
+void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
     this->assetsPtr = assetsPtr;
-    
-    parent = NULL;
-    
-    boundary = ofRectangle();
-    elementFbo = new ofFbo();
-    elementFbo->allocate();
-    
-    styles = new ofxOSS();
+}
+
+void ofxLayoutElement::setFonts(map<string, ofxFontStash *>* fontsPtr){
+    this->fontsPtr = fontsPtr;
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -41,14 +38,32 @@ void ofxLayoutElement::update(){
     else{
         boundary = styles->computeElementTransform(parent->boundary);
     }
-    
     if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
-        elementFbo->allocate(boundary.width, boundary.height);
+        elementFbo->allocate(boundary.width, boundary.height,GL_RGBA,4);
     }
 
+    ofPushMatrix();
+    ofTranslate(boundary.x, boundary.y, 0);
+    elementFbo->begin();
+    ofClear(ofColor(0,0,0,0));
+    drawStyles();
+    // For subclasses
+    drawTag();
+    elementFbo->end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
+    ofPopMatrix();
+
+}
+
+void ofxLayoutElement::pushTransforms(){
+    ofPushMatrix();
+    ofTranslate(boundary.x, boundary.y, 0);
+}
+
+void ofxLayoutElement::popTransforms(){
+    ofPopMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
@@ -57,33 +72,75 @@ void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
 }
 
 void ofxLayoutElement::draw(){
-    // Saving the scissor state
-    glPushAttrib(GL_SCISSOR_BIT);
     ofPushMatrix();
-    ofScale(1.0,1.0);
     ofTranslate(boundary.x, boundary.y, 0);
-    elementFbo->begin();
-    ofClear(ofColor(0,0,0,0));
-    drawStyles();
-    elementFbo->end();
     elementFbo->draw(0,0);
-    ofPopMatrix();
-    glPopAttrib();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
+    ofPopMatrix();
 }
 
 /// |   Setters/Getters   | ///
 /// | ------------------- | ///
+string ofxLayoutElement::getValue(){
+    return this->elementValue;
+}
 
-string ofxLayoutElement::getTag(){
+void ofxLayoutElement::setValue(string value){
+    this->elementValue = value;
+}
+
+
+TAG::ENUM ofxLayoutElement::getTag(){
     return this->tag;
 }
 
 void ofxLayoutElement::setTag(string tag){
+    setTag(getTagEnum(tag));
+}
+
+void ofxLayoutElement::setTag(TAG::ENUM tag){
     this->tag = tag;
 }
+
+
+string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
+    string tag = "";
+    switch (tagEnum) {
+        case TAG::BODY:
+            tag = "body";
+            break;
+        case TAG::ELEMENT:
+            tag = "element";
+            break;
+        case TAG::TEXT:
+            tag = "text";
+            break;
+        default:
+            ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
+            break;
+    }
+    return tag;
+}
+
+TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
+    TAG::ENUM tag = TAG::INVALID;
+    if(tagString == "body"){
+        return TAG::BODY;
+    }
+    else if(tagString == "element") {
+        return TAG::ELEMENT;
+    }
+    else if(tagString == "text") {
+        return TAG::TEXT;
+    }
+    else{
+        ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
+        return TAG::INVALID;
+    }
+}
+
 
 string ofxLayoutElement::getClasses(){
     return this->classes;
@@ -134,6 +191,7 @@ void ofxLayoutElement::drawStyles(){
     }
 }
 
+
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
         this->styles->rules[iterator->first] = iterator->second;
@@ -161,4 +219,12 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
 
 void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
+}
+
+ofFbo* ofxLayoutElement::getFbo(){
+    return elementFbo;
+}
+
+ofRectangle ofxLayoutElement::getBoundary(){
+    return boundary;
 }
