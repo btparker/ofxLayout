@@ -50,7 +50,7 @@ void ofxLayoutElement::update(){
     drawStyles();
     // For subclasses
     drawTag();
-    ofClearAlpha();
+    ofDisableAlphaBlending();
     elementFbo->end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
@@ -76,7 +76,9 @@ void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
 void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
+    ofEnableAlphaBlending();
     elementFbo->draw(0,0);
+    ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
