@@ -7,24 +7,24 @@ ofxOSS::ofxOSS(){
 void ofxOSS::setDefaults(){
     // Create defaults
     ofxOssRule* backgroundColorDefault = new ofxOssRule();
-    backgroundColorDefault->type = OSS_TYPE::COLOR;
     backgroundColorDefault->value = "rgba(0,0,0,0)";
     this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
     
     ofxOssRule* positionDefault = new ofxOssRule();
-    positionDefault->type = OSS_TYPE::POSITION;
     positionDefault->value = "0px 0px";
     this->rules[OSS_KEY::POSITION] = positionDefault;
     
     ofxOssRule* widthDefault = new ofxOssRule();
-    widthDefault->type = OSS_TYPE::NUMBER;
     widthDefault->value = "100%";
     this->rules[OSS_KEY::WIDTH] = widthDefault;
     
     ofxOssRule* heightDefault = new ofxOssRule();
-    heightDefault->type = OSS_TYPE::NUMBER;
     heightDefault->value = "100%";
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
+    
+    ofxOssRule* textAlignDefault = new ofxOssRule();
+    textAlignDefault->value = "left";
+    this->rules[OSS_KEY::TEXT_ALIGN] = textAlignDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -79,6 +79,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     else if(key == "font-family"){
         return OSS_KEY::FONT_FAMILY;
     }
+    else if(key == "text-align"){
+        return OSS_KEY::TEXT_ALIGN;
+    }
     else{
         ofLogWarning("ofxOSS::getEnumFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -114,6 +117,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::FONT_FAMILY:
             keyString = "font-family";
+            break;
+        case OSS_KEY::TEXT_ALIGN:
+            keyString = "text-align";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");

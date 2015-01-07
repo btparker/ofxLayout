@@ -6,7 +6,8 @@
 		"height" : "50%"
 	},
 	".container3" : {
-		"font-family" : "fonts/Graphik-Black.ttf"
+		"font-family" : "fonts/Graphik-Black.ttf",
+		"text-align" : "right"
 	},
 	"#container2" : {
 		"background-color" : "rgba(50,50,50,255)",
