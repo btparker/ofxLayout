@@ -14,12 +14,17 @@ void ofxLayoutTextElement::drawTag(){
         if(fontsPtr->count(fontFilename) > 0){
             ofFill();
             ofSetColor(255,255,255);
+            
             ofxFontStash* fontPtr = fontsPtr->at(fontFilename);
-            float fontSize = 50.0f;
             
-            ofRectangle fontBBox = fontPtr->getBBox(getValue(), fontSize, 0,0);
+            float fontSize;
+            if(hasStyle(OSS_KEY::FONT_SIZE)){
+                fontSize = ofToFloat(getStyle(OSS_KEY::FONT_SIZE));
+            }
             
-            float x = 0.0f;
+            ofRectangle fontBBox = fontPtr->getBBox(getValue(), fontSize, 0, 0);
+            
+            float x;
             float y = fontBBox.height;
             
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
