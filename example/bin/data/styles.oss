@@ -1,20 +1,20 @@
 {
 	"#container" : {
-		"background-color" : "rgba(50,50,50,255)",
-		"background-image" : "images/bf.jpg",
-		"background-size" : "cover",
-		"background-position" : "center",
-		"position" : "0",
+		"background-color" : "rgba(255,0,0,255)",
+		"position" : "center",
 		"width" : "50%",
-		"height" : "100%"
+		"height" : "50%"
+	},
+	".container3" : {
+		"font-family" : "fonts/Graphik-Black.ttf"
 	},
 	"#container2" : {
 		"background-color" : "rgba(50,50,50,255)",
 		"background-image" : "images/legs.jpg",
 		"background-size" : "cover",
 		"background-position" : "center",
-		"position" : "50% 0",
-		"width" : "50%",
+		"position" : "center",
+		"width" : "100%",
 		"height" : "100%"
 	}
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		772B07B71A5C46DD00141777 /* ofxLayoutTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772B07B51A5C46DD00141777 /* ofxLayoutTextElement.cpp */; };
 		77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */; };
 		77560CFB1A41BC4600A05C1C /* fontstash.c in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF61A41BC4600A05C1C /* fontstash.c */; };
 		77560CFC1A41BC4600A05C1C /* stb_truetype.c in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF81A41BC4600A05C1C /* stb_truetype.c */; };
@@ -90,6 +91,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		772B07B51A5C46DD00141777 /* ofxLayoutTextElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLayoutTextElement.cpp; sourceTree = "<group>"; };
+		772B07B61A5C46DD00141777 /* ofxLayoutTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLayoutTextElement.h; sourceTree = "<group>"; };
 		77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFontStash.cpp; sourceTree = "<group>"; };
 		77560CF21A41BC4600A05C1C /* ofxFontStash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxFontStash.h; sourceTree = "<group>"; };
 		77560CF61A41BC4600A05C1C /* fontstash.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fontstash.c; sourceTree = "<group>"; };
@@ -866,6 +869,8 @@
 				77E916121A3B4B3E00C1362E /* ofxOSS.h */,
 				77560D261A487D2200A05C1C /* ofxLayout.cpp */,
 				77560D271A487D2300A05C1C /* ofxLayout.h */,
+				772B07B51A5C46DD00141777 /* ofxLayoutTextElement.cpp */,
+				772B07B61A5C46DD00141777 /* ofxLayoutTextElement.h */,
 			);
 			name = src;
 			path = ../src;
@@ -1105,6 +1110,7 @@
 				77560D281A487D2300A05C1C /* ofxLayout.cpp in Sources */,
 				77E916211A3F5FF300C1362E /* tinyxmlerror.cpp in Sources */,
 				77C609B81A40BEE900093728 /* ofxCvColorImage.cpp in Sources */,
+				772B07B71A5C46DD00141777 /* ofxLayoutTextElement.cpp in Sources */,
 				77C609BB1A40BEE900093728 /* ofxCvGrayscaleImage.cpp in Sources */,
 				77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */,
 				77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */,

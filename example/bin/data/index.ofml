@@ -1,6 +1,7 @@
-<element>
-	<element id="container">
+<body>
+	<element id="container2" class="show">
+		<element id="container">
+			<text class="container3 show">HAH*AH*AAH</text>
+		</element>
 	</element>
-	<element id="container2">
-	</element>
-</element>
+</body>

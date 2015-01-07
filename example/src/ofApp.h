@@ -23,4 +23,6 @@ class ofApp : public ofBaseApp{
         void loadExternalLayout();
     
         ofxLayout layout;
+        ofFbo activeFbo;
+        vector<string> filters;
 };

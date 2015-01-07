@@ -1,8 +1,13 @@
+#pragma once
 #include "ofMain.h"
 #include "ofxOSS.h"
 #include "ofxXmlSettings.h"
 #include "ofxProgressiveTextureLoad.h"
 #include "ofxLoaderSpool.h"
+
+namespace TAG {
+    enum ENUM{BODY, ELEMENT, TEXT, INVALID};
+};
 
 class ofxLayoutElement{
     
@@ -11,7 +16,6 @@ public:
     /// | -------------------------- | ///
     
     ofxLayoutElement();
-    ofxLayoutElement(ofxLoaderSpool* assetsPtr);
     ~ofxLayoutElement();
     
     
@@ -21,18 +25,29 @@ public:
     void update();
     void draw();
     
-    
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
     
-    string getTag();
+    void setAssets(ofxLoaderSpool* assetsPtr);
+    void setFonts(map<string, ofxFontStash*>* fontsPtr);
+    
+    TAG::ENUM getTag();
+    void setTag(TAG::ENUM tag);
     void setTag(string tag);
+    
+    static string getTagString(TAG::ENUM tagEnum);
+    static TAG::ENUM getTagEnum(string tagString);
 
     string getID();
     void setID(string ID);
     
+    string getValue();
+    void setValue(string value);
+    
     string getClasses();
     void setClasses(string classes);
+    
+    ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);
     string getStyle(OSS_KEY::ENUM styleKey);
@@ -47,18 +62,27 @@ public:
     
     vector<ofxLayoutElement*> children;
     ofxLayoutElement* parent;
+    
+    ofFbo* getFbo();
+    
+    void pushTransforms();
+    void popTransforms();
 
 protected:
     void drawStyles();
+    virtual void drawTag(){};
+    
     ofRectangle boundary;
     
     string ID;
-    string tag;
+    TAG::ENUM tag;
     string classes;
+    string elementValue;
     
     ofFbo* elementFbo;
     
     string inlineStyle;
     
     ofxLoaderSpool* assetsPtr;
+    map<string, ofxFontStash*>* fontsPtr;
 };

@@ -4,10 +4,13 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    contextTreeRoot = new ofxLayoutElement(&assets);
+    contextTreeRoot = new ofxLayoutElement();
+    contextTreeRoot->setAssets(&assets);
     styleRulesRoot = new ofxOSS();
     contextTreeRoot->styles = styleRulesRoot;
-    assets.addBatch("images");
+    
+    // This is so that the functionality can be overwritten in the case of adding new tag types
+    init();
 }
 
 ofxLayout::~ofxLayout(){
@@ -23,22 +26,38 @@ void ofxLayout::update(){
 }
 
 void ofxLayout::draw(){
-    contextTreeRoot->draw();
+    if(drawable()){
+        contextTreeRoot->draw();
+    }
 }
 
 /// |   Utilities   | ///
 /// | ------------- | ///
+void ofxLayout::init(){
+    assets.addBatch("images");
+}
+
+bool ofxLayout::ready(){
+    return assets.isBatchReady("images");
+}
+
+bool ofxLayout::drawable(){
+    return assets.isBatchDrawable("images");
+}
 
 void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
     bool ofmlParsingSuccessful = xmlLayout.loadFile(ofmlFilename);
     if(ofmlParsingSuccessful){
-        loadFromXmlLayout(&xmlLayout, contextTreeRoot);
+        loadFromXmlLayout(&xmlLayout, contextTreeRoot, TAG::BODY);
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+ofmlFilename+".");
     }
-    
+    applyChanges();
+}
+
+void ofxLayout::applyChanges(){
     applyStyles();
     assets.loadBatch("images");
 }
@@ -50,16 +69,15 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, styleRulesRoot);
-        applyStyles();
-        assets.loadBatch("images");
+        applyChanges();
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OSS file "+ossFilename+".");
     }
 }
 
-void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, int which){
-    string tag = "element";
+void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, TAG::ENUM tagEnum, int which){
+    string tag = ofxLayoutElement::getTagString(tagEnum);
     
     string id = xmlLayout->getAttribute(tag,"id", "", which);
     element->setID(id);
@@ -70,14 +88,33 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     element->setInlineStyle(style);
     
-    xmlLayout->pushTag(tag);
-    int numElements = xmlLayout->getNumTags(tag);
-    for(int i = 0; i < numElements; i++){
-        ofxLayoutElement* childElement = new ofxLayoutElement(&assets);
-        element->addChild(childElement);
-        loadFromXmlLayout(xmlLayout, childElement,i);
-    }
+    string value = xmlLayout->getValue(tag,"", which);
+    element->setValue(value);
+    
+    // Push into current element, and load all children of different valid tag types
+    xmlLayout->pushTag(tag, which);
+    loadTags(xmlLayout, element);
     xmlLayout->popTag();
+}
+
+void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
+    int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
+    for(int i = 0; i < numElements; i++){
+        ofxLayoutElement* childElement = new ofxLayoutElement();
+        childElement->setAssets(&assets);
+        childElement->setFonts(&fonts);
+        element->addChild(childElement);
+        loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
+    }
+    
+    int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
+    for(int i = 0; i < numTextElements; i++){
+        ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
+        childElement->setAssets(&assets);
+        childElement->setFonts(&fonts);
+        element->addChild(childElement);
+        loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
+    }
 }
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
@@ -126,18 +163,17 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         styleObject = styleRulesRoot;
     }
     
-    string tag = "element";
-    
+    // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
-        if(styleObject->classMap.count(classes[i])){
-            element->overrideStyles(styleObject->classMap[classes[i]]);
+        if(styleRulesRoot->classMap.count(classes[i])){
+            element->overrideStyles(styleRulesRoot->classMap[classes[i]]);
         }
     }
     
     string id = element->getID();
-    if(styleObject->idMap.count(id)){
-        element->overrideStyles(styleObject->idMap[id]);
+    if(styleRulesRoot->idMap.count(id)){
+        element->overrideStyles(styleRulesRoot->idMap[id]);
     }
     
     ofxOSS* inlineStyles = element->getInlineStyles();
@@ -152,7 +188,60 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         }
     }
     
-    for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i], element->styles);
+    // Get fonts
+    if(element->hasStyle(OSS_KEY::FONT_FAMILY)){
+        string fontFilename = element->getStyle(OSS_KEY::FONT_FAMILY);
+        
+        if(fonts.count(fontFilename) == 0){
+            fonts[fontFilename] = new ofxFontStash();
+            fonts[fontFilename]->setup(fontFilename);
+        }
     }
+    
+    for(int i = 0; i < element->children.size(); i++){
+        applyStyles(element->children[i], styleRulesRoot);
+    }
+}
+
+void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters){
+    fboPtr->allocate(contextTreeRoot->getFbo()->getWidth(), contextTreeRoot->getFbo()->getHeight());
+    fboPtr->begin();
+    ofClear(0,0,0,0);
+    filterElements(filters, contextTreeRoot);
+    fboPtr->end();
+}
+
+void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *element){
+    vector<string> classes = ofSplitString(element->getClasses()," ",true,true);
+    string elementID = element->getID();
+    bool hasFilterID = false;
+    bool hasFilterClass = false;
+    for(vector<string>::iterator filter = filters->begin(); filter != filters->end(); ++filter) {
+        bool filterIsId = filter->substr(0,1) == "#";
+        bool filterIsClass = filter->substr(0,1) == ".";
+        
+        if(filterIsId){
+            string idFilter = filter->substr(1,filter->length());
+            hasFilterID = elementID == idFilter;
+        }
+        if(filterIsClass){
+            string classFilter = filter->substr(1,filter->length());
+            if (find(classes.begin(), classes.end(), classFilter) != classes.end()){
+                hasFilterClass = true;
+            }
+        }
+    }
+    
+    bool noFilters = filters->size() == 0;
+    bool drawElement = noFilters || hasFilterID || hasFilterClass;
+   
+    element->pushTransforms();
+    if(drawElement){
+        element->getFbo()->draw(0,0);
+    }
+    for(int i = 0 ; i < element->children.size(); i++){
+        filterElements(filters, element->children[i]);
+    }
+    element->popTransforms();
+    
 }
