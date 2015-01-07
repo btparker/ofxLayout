@@ -12,6 +12,31 @@ void ofxLayoutTextElement::drawTag(){
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
         string fontFilename = getStyle(OSS_KEY::FONT_FAMILY);
         if(fontsPtr->count(fontFilename) > 0){
+            string text = getValue();
+            if(hasStyle(OSS_KEY::TEXT_TRANSFORM)){
+                vector<string> words = ofSplitString(text, " ",true,true);
+                OSS_TEXT_TRANSFORM::ENUM textTransform = ofxOSS::getTextTransformFromString(getStyle(OSS_KEY::TEXT_TRANSFORM));
+                switch(textTransform){
+                    case OSS_TEXT_TRANSFORM::NONE:
+                        //do nothing
+                        break;
+                    case OSS_TEXT_TRANSFORM::UPPERCASE:
+                        text = ofToUpper(text);
+                        break;
+                    case OSS_TEXT_TRANSFORM::LOWERCASE:
+                        text = ofToLower(text);
+                        break;
+                    case OSS_TEXT_TRANSFORM::CAPITALIZE:
+                        for(int i = 0; i < words.size(); i++) {
+                            words[i] = ofToLower(words[i]);
+                            words[i] = ofToUpper(words[i].substr(0,1))+words[i].substr(1,words[i].size());
+                        }
+                        text = ofJoinString(words, " ");
+                        break;
+                    default:
+                        text = text;
+                }
+            }
             ofFill();
             ofSetColor(255,255,255);
             
@@ -22,7 +47,7 @@ void ofxLayoutTextElement::drawTag(){
                 fontSize = ofToFloat(getStyle(OSS_KEY::FONT_SIZE));
             }
             
-            ofRectangle fontBBox = fontPtr->getBBox(getValue(), fontSize, 0, 0);
+            ofRectangle fontBBox = fontPtr->getBBox(text, fontSize, 0, 0);
             
             float x;
             float y = fontBBox.height;
@@ -39,7 +64,7 @@ void ofxLayoutTextElement::drawTag(){
                     x = boundary.width - fontBBox.width;
                 }
             }
-            fontPtr->draw(getValue(), fontSize, x, y);
+            fontPtr->draw(text, fontSize, x, y);
         }
     }
 }
