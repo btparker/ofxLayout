@@ -31,6 +31,7 @@
 		77C609C81A411EAE00093728 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609C71A411EAD00093728 /* AVFoundation.framework */; };
 		77C609CA1A411EBA00093728 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609C91A411EBA00093728 /* QuartzCore.framework */; };
 		77C609CC1A411ECA00093728 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C609CB1A411ECA00093728 /* CoreMedia.framework */; };
+		77DF6CB21A5D970A004328D3 /* ofxTimeMeasurements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77DF6CAE1A5D970A004328D3 /* ofxTimeMeasurements.cpp */; };
 		77E846C21A5AFDDD00DF11CB /* ofxLoaderBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E846BE1A5AFDDD00DF11CB /* ofxLoaderBatch.cpp */; };
 		77E846C31A5AFDDD00DF11CB /* ofxLoaderSpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E846C01A5AFDDD00DF11CB /* ofxLoaderSpool.cpp */; };
 		77E916101A3B32B000C1362E /* ofxLayoutElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77E9160E1A3B32B000C1362E /* ofxLayoutElement.cpp */; };
@@ -232,6 +233,9 @@
 		77C609C71A411EAD00093728 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		77C609C91A411EBA00093728 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		77C609CB1A411ECA00093728 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		77DF6CAE1A5D970A004328D3 /* ofxTimeMeasurements.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxTimeMeasurements.cpp; sourceTree = "<group>"; };
+		77DF6CAF1A5D970A004328D3 /* ofxTimeMeasurements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxTimeMeasurements.h; sourceTree = "<group>"; };
+		77DF6CB11A5D970A004328D3 /* tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tree.h; sourceTree = "<group>"; };
 		77E846BE1A5AFDDD00DF11CB /* ofxLoaderBatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLoaderBatch.cpp; sourceTree = "<group>"; };
 		77E846BF1A5AFDDD00DF11CB /* ofxLoaderBatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLoaderBatch.h; sourceTree = "<group>"; };
 		77E846C01A5AFDDD00DF11CB /* ofxLoaderSpool.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLoaderSpool.cpp; sourceTree = "<group>"; };
@@ -832,6 +836,34 @@
 			path = ../../ofxMSATimer/src;
 			sourceTree = "<group>";
 		};
+		77DF6CAC1A5D9709004328D3 /* ofxTimeMeasurements */ = {
+			isa = PBXGroup;
+			children = (
+				77DF6CAD1A5D970A004328D3 /* src */,
+				77DF6CB01A5D970A004328D3 /* lib */,
+			);
+			name = ofxTimeMeasurements;
+			sourceTree = "<group>";
+		};
+		77DF6CAD1A5D970A004328D3 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				77DF6CAE1A5D970A004328D3 /* ofxTimeMeasurements.cpp */,
+				77DF6CAF1A5D970A004328D3 /* ofxTimeMeasurements.h */,
+			);
+			name = src;
+			path = ../../ofxTimeMeasurements/src;
+			sourceTree = "<group>";
+		};
+		77DF6CB01A5D970A004328D3 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				77DF6CB11A5D970A004328D3 /* tree.h */,
+			);
+			name = lib;
+			path = ../../ofxTimeMeasurements/lib;
+			sourceTree = "<group>";
+		};
 		77E846BC1A5AFDDD00DF11CB /* ofxLoaderSpool */ = {
 			isa = PBXGroup;
 			children = (
@@ -910,6 +942,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				77DF6CAC1A5D9709004328D3 /* ofxTimeMeasurements */,
 				77E846BC1A5AFDDD00DF11CB /* ofxLoaderSpool */,
 				77560CFD1A41BC8700A05C1C /* ofxUnicode */,
 				77560CEF1A41BC4600A05C1C /* ofxFontStash */,
@@ -1098,6 +1131,7 @@
 				77C609BD1A40BEE900093728 /* ofxCvImage.cpp in Sources */,
 				77C609BC1A40BEE900093728 /* ofxCvHaarFinder.cpp in Sources */,
 				77E916131A3B4B3E00C1362E /* ofxOSS.cpp in Sources */,
+				77DF6CB21A5D970A004328D3 /* ofxTimeMeasurements.cpp in Sources */,
 				77C609BA1A40BEE900093728 /* ofxCvFloatImage.cpp in Sources */,
 				77E916101A3B32B000C1362E /* ofxLayoutElement.cpp in Sources */,
 				77E846C21A5AFDDD00DF11CB /* ofxLoaderBatch.cpp in Sources */,
