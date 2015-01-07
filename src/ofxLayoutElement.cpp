@@ -77,11 +77,13 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
+    ofSetColor(255,255,255,ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
     elementFbo->draw(0,0);
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
+    ofSetColor(255);
     ofPopMatrix();
 }
 
