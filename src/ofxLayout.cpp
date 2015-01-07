@@ -22,6 +22,7 @@ ofxLayout::~ofxLayout(){
 /// | ------------------ | ///
 
 void ofxLayout::update(){
+    assets.update();
     contextTreeRoot->update();
 }
 

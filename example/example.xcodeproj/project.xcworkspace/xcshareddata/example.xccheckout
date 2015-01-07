@@ -26,6 +26,8 @@
 		<string>https://github.com/jefftimesten/ofxJSON.git</string>
 		<key>9B774B0323186B2BCB6A3C5ECEB04025E7DCF467</key>
 		<string>https://github.com/armadillu/ofxFontStash.git</string>
+		<key>A9EB116B24E1E187292E7D55C8A151A6DEA16570</key>
+		<string>https://github.com/armadillu/ofxTimeMeasurements.git</string>
 		<key>C244CE38817BC3508587E19FA66F16144386E30C</key>
 		<string>git.assembla.com:brookfield-production.brookfield-place-of.git</string>
 		<key>E0CB4C1C2522C94E4D03AC595BB2CF0D7F09B508</key>
@@ -53,6 +55,8 @@
 		<string>../../../../ofxJSON</string>
 		<key>9B774B0323186B2BCB6A3C5ECEB04025E7DCF467</key>
 		<string>../../../../ofxFontStash</string>
+		<key>A9EB116B24E1E187292E7D55C8A151A6DEA16570</key>
+		<string>../../../../ofxTimeMeasurements</string>
 		<key>C244CE38817BC3508587E19FA66F16144386E30C</key>
 		<string>../../../../projects/brookfield/brookfield-place-of</string>
 		<key>E0CB4C1C2522C94E4D03AC595BB2CF0D7F09B508</key>
@@ -139,6 +143,14 @@
 			<string>12DFF02CF5C9C72708B200DCDDC2EE4EF0E5A36A</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxThreadedVideoPlayer</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>A9EB116B24E1E187292E7D55C8A151A6DEA16570</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxTimeMeasurements</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
