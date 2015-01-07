@@ -10,7 +10,11 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, TEXT_ALIGN, FONT_SIZE};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE};
+};
+
+namespace OSS_BLEND_MODE{
+    enum ENUM{DISABLED, ALPHA, ADD, SUBTRACT, SCREEN, MULTIPLY, INVALID_BLEND_MODE};//, OVERLAY, DARKEN, LIGHTEN, COLOR_DODGE, COLOR_BURN, HARD_LIGHT, SOFT_LIGHT, DIFFERENCE, EXCLUSION, HUE, SATURATION, COLOR, LUMINOSITY};
 };
 
 namespace OSS_VALUE{
@@ -48,14 +52,17 @@ public:
     /// Example: BACKGROUND_COLOR from 'background-color'. Returns warning and INVALID enum if none found.
     ///
     /// \param key The string of the css-like key
-    static OSS_KEY::ENUM getEnumFromString(string key);
+    static OSS_KEY::ENUM getOssKeyFromString(string key);
     
     /// \brief Lookup key string from provided key enum
     ///
     /// Example: 'background-color' from BACKGROUND_COLOR. Returns warning and empty string if none found.
     ///
     /// \param key The enum of the css-like key
-    static string getStringFromEnum(OSS_KEY::ENUM key);
+    static string getStringFromOssKey(OSS_KEY::ENUM key);
+    
+    static OSS_BLEND_MODE::ENUM getBlendModeFromString(string blendMode);
+    static string getStringFromBlendMode(OSS_BLEND_MODE::ENUM blendMode);
     
     /// \brief Loads and parses an OSS file, stores in relevant styles
     ///

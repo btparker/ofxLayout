@@ -30,10 +30,13 @@ void ofxOSS::setDefaults(){
     fontSizeDefault->value = "50";
     this->rules[OSS_KEY::FONT_SIZE] = fontSizeDefault;
     
-    
     ofxOssRule* bgSizeDefault = new ofxOssRule();
     bgSizeDefault->value = "cover";
     this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
+    
+    ofxOssRule* bgBlendModeDefault = new ofxOssRule();
+    bgBlendModeDefault->value = "disabled";
+    this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -44,7 +47,7 @@ ofxOSS::~ofxOSS(){
 /// | ------------------- | ///
 
 string ofxOSS::getStyle(string key){
-    return getStyle(getEnumFromString(key));
+    return getStyle(getOssKeyFromString(key));
 }
 
 string ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
@@ -52,14 +55,14 @@ string ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
 }
 
 bool ofxOSS::validKey(string key){
-    return getEnumFromString(key) != OSS_KEY::INVALID;
+    return getOssKeyFromString(key) != OSS_KEY::INVALID;
 }
 
 
 /// |   Utilities   | ///
 /// | ------------- | ///
 
-OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
+OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     OSS_KEY::ENUM keyEnum;
     if(key == "background-color"){
         return OSS_KEY::BACKGROUND_COLOR;
@@ -75,6 +78,9 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     }
     else if(key == "background-position"){
         return OSS_KEY::BACKGROUND_POSITION;
+    }
+    else if(key == "background-blend-mode"){
+        return OSS_KEY::BACKGROUND_BLEND_MODE;
     }
     else if(key == "width"){
         return OSS_KEY::WIDTH;
@@ -100,7 +106,7 @@ OSS_KEY::ENUM ofxOSS::getEnumFromString(string key){
     }
 }
 
-string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
+string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
     string keyString;
     switch(key){
         case OSS_KEY::BACKGROUND_COLOR:
@@ -117,6 +123,9 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BACKGROUND_POSITION:
             keyString = "background-position";
+            break;
+        case OSS_KEY::BACKGROUND_BLEND_MODE:
+            keyString = "background-blend-mode";
             break;
         case OSS_KEY::WIDTH:
             keyString = "width";
@@ -141,6 +150,138 @@ string ofxOSS::getStringFromEnum(OSS_KEY::ENUM key){
     }
     return keyString;
 }
+
+OSS_BLEND_MODE::ENUM ofxOSS::getBlendModeFromString(string blendMode){
+    if(blendMode == "disabled"){
+        return OSS_BLEND_MODE::DISABLED;
+    }
+    else if(blendMode == "alpha"){
+        return OSS_BLEND_MODE::ALPHA;
+    }
+    else if(blendMode == "add"){
+        return OSS_BLEND_MODE::ADD;
+    }
+    else if(blendMode == "subtract"){
+        return OSS_BLEND_MODE::SUBTRACT;
+    }
+    else if(blendMode == "screen"){
+        return OSS_BLEND_MODE::SCREEN;
+    }
+    else if(blendMode == "multiply"){
+        return OSS_BLEND_MODE::MULTIPLY;
+    }
+//    else if(blendMode == "overlay"){
+//        return OSS_BLEND_MODE::OVERLAY;
+//    }
+//    else if(blendMode == "darken"){
+//        return OSS_BLEND_MODE::DARKEN;
+//    }
+//    else if(blendMode == "lighten"){
+//        return OSS_BLEND_MODE::LIGHTEN;
+//    }
+//    else if(blendMode == "color-dodge"){
+//        return OSS_BLEND_MODE::COLOR_DODGE;
+//    }
+//    else if(blendMode == "color-burn"){
+//        return OSS_BLEND_MODE::COLOR_BURN;
+//    }
+//    else if(blendMode == "hard-light"){
+//        return OSS_BLEND_MODE::HARD_LIGHT;
+//    }
+//    else if(blendMode == "soft-light"){
+//        return OSS_BLEND_MODE::SOFT_LIGHT;
+//    }
+//    else if(blendMode == "difference"){
+//        return OSS_BLEND_MODE::DIFFERENCE;
+//    }
+//    else if(blendMode == "exclusion"){
+//        return OSS_BLEND_MODE::EXCLUSION;
+//    }
+//    else if(blendMode == "hue"){
+//        return OSS_BLEND_MODE::HUE;
+//    }
+//    else if(blendMode == "saturation"){
+//        return OSS_BLEND_MODE::SATURATION;
+//    }
+//    else if(blendMode == "color"){
+//        return OSS_BLEND_MODE::COLOR;
+//    }
+//    else if(blendMode == "luminosity"){
+//        return OSS_BLEND_MODE::LUMINOSITY;
+//    }
+    else{
+        ofLogWarning("ofxOSS::getBlendModeFromString","No blend-mode for "+blendMode+" found.");
+        return OSS_BLEND_MODE::INVALID_BLEND_MODE;
+    }
+}
+
+string ofxOSS::getStringFromBlendMode(OSS_BLEND_MODE::ENUM blendMode){
+    string blendModeStr;
+    switch(blendMode){
+        case OSS_BLEND_MODE::DISABLED:
+            blendModeStr = "disabled";
+            break;
+        case OSS_BLEND_MODE::ALPHA:
+            blendModeStr = "alpha";
+            break;
+        case OSS_BLEND_MODE::ADD:
+            blendModeStr = "add";
+            break;
+        case OSS_BLEND_MODE::SUBTRACT:
+            blendModeStr = "subtract";
+            break;
+        case OSS_BLEND_MODE::SCREEN:
+            blendModeStr = "screen";
+            break;
+        case OSS_BLEND_MODE::MULTIPLY:
+            blendModeStr = "multiply";
+            break;
+//        case OSS_BLEND_MODE::OVERLAY:
+//            blendModeStr = "overlay";
+//            break;
+//        case OSS_BLEND_MODE::DARKEN:
+//            blendModeStr = "darken";
+//            break;
+//        case OSS_BLEND_MODE::LIGHTEN:
+//            blendModeStr = "lighten";
+//            break;
+//        case OSS_BLEND_MODE::COLOR_DODGE:
+//            blendModeStr = "color-dodge";
+//            break;
+//        case OSS_BLEND_MODE::COLOR_BURN:
+//            blendModeStr = "color-burn";
+//            break;
+//        case OSS_BLEND_MODE::HARD_LIGHT:
+//            blendModeStr = "hard-light";
+//            break;
+//        case OSS_BLEND_MODE::SOFT_LIGHT:
+//            blendModeStr = "soft-light";
+//            break;
+//        case OSS_BLEND_MODE::DIFFERENCE:
+//            blendModeStr = "difference";
+//            break;
+//        case OSS_BLEND_MODE::EXCLUSION:
+//            blendModeStr = "exclusion";
+//            break;
+//        case OSS_BLEND_MODE::HUE:
+//            blendModeStr = "hue";
+//            break;
+//        case OSS_BLEND_MODE::SATURATION:
+//            blendModeStr = "saturation";
+//            break;
+//        case OSS_BLEND_MODE::COLOR:
+//            blendModeStr = "color";
+//            break;
+//        case OSS_BLEND_MODE::LUMINOSITY:
+//            blendModeStr = "luminosity";
+//            break;
+        default:
+            ofLogWarning("ofxOSS::getStringFromBlendMode","No string for given OSS_BLEND_MODE found.");
+    }
+    return blendModeStr;
+}
+
+
 
 /// |   Color Styles   | ///
 /// | ---------------- | ///
