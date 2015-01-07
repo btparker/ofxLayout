@@ -208,7 +208,9 @@ void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters){
     fboPtr->allocate(contextTreeRoot->getFbo()->getWidth(), contextTreeRoot->getFbo()->getHeight());
     fboPtr->begin();
     ofClear(0,0,0,0);
+    ofEnableAlphaBlending();
     filterElements(filters, contextTreeRoot);
+    ofClearAlpha();
     fboPtr->end();
 }
 

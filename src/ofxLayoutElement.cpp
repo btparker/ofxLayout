@@ -45,10 +45,12 @@ void ofxLayoutElement::update(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     elementFbo->begin();
-    ofClear(ofColor(0,0,0,0));
+    ofClear(0,0,0,0);
+    ofEnableAlphaBlending();
     drawStyles();
     // For subclasses
     drawTag();
+    ofClearAlpha();
     elementFbo->end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
