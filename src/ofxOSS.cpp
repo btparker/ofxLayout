@@ -41,6 +41,10 @@ void ofxOSS::setDefaults(){
     ofxOssRule* opacityDefault = new ofxOssRule();
     opacityDefault->value = "1.0f";
     this->rules[OSS_KEY::OPACITY] = opacityDefault;
+    
+    ofxOssRule* textTransformDefault = new ofxOssRule();
+    textTransformDefault->value = "none";
+    this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -107,6 +111,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "opacity"){
         return OSS_KEY::OPACITY;
     }
+    else if(key == "text-transform"){
+        return OSS_KEY::TEXT_TRANSFORM;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -148,6 +155,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::TEXT_ALIGN:
             keyString = "text-align";
+            break;
+        case OSS_KEY::TEXT_TRANSFORM:
+            keyString = "text-transform";
             break;
         case OSS_KEY::FONT_SIZE:
             keyString = "font-size";
@@ -292,6 +302,45 @@ string ofxOSS::getStringFromBlendMode(OSS_BLEND_MODE::ENUM blendMode){
 }
 
 
+OSS_TEXT_TRANSFORM::ENUM ofxOSS::getTextTransformFromString(string textTransform){
+    if(textTransform == "none"){
+        return OSS_TEXT_TRANSFORM::NONE;
+    }
+    else if (textTransform == "uppercase"){
+        return OSS_TEXT_TRANSFORM::UPPERCASE;
+    }
+    else if (textTransform == "lowercase"){
+        return OSS_TEXT_TRANSFORM::LOWERCASE;
+    }
+    else if (textTransform == "capitalize"){
+        return OSS_TEXT_TRANSFORM::CAPITALIZE;
+    }
+    else{
+        ofLogWarning("ofxOSS::getTextTransformFromString","No text-transform for "+textTransform+" found.");
+        return OSS_TEXT_TRANSFORM::INVALID_TEXT_TRANSFORM;
+    }
+}
+
+string ofxOSS::getStringFromTextTransform(OSS_TEXT_TRANSFORM::ENUM textTransform){
+    string textTransformStr;
+    switch(textTransform){
+        case OSS_TEXT_TRANSFORM::NONE:
+            textTransformStr = "none";
+            break;
+        case OSS_TEXT_TRANSFORM::UPPERCASE:
+            textTransformStr = "uppercase";
+            break;
+        case OSS_TEXT_TRANSFORM::LOWERCASE:
+            textTransformStr = "lowercase";
+            break;
+        case OSS_TEXT_TRANSFORM::CAPITALIZE:
+            textTransformStr = "capitalize";
+            break;
+        default:
+            ofLogWarning("ofxOSS::getStringFromTextTransform","No string for given OSS_TEXT_TRANSFORM found.");
+    }
+    return textTransformStr;
+}
 
 /// |   Color Styles   | ///
 /// | ---------------- | ///
@@ -323,6 +372,7 @@ ofColor ofxOSS::parseColor(string colorValue){
     }
     return color;
 }
+
 
 ofColor ofxOSS::parseColorChannels(string colorChannels){
     ofColor color;
