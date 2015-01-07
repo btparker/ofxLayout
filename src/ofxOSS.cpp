@@ -29,6 +29,11 @@ void ofxOSS::setDefaults(){
     ofxOssRule* fontSizeDefault = new ofxOssRule();
     fontSizeDefault->value = "50";
     this->rules[OSS_KEY::FONT_SIZE] = fontSizeDefault;
+    
+    
+    ofxOssRule* bgSizeDefault = new ofxOssRule();
+    bgSizeDefault->value = "cover";
+    this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
 }
 
 ofxOSS::~ofxOSS(){
