@@ -180,7 +180,7 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles->rules[styleKey]->value;
+    return this->styles->rules[styleKey].value;
 }
 
 /// |   Utilities   | ///
@@ -288,7 +288,7 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
         string styleKey = styleKeyValueVec[0];
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
-            ofxOssRule* rule = ofxOSS::generateRule(styleKey, styleValue);
+            ofxOssRule rule = ofxOSS::generateRule(styleKey, styleValue);
             inlineStyles->rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
         }
     }

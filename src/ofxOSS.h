@@ -133,7 +133,7 @@ public:
     /// \param ofRectangle elementBoundary
 //    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
-    static ofxOssRule* generateRule(string key, string value);
+    static ofxOssRule generateRule(string key, string value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);
     
@@ -141,7 +141,7 @@ public:
     
     ofxOSS* parent = NULL;
     
-    map<OSS_KEY::ENUM, ofxOssRule*> rules;
+    map<OSS_KEY::ENUM, ofxOssRule> rules;
     
     map<string,ofxOSS*> idMap;
     map<string,ofxOSS*> classMap;

@@ -179,7 +179,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
                 }
             }
 
-            ofxOssRule* ossRule = ofxOSS::generateRule(key, value);
+            ofxOssRule ossRule = ofxOSS::generateRule(key, value);
             
             styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
         }
