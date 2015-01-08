@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/ofxOSS.cpp"
-            timestampString = "442416728.918784"
+            timestampString = "442448321.556127"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "558"
-            endingLineNumber = "558"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
             landmarkName = "ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary)"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/ofxOSS.cpp"
-            timestampString = "442416625.244312"
+            timestampString = "442448321.556127"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "66"
-            endingLineNumber = "66"
+            startingLineNumber = "69"
+            endingLineNumber = "69"
             landmarkName = "ofxOSS::getStyle(OSS_KEY::ENUM styleKey)"
             landmarkType = "5">
          </BreakpointContent>
