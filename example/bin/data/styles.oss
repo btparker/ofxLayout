@@ -12,7 +12,8 @@
 		"font-family" : "fonts/Graphik-Black.ttf",
 		"text-align" : "center",
 		"font-size" : "20px",
-		"text-transform" : "capitalize"
+		"text-transform" : "capitalize",
+		"color":"rgba(0,255,0,50)"
 	},
 	"#container2" : {
 		"background-color" : "rgba(50,50,50,255)",
