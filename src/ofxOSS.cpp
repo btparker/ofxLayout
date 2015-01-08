@@ -35,7 +35,7 @@ void ofxOSS::setDefaults(){
     this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
     
     ofxOssRule* bgBlendModeDefault = new ofxOssRule();
-    bgBlendModeDefault->value = "disabled";
+    bgBlendModeDefault->value = getStringFromBlendMode(OSS_BLEND_MODE::DISABLED);
     this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
     
     ofxOssRule* opacityDefault = new ofxOssRule();
