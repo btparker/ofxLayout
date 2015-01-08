@@ -45,6 +45,10 @@ void ofxOSS::setDefaults(){
     ofxOssRule* textTransformDefault = new ofxOssRule();
     textTransformDefault->value = "none";
     this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
+    
+    ofxOssRule* colorDefault = new ofxOssRule();
+    colorDefault->value = "rgb(0,0,0)";
+    this->rules[OSS_KEY::COLOR] = colorDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -114,6 +118,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "text-transform"){
         return OSS_KEY::TEXT_TRANSFORM;
     }
+    else if(key == "color"){
+        return OSS_KEY::COLOR;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -161,6 +168,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::FONT_SIZE:
             keyString = "font-size";
+            break;
+        case OSS_KEY::COLOR:
+            keyString = "color";
             break;
         case OSS_KEY::OPACITY:
             keyString = "opacity";

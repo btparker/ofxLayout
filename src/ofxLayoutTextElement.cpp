@@ -37,8 +37,8 @@ void ofxLayoutTextElement::drawTag(){
                         text = text;
                 }
             }
-            ofFill();
-            ofSetColor(255,255,255);
+            
+            
             
             ofxFontStash* fontPtr = fontsPtr->at(fontFilename);
             
@@ -63,6 +63,13 @@ void ofxLayoutTextElement::drawTag(){
                 else if(textAlign == "right"){
                     x = boundary.width - fontBBox.width;
                 }
+            }
+            
+            ofFill();
+            if(hasStyle(OSS_KEY::COLOR)){
+                string colorStr = getStyle(OSS_KEY::COLOR);
+                ofColor fontColor = ofxOSS::parseColor(colorStr);
+                ofSetColor(fontColor);
             }
             fontPtr->draw(text, fontSize, x, y);
         }
