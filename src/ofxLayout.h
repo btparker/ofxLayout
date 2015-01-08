@@ -23,7 +23,6 @@ public:
     void update();
     void draw();
     
-    
     /// |   Utilities   | ///
     /// | ------------- | ///
     void computeFbo(ofFbo* fboPtr, vector<string>* filters = new vector<string>());
@@ -48,6 +47,7 @@ public:
     map<string, ofxFontStash*> fonts;
     map<string, string> data;
     
+    void unload();
     
 protected:
     ofxLayoutElement* contextTreeRoot;

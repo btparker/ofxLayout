@@ -16,6 +16,7 @@ ofxLayout::ofxLayout(){
 }
 
 ofxLayout::~ofxLayout(){
+    unload();
     delete contextTreeRoot;
     delete styleRulesRoot;
 }
@@ -34,6 +35,9 @@ void ofxLayout::draw(){
     }
 }
 
+void ofxLayout::unload(){
+    assets.getBatch("images")->clear();
+}
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayout::init(){
