@@ -50,8 +50,8 @@ public:
     void unload();
     
 protected:
-    ofxLayoutElement* contextTreeRoot;
-    ofxOSS* styleRulesRoot;
+    ofxLayoutElement contextTreeRoot;
+    ofxOSS styleRulesRoot;
     
     
     

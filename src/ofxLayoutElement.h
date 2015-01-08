@@ -53,13 +53,13 @@ public:
     bool hasStyle(OSS_KEY::ENUM styleKey);
     string getStyle(OSS_KEY::ENUM styleKey);
     string getInlineStyle();
-    ofxOSS* getInlineStyles();
+    ofxOSS getInlineStyles();
     void setInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
     void addChild(ofxLayoutElement* childElement);
     
-    ofxOSS* styles;
+    ofxOSS styles;
     
     vector<ofxLayoutElement*> children;
     ofxLayoutElement* parent;
@@ -86,7 +86,7 @@ protected:
     string classes;
     string elementValue;
     
-    ofFbo* elementFbo;
+    ofFbo elementFbo;
     
     string inlineStyle;
     

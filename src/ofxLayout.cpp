@@ -4,12 +4,10 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    contextTreeRoot = new ofxLayoutElement();
-    contextTreeRoot->setAssets(&assets);
-    contextTreeRoot->setData(&data);
-    contextTreeRoot->setFonts(&fonts);
-    styleRulesRoot = new ofxOSS();
-    contextTreeRoot->styles = styleRulesRoot;
+    contextTreeRoot.setAssets(&assets);
+    contextTreeRoot.setData(&data);
+    contextTreeRoot.setFonts(&fonts);
+    contextTreeRoot.styles = styleRulesRoot;
     
     // This is so that the functionality can be overwritten in the case of adding new tag types
     init();
@@ -17,8 +15,6 @@ ofxLayout::ofxLayout(){
 
 ofxLayout::~ofxLayout(){
     unload();
-    delete contextTreeRoot;
-    delete styleRulesRoot;
 }
 
 /// |   Cycle Functions  | ///
@@ -26,12 +22,12 @@ ofxLayout::~ofxLayout(){
 
 void ofxLayout::update(){
     assets.update();
-    contextTreeRoot->update();
+    contextTreeRoot.update();
 }
 
 void ofxLayout::draw(){
     if(drawable()){
-        contextTreeRoot->draw();
+        contextTreeRoot.draw();
     }
 }
 
@@ -72,7 +68,7 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
     bool ofmlParsingSuccessful = xmlLayout.loadFile(ofmlFilename);
     if(ofmlParsingSuccessful){
-        loadFromXmlLayout(&xmlLayout, contextTreeRoot, TAG::BODY);
+        loadFromXmlLayout(&xmlLayout, &contextTreeRoot, TAG::BODY);
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+ofmlFilename+".");
@@ -86,12 +82,12 @@ void ofxLayout::applyChanges(){
 }
 
 void ofxLayout::loadOssFromFile(string ossFilename){
-    styleRulesRoot->setDefaults();
+    styleRulesRoot.setDefaults();
     
     ofxJSONElement ossStylesheet;
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
-        loadFromOss(&ossStylesheet, styleRulesRoot);
+        loadFromOss(&ossStylesheet, &styleRulesRoot);
         applyChanges();
     }
     else{
@@ -191,27 +187,27 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 
 void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(element == NULL){
-        element = contextTreeRoot;
+        element = &contextTreeRoot;
     }
     if(styleObject == NULL){
-        styleObject = styleRulesRoot;
+        styleObject = &styleRulesRoot;
     }
     
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
-        if(styleRulesRoot->classMap.count(classes[i])){
-            element->overrideStyles(styleRulesRoot->classMap[classes[i]]);
+        if(styleRulesRoot.classMap.count(classes[i])){
+            element->overrideStyles(styleRulesRoot.classMap[classes[i]]);
         }
     }
     
     string id = element->getID();
-    if(styleRulesRoot->idMap.count(id)){
-        element->overrideStyles(styleRulesRoot->idMap[id]);
+    if(styleRulesRoot.idMap.count(id)){
+        element->overrideStyles(styleRulesRoot.idMap[id]);
     }
     
-    ofxOSS* inlineStyles = element->getInlineStyles();
-    element->overrideStyles(inlineStyles);
+    ofxOSS inlineStyles = element->getInlineStyles();
+    element->overrideStyles(&inlineStyles);
     
     // Get assets
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
@@ -233,16 +229,16 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i], styleRulesRoot);
+        applyStyles(element->children[i], &styleRulesRoot);
     }
 }
 
 void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters){
-    fboPtr->allocate(contextTreeRoot->getFbo()->getWidth(), contextTreeRoot->getFbo()->getHeight());
+    fboPtr->allocate(contextTreeRoot.getFbo()->getWidth(), contextTreeRoot.getFbo()->getHeight());
     fboPtr->begin();
     ofClear(0,0,0,0);
     ofEnableAlphaBlending();
-    filterElements(filters, contextTreeRoot);
+    filterElements(filters, &contextTreeRoot);
     ofClearAlpha();
     fboPtr->end();
 }
