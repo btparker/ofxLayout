@@ -6,11 +6,9 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     
     boundary = ofRectangle();
-    elementFbo = new ofFbo();
-    elementFbo->allocate();
+    elementFbo.allocate();
     
-    styles = new ofxOSS();
-    styles->setDefaults();
+    styles.setDefaults();
 }
 
 void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
@@ -26,7 +24,7 @@ void ofxLayoutElement::setData(map<string, string>* dataPtr){
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
-    delete elementFbo;
+    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -40,22 +38,22 @@ void ofxLayoutElement::update(){
         boundary.height = ofGetHeight();
     }
     else{
-        boundary = styles->computeElementTransform(parent->boundary);
+        boundary = styles.computeElementTransform(parent->boundary);
     }
-    if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
-        elementFbo->allocate(boundary.width, boundary.height,GL_RGBA,4);
+    if(elementFbo.getWidth() != boundary.width || elementFbo.getHeight() != boundary.height){
+        elementFbo.allocate(boundary.width, boundary.height,GL_RGBA,4);
     }
 
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
-    elementFbo->begin();
+    elementFbo.begin();
     ofClear(0,0,0,0);
     ofEnableAlphaBlending();
     drawStyles();
     // For subclasses
     drawTag();
     ofDisableAlphaBlending();
-    elementFbo->end();
+    elementFbo.end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -82,7 +80,7 @@ void ofxLayoutElement::draw(){
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
     ofSetColor(255,255,255,ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    elementFbo->draw(0,0);
+    elementFbo.draw(0,0);
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
@@ -176,11 +174,11 @@ void ofxLayoutElement::setID(string ID){
 }
 
 bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
-    return this->styles->rules.count(styleKey) > 0;
+    return this->styles.rules.count(styleKey) > 0;
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles->rules[styleKey].value;
+    return this->styles.rules[styleKey].value;
 }
 
 /// |   Utilities   | ///
@@ -255,7 +253,7 @@ void ofxLayoutElement::drawBackgroundImage(){
             imageTransform.setWidth(imagesBatch->getTexture(imageID)->getWidth());
             imageTransform.setHeight(imagesBatch->getTexture(imageID)->getHeight());
             
-            imageTransform = styles->computeBackgroundTransform(imageTransform, boundary);
+            imageTransform = styles.computeBackgroundTransform(imageTransform, boundary);
             
             imagesBatch->getTexture(imageID)->draw(imageTransform);
         }
@@ -272,7 +270,7 @@ void ofxLayoutElement::drawBackgroundColor(){
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
-        this->styles->rules[iterator->first] = iterator->second;
+        this->styles.rules[iterator->first] = iterator->second;
     }
 }
 
@@ -280,8 +278,8 @@ string ofxLayoutElement::getInlineStyle(){
     return this->inlineStyle;
 }
 
-ofxOSS* ofxLayoutElement::getInlineStyles(){
-    ofxOSS* inlineStyles = new ofxOSS();
+ofxOSS ofxLayoutElement::getInlineStyles(){
+    ofxOSS inlineStyles;
     vector<string> stylesVec = ofSplitString(this->inlineStyle, ";", true, true);
     for(int i = 0; i < stylesVec.size(); i++){
         vector<string> styleKeyValueVec = ofSplitString(stylesVec[i], ":", true, true);
@@ -289,7 +287,7 @@ ofxOSS* ofxLayoutElement::getInlineStyles(){
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
             ofxOssRule rule = ofxOSS::generateRule(styleKey, styleValue);
-            inlineStyles->rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
+            inlineStyles.rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
         }
     }
     return inlineStyles;
@@ -300,7 +298,7 @@ void ofxLayoutElement::setInlineStyle(string style){
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
-    return elementFbo;
+    return &elementFbo;
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){
