@@ -29,7 +29,7 @@ public:
     /// | ------------------- | ///
     
     void setAssets(ofxLoaderSpool* assetsPtr);
-    void setFonts(map<string, ofxFontStash*>* fontsPtr);
+    void setFonts(map<string, ofxFontStash>* fontsPtr);
     void setData(map<string,string>* dataPtr);
     
     TAG::ENUM getTag();
@@ -92,5 +92,5 @@ protected:
     
     map<string,string>* dataPtr;
     ofxLoaderSpool* assetsPtr;
-    map<string, ofxFontStash*>* fontsPtr;
+    map<string, ofxFontStash>* fontsPtr;
 };
