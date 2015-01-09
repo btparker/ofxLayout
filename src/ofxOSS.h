@@ -143,9 +143,9 @@ public:
     
     map<OSS_KEY::ENUM, ofxOssRule> rules;
     
-    map<string,ofxOSS*> idMap;
-    map<string,ofxOSS*> classMap;
-    map<string,ofxOSS*> tagMap;
+    map<string,ofxOSS> idMap;
+    map<string,ofxOSS> classMap;
+    map<string,ofxOSS> tagMap;
     
     
 private:

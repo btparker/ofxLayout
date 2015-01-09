@@ -150,20 +150,20 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             bool idExists = styleObject->idMap.count(idName) > 0;
             
             if(!idExists){
-                styleObject->idMap[idName] = new ofxOSS();
+                styleObject->idMap[idName] = ofxOSS();
             }
             
-            loadFromOss(&value, styleObject->idMap[idName]);
+            loadFromOss(&value, &(styleObject->idMap[idName]));
         }
         else if(keyIsClass){
             string className = key.substr(1);
             bool classExists = styleObject->classMap.count(className) > 0;
             
             if(!classExists){
-                styleObject->classMap[className] = new ofxOSS();
+                styleObject->classMap[className] = ofxOSS();
             }
             
-            loadFromOss(&value, styleObject->classMap[className]);
+            loadFromOss(&value, &(styleObject->classMap[className]));
         }
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
@@ -197,13 +197,13 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
         if(styleRulesRoot.classMap.count(classes[i])){
-            element->overrideStyles(styleRulesRoot.classMap[classes[i]]);
+            element->overrideStyles(&styleRulesRoot.classMap[classes[i]]);
         }
     }
     
     string id = element->getID();
     if(styleRulesRoot.idMap.count(id)){
-        element->overrideStyles(styleRulesRoot.idMap[id]);
+        element->overrideStyles(&styleRulesRoot.idMap[id]);
     }
     
     ofxOSS inlineStyles = element->getInlineStyles();
