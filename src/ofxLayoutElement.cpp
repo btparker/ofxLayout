@@ -71,7 +71,7 @@ void ofxLayoutElement::popTransforms(){
 }
 
 ofxLayoutElement* ofxLayoutElement::addChild(){
-    ofxLayoutElement childElement;
+    ofxLayoutElement childElement = ofxLayoutElement();
     childElement.parent = this;
     children.push_back(childElement);
     return &children.back();
