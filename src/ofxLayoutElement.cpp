@@ -15,7 +15,7 @@ void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
     this->assetsPtr = assetsPtr;
 }
 
-void ofxLayoutElement::setFonts(map<string, ofxFontStash *>* fontsPtr){
+void ofxLayoutElement::setFonts(map<string, ofxFontStash>* fontsPtr){
     this->fontsPtr = fontsPtr;
 }
 

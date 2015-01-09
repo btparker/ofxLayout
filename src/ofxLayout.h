@@ -44,7 +44,7 @@ public:
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
     
     ofxLoaderSpool assets;
-    map<string, ofxFontStash*> fonts;
+    map<string, ofxFontStash> fonts;
     map<string, string> data;
     
     void unload();

@@ -40,14 +40,13 @@ void ofxLayoutTextElement::drawTag(){
             
             
             
-            ofxFontStash* fontPtr = fontsPtr->at(fontFilename);
             
             float fontSize;
             if(hasStyle(OSS_KEY::FONT_SIZE)){
                 fontSize = ofToFloat(getStyle(OSS_KEY::FONT_SIZE));
             }
             
-            ofRectangle fontBBox = fontPtr->getBBox(text, fontSize, 0, 0);
+            ofRectangle fontBBox = fontsPtr->at(fontFilename).getBBox(text, fontSize, 0, 0);
             
             float x;
             float y = fontBBox.height;
@@ -71,7 +70,7 @@ void ofxLayoutTextElement::drawTag(){
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
                 ofSetColor(fontColor);
             }
-            fontPtr->draw(text, fontSize, x, y);
+            fontsPtr->at(fontFilename).draw(text, fontSize, x, y);
         }
     }
 }
