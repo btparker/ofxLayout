@@ -162,6 +162,4 @@ private:
     /// \param ofRectangle boundary The boundary of the element which the style is to be applied to
     /// \param ofRectangle parentBoundary The boundary of the parent element of the element which the style is to be applied
     float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
-    
-    map<string,ofxFontStash*> fonts;
 };

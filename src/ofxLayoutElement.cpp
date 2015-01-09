@@ -55,7 +55,7 @@ void ofxLayoutElement::update(){
     ofDisableAlphaBlending();
     elementFbo.end();
     for(int i = 0 ; i < children.size(); i++){
-        children[i]->update();
+        children[i].update();
     }
     ofPopMatrix();
 
@@ -70,9 +70,11 @@ void ofxLayoutElement::popTransforms(){
     ofPopMatrix();
 }
 
-void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
-    childElement->parent = this;
+ofxLayoutElement* ofxLayoutElement::addChild(){
+    ofxLayoutElement childElement;
+    childElement.parent = this;
     children.push_back(childElement);
+    return &children.back();
 }
 
 void ofxLayoutElement::draw(){
@@ -83,7 +85,7 @@ void ofxLayoutElement::draw(){
     elementFbo.draw(0,0);
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
-        children[i]->draw();
+        children[i].draw();
     }
     ofSetColor(255);
     ofPopMatrix();

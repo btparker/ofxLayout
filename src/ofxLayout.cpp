@@ -119,21 +119,19 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
-        ofxLayoutElement* childElement = new ofxLayoutElement();
+        ofxLayoutElement* childElement = element->addChild();
         childElement->setAssets(&assets);
         childElement->setFonts(&fonts);
         childElement->setData(&data);
-        element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
     }
     
     int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
-        ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
+        ofxLayoutTextElement* childElement = (ofxLayoutTextElement*)element->addChild();
         childElement->setAssets(&assets);
         childElement->setFonts(&fonts);
         childElement->setData(&data);
-        element->addChild(childElement);
         loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
     }
 }
@@ -229,7 +227,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i], &styleRulesRoot);
+        applyStyles(&element->children[i], &styleRulesRoot);
     }
 }
 
@@ -272,7 +270,7 @@ void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *elemen
         element->getFbo()->draw(0,0);
     }
     for(int i = 0 ; i < element->children.size(); i++){
-        filterElements(filters, element->children[i]);
+        filterElements(filters, &element->children[i]);
     }
     element->popTransforms();
     
