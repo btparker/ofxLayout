@@ -10,7 +10,15 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM};
+};
+
+namespace OSS_BLEND_MODE{
+    enum ENUM{DISABLED, ALPHA, ADD, SUBTRACT, SCREEN, MULTIPLY, INVALID_BLEND_MODE};//, OVERLAY, DARKEN, LIGHTEN, COLOR_DODGE, COLOR_BURN, HARD_LIGHT, SOFT_LIGHT, DIFFERENCE, EXCLUSION, HUE, SATURATION, COLOR, LUMINOSITY};
+};
+
+namespace OSS_TEXT_TRANSFORM{
+    enum ENUM{NONE, UPPERCASE, LOWERCASE, CAPITALIZE, INVALID_TEXT_TRANSFORM};
 };
 
 namespace OSS_VALUE{
@@ -48,14 +56,20 @@ public:
     /// Example: BACKGROUND_COLOR from 'background-color'. Returns warning and INVALID enum if none found.
     ///
     /// \param key The string of the css-like key
-    static OSS_KEY::ENUM getEnumFromString(string key);
+    static OSS_KEY::ENUM getOssKeyFromString(string key);
     
     /// \brief Lookup key string from provided key enum
     ///
     /// Example: 'background-color' from BACKGROUND_COLOR. Returns warning and empty string if none found.
     ///
     /// \param key The enum of the css-like key
-    static string getStringFromEnum(OSS_KEY::ENUM key);
+    static string getStringFromOssKey(OSS_KEY::ENUM key);
+    
+    static OSS_BLEND_MODE::ENUM getBlendModeFromString(string blendMode);
+    static string getStringFromBlendMode(OSS_BLEND_MODE::ENUM blendMode);
+    
+    static OSS_TEXT_TRANSFORM::ENUM getTextTransformFromString(string textTransform);
+    static string getStringFromTextTransform(OSS_TEXT_TRANSFORM::ENUM textTransform);
     
     /// \brief Loads and parses an OSS file, stores in relevant styles
     ///
@@ -119,7 +133,7 @@ public:
     /// \param ofRectangle elementBoundary
 //    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
-    static ofxOssRule* generateRule(string key, string value);
+    static ofxOssRule generateRule(string key, string value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);
     
@@ -127,11 +141,11 @@ public:
     
     ofxOSS* parent = NULL;
     
-    map<OSS_KEY::ENUM, ofxOssRule*> rules;
+    map<OSS_KEY::ENUM, ofxOssRule> rules;
     
-    map<string,ofxOSS*> idMap;
-    map<string,ofxOSS*> classMap;
-    map<string,ofxOSS*> tagMap;
+    map<string,ofxOSS> idMap;
+    map<string,ofxOSS> classMap;
+    map<string,ofxOSS> tagMap;
     
     
 private:

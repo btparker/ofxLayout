@@ -26,28 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/ofxOSS.cpp"
-            timestampString = "442270781.236503"
+            timestampString = "442448321.556127"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "326"
-            endingLineNumber = "326"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
             landmarkName = "ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/ofxOSS.cpp"
-            timestampString = "442191321.454634"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "ofxOSS::getStyle(OSS_KEY::ENUM styleKey)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

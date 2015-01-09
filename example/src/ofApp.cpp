@@ -23,6 +23,7 @@ void ofApp::draw(){
 }
 
 void ofApp::loadExternalLayout(){
+    layout.loadDataFromFile("data.json");
     layout.loadOfmlFromFile("index.ofml");
     layout.loadOssFromFile("styles.oss");
 }

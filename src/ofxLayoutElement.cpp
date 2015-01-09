@@ -6,23 +6,25 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     
     boundary = ofRectangle();
-    elementFbo = new ofFbo();
-    elementFbo->allocate();
+    elementFbo.allocate();
     
-    styles = new ofxOSS();
-    styles->setDefaults();
+    styles.setDefaults();
 }
 
 void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
     this->assetsPtr = assetsPtr;
 }
 
-void ofxLayoutElement::setFonts(map<string, ofxFontStash *>* fontsPtr){
+void ofxLayoutElement::setFonts(map<string, ofxFontStash>* fontsPtr){
     this->fontsPtr = fontsPtr;
 }
 
+void ofxLayoutElement::setData(map<string, string>* dataPtr){
+    this->dataPtr = dataPtr;
+}
+
 ofxLayoutElement::~ofxLayoutElement(){
-    delete elementFbo;
+    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -36,22 +38,22 @@ void ofxLayoutElement::update(){
         boundary.height = ofGetHeight();
     }
     else{
-        boundary = styles->computeElementTransform(parent->boundary);
+        boundary = styles.computeElementTransform(parent->boundary);
     }
-    if(elementFbo->getWidth() != boundary.width || elementFbo->getHeight() != boundary.height){
-        elementFbo->allocate(boundary.width, boundary.height,GL_RGBA,4);
+    if(elementFbo.getWidth() != boundary.width || elementFbo.getHeight() != boundary.height){
+        elementFbo.allocate(boundary.width, boundary.height,GL_RGBA,4);
     }
 
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
-    elementFbo->begin();
+    elementFbo.begin();
     ofClear(0,0,0,0);
     ofEnableAlphaBlending();
     drawStyles();
     // For subclasses
     drawTag();
     ofDisableAlphaBlending();
-    elementFbo->end();
+    elementFbo.end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -77,11 +79,13 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
-    elementFbo->draw(0,0);
+    ofSetColor(255,255,255,ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
+    elementFbo.draw(0,0);
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
+    ofSetColor(255);
     ofPopMatrix();
 }
 
@@ -92,6 +96,13 @@ string ofxLayoutElement::getValue(){
 }
 
 void ofxLayoutElement::setValue(string value){
+    if(ofStringTimesInString(value, "{{") > 0){
+        string dataKey = value.substr(2,value.size()-4);
+        
+        if(dataPtr->count(dataKey) > 0){
+            value = dataPtr->at(dataKey);
+        }
+    }
     this->elementValue = value;
 }
 
@@ -163,22 +174,76 @@ void ofxLayoutElement::setID(string ID){
 }
 
 bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
-    return this->styles->rules.count(styleKey) > 0;
+    return this->styles.rules.count(styleKey) > 0;
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles->rules[styleKey]->value;
+    return this->styles.rules[styleKey].value;
 }
 
 /// |   Utilities   | ///
 /// | ------------- | ///
 
 void ofxLayoutElement::drawStyles(){
-    if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
-        ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
-        ofFill();
-        ofRect(0,0,boundary.width,boundary.height);
+    bool blendModeActive = beginBackgroundBlendMode();
+    
+    // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
+    // based on whether blend mode is enabled or disabled
+    if(blendModeActive){
+        drawBackgroundImage();
+        drawBackgroundColor();
     }
+    else{
+        drawBackgroundColor();
+        drawBackgroundImage();
+    }
+    endBackgroundBlendMode();
+}
+
+bool ofxLayoutElement::beginBackgroundBlendMode(){
+    bool blendModeActive = true;
+    
+    if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
+        OSS_BLEND_MODE::ENUM bgBlendMode = ofxOSS::getBlendModeFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
+        switch (bgBlendMode) {
+            case OSS_BLEND_MODE::DISABLED:
+                blendModeActive = false;
+                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+                break;
+            case OSS_BLEND_MODE::ALPHA:
+                ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+                break;
+            case OSS_BLEND_MODE::ADD:
+                ofEnableBlendMode(OF_BLENDMODE_ADD);
+                break;
+            case OSS_BLEND_MODE::SUBTRACT:
+                ofEnableBlendMode(OF_BLENDMODE_SUBTRACT);
+                break;
+            case OSS_BLEND_MODE::SCREEN:
+                ofEnableBlendMode(OF_BLENDMODE_SCREEN);
+                break;
+            case OSS_BLEND_MODE::MULTIPLY:
+                ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
+                break;
+            default:
+                blendModeActive = false;
+                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
+        }
+        if(blendModeActive){
+            ofBackground(0);
+        }
+    }
+    
+    return blendModeActive;
+}
+
+void ofxLayoutElement::endBackgroundBlendMode(){
+    if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
+        ofDisableBlendMode();
+    }
+}
+
+void ofxLayoutElement::drawBackgroundImage(){
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
         ofxLoaderBatch* imagesBatch = assetsPtr->getBatch("images");
@@ -188,17 +253,24 @@ void ofxLayoutElement::drawStyles(){
             imageTransform.setWidth(imagesBatch->getTexture(imageID)->getWidth());
             imageTransform.setHeight(imagesBatch->getTexture(imageID)->getHeight());
             
-            imageTransform = styles->computeBackgroundTransform(imageTransform, boundary);
+            imageTransform = styles.computeBackgroundTransform(imageTransform, boundary);
             
             imagesBatch->getTexture(imageID)->draw(imageTransform);
         }
     }
 }
 
+void ofxLayoutElement::drawBackgroundColor(){
+    if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
+        ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
+        ofFill();
+        ofRect(0,0,boundary.width,boundary.height);
+    }
+}
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
-        this->styles->rules[iterator->first] = iterator->second;
+        this->styles.rules[iterator->first] = iterator->second;
     }
 }
 
@@ -206,16 +278,16 @@ string ofxLayoutElement::getInlineStyle(){
     return this->inlineStyle;
 }
 
-ofxOSS* ofxLayoutElement::getInlineStyles(){
-    ofxOSS* inlineStyles = new ofxOSS();
+ofxOSS ofxLayoutElement::getInlineStyles(){
+    ofxOSS inlineStyles;
     vector<string> stylesVec = ofSplitString(this->inlineStyle, ";", true, true);
     for(int i = 0; i < stylesVec.size(); i++){
         vector<string> styleKeyValueVec = ofSplitString(stylesVec[i], ":", true, true);
         string styleKey = styleKeyValueVec[0];
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
-            ofxOssRule* rule = ofxOSS::generateRule(styleKey, styleValue);
-            inlineStyles->rules[ofxOSS::getEnumFromString(styleKey)] = rule;
+            ofxOssRule rule = ofxOSS::generateRule(styleKey, styleValue);
+            inlineStyles.rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
         }
     }
     return inlineStyles;
@@ -226,7 +298,7 @@ void ofxLayoutElement::setInlineStyle(string style){
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
-    return elementFbo;
+    return &elementFbo;
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){
