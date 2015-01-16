@@ -10,6 +10,7 @@ namespace TAG {
     enum ENUM{BODY, ELEMENT, TEXT, INVALID};
 };
 
+class ofxLayout;
 class ofxLayoutElement{
     
 public:
@@ -75,8 +76,11 @@ public:
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();
+    
+    void setLayout(ofxLayout* layout);
 
 protected:
+    ofxLayout* layout;
     void drawStyles();
     virtual void drawTag(){};
     

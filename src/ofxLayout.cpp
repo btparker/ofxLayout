@@ -120,6 +120,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* childElement = new ofxLayoutElement();
+        childElement->setLayout(this);
         childElement->setAssets(&assets);
         childElement->setFonts(&fonts);
         childElement->setData(&data);
@@ -130,6 +131,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
         ofxLayoutTextElement* childElement = new ofxLayoutTextElement();
+        childElement->setLayout(this);
         childElement->setAssets(&assets);
         childElement->setFonts(&fonts);
         childElement->setData(&data);

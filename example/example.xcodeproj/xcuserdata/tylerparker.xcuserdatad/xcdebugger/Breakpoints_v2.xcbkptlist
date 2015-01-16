@@ -26,12 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/ofxOSS.cpp"
-            timestampString = "442448321.556127"
+            timestampString = "443123930.516458"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "561"
-            endingLineNumber = "561"
-            landmarkName = "ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary)"
+            startingLineNumber = "581"
+            endingLineNumber = "581"
+            landmarkName = "ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

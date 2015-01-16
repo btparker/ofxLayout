@@ -1,4 +1,5 @@
 #include "ofxLayoutElement.h"
+#include "ofxLayout.h"
 
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
@@ -6,7 +7,7 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     
     boundary = ofRectangle();
-//    elementFbo.allocate();
+//    elementMask.setup(0, 0, ofxMask::LUMINANCE);
     
     styles.setDefaults();
 }
@@ -49,6 +50,11 @@ void ofxLayoutElement::update(){
     elementMask.beginMask();
     ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
     ofRect(0,0,ofGetWidth(),ofGetHeight());
+    if(getStyle(OSS_KEY::MASK) != ""){
+        vector<string> filters;
+        filters.push_back(getStyle(OSS_KEY::MASK));
+        layout->computeFbo(elementMask.getMasker(),&filters);
+    }
     elementMask.endMask();
     elementMask.begin();
     ofClear(0,0,0,0);
@@ -307,4 +313,8 @@ ofFbo* ofxLayoutElement::getFbo(){
 
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
+}
+
+void ofxLayoutElement::setLayout(ofxLayout *layout){
+    this->layout = layout;
 }
