@@ -7,56 +7,56 @@ ofxOSS::ofxOSS(){
 void ofxOSS::setDefaults(){
     // Create defaults
     ofxOssRule backgroundColorDefault;
-    backgroundColorDefault.value = "rgba(0,0,0,0)";
+    backgroundColorDefault.setValue("rgba(0,0,0,0)");
     this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
     
     ofxOssRule positionDefault;
-    positionDefault.value = "0px 0px";
+    positionDefault.setValue("0px 0px");
     this->rules[OSS_KEY::POSITION] = positionDefault;
     
     
     ofxOssRule bgPositionDefault;
-    bgPositionDefault.value = "center";
+    bgPositionDefault.setValue("center");
     this->rules[OSS_KEY::BACKGROUND_POSITION] = bgPositionDefault;
     
     ofxOssRule widthDefault;
-    widthDefault.value = "100%";
+    widthDefault.setValue("100%");
     this->rules[OSS_KEY::WIDTH] = widthDefault;
     
     ofxOssRule heightDefault;
-    heightDefault.value = "100%";
+    heightDefault.setValue("100%");
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
     
     ofxOssRule textAlignDefault;
-    textAlignDefault.value = "left";
+    textAlignDefault.setValue("left");
     this->rules[OSS_KEY::TEXT_ALIGN] = textAlignDefault;
     
     ofxOssRule fontSizeDefault;
-    fontSizeDefault.value = "50";
+    fontSizeDefault.setValue("50");
     this->rules[OSS_KEY::FONT_SIZE] = fontSizeDefault;
     
     ofxOssRule bgSizeDefault;
-    bgSizeDefault.value = "cover";
+    bgSizeDefault.setValue("cover");
     this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
     
     ofxOssRule bgBlendModeDefault;
-    bgBlendModeDefault.value = getStringFromBlendMode(OSS_BLEND_MODE::DISABLED);
+    bgBlendModeDefault.setValue(getStringFromBlendMode(OSS_BLEND_MODE::DISABLED));
     this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
     
     ofxOssRule opacityDefault;
-    opacityDefault.value = "1.0f";
+    opacityDefault.setValue("1.0f");
     this->rules[OSS_KEY::OPACITY] = opacityDefault;
     
     ofxOssRule textTransformDefault;
-    textTransformDefault.value = "none";
+    textTransformDefault.setValue("none");
     this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
     
     ofxOssRule colorDefault;
-    colorDefault.value = "rgb(0,0,0)";
+    colorDefault.setValue("rgb(0,0,0)");
     this->rules[OSS_KEY::COLOR] = colorDefault;
     
     ofxOssRule maskDefault;
-    maskDefault.value = "";
+    maskDefault.setValue("");
     this->rules[OSS_KEY::MASK] = maskDefault;
 }
 
@@ -75,7 +75,7 @@ string ofxOSS::getStyle(string key){
 }
 
 string ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
-    return this->rules[styleKey].value;
+    return this->rules[styleKey].getStringValue();
 }
 
 bool ofxOSS::validKey(string key){
@@ -605,7 +605,7 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 
 ofxOssRule ofxOSS::generateRule(string key, string value){
     ofxOssRule ossRule;
-    ossRule.value = value;
+    ossRule.setValue(value);
     return ossRule;
 }
 

@@ -69,7 +69,7 @@ void ofxLayoutElement::update(){
     ofDisableAlphaBlending();
     elementMask.end();
     for(int i = 0 ; i < children.size(); i++){
-        children[i]->update();
+        children[i].update();
     }
     ofPopMatrix();
 
@@ -84,9 +84,10 @@ void ofxLayoutElement::popTransforms(){
     ofPopMatrix();
 }
 
-void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
-    childElement->parent = this;
-    children.push_back(childElement);
+ofxLayoutElement* ofxLayoutElement::addChild(){
+    children.push_back(ofxLayoutElement());
+    children[children.size()-1].parent = this;
+    return &children[children.size()-1];
 }
 
 void ofxLayoutElement::draw(){
@@ -97,7 +98,7 @@ void ofxLayoutElement::draw(){
     elementMask.draw();
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
-        children[i]->draw();
+        children[i].draw();
     }
     ofSetColor(255);
     ofPopMatrix();
@@ -192,7 +193,7 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].value;
+    return this->styles.rules[styleKey].getStringValue();
 }
 
 /// |   Utilities   | ///
