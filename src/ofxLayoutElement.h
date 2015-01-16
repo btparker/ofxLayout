@@ -72,6 +72,7 @@ public:
     void popTransforms();
     
     void drawBackgroundImage();
+    void drawBackgroundVideo();
     void drawBackgroundColor();
     
     bool beginBackgroundBlendMode();
@@ -98,4 +99,6 @@ protected:
     map<string,string>* dataPtr;
     ofxLoaderSpool* assetsPtr;
     map<string, ofxFontStash>* fontsPtr;
+    
+    ofVideoPlayer* video;
 };

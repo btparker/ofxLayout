@@ -5,7 +5,7 @@
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
-    
+    video = NULL;
     boundary = ofRectangle();
 //    elementMask.setup(0, 0, ofxMask::LUMINANCE);
     
@@ -25,7 +25,11 @@ void ofxLayoutElement::setData(map<string, string>* dataPtr){
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
-//    elementFbo.getTextureReference().clear();
+    if(video != NULL){
+        video->closeMovie();
+        video = NULL;
+    }
+    //    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -201,10 +205,12 @@ void ofxLayoutElement::drawStyles(){
     // based on whether blend mode is enabled or disabled
     if(blendModeActive){
         drawBackgroundImage();
+        drawBackgroundVideo();
         drawBackgroundColor();
     }
     else{
         drawBackgroundColor();
+        drawBackgroundVideo();
         drawBackgroundImage();
     }
     endBackgroundBlendMode();
@@ -267,6 +273,34 @@ void ofxLayoutElement::drawBackgroundImage(){
             
             imagesBatch->getTexture(imageID)->draw(imageTransform);
         }
+    }
+}
+
+void ofxLayoutElement::drawBackgroundVideo(){
+    if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
+        ofSetColor(255);
+        string videoPath = getStyle(OSS_KEY::BACKGROUND_VIDEO);
+//        if(video != NULL && video->getMoviePath() != videoPath){
+//            video->closeMovie();
+//            video = NULL;
+//        }
+        if(video == NULL){
+            video = new ofVideoPlayer();
+            video->loadMovie(videoPath);
+            video->setVolume(0.0f);
+            video->play();
+        }
+        else{
+            video->update();
+            ofRectangle videoTransform = ofRectangle();
+            videoTransform.setWidth(video->getWidth());
+            videoTransform.setHeight(video->getHeight());
+            
+            videoTransform = styles.computeBackgroundTransform(videoTransform, boundary);
+            
+            video->draw(videoTransform.x, videoTransform.y, videoTransform.width, videoTransform.height);
+        }
+        
     }
 }
 
