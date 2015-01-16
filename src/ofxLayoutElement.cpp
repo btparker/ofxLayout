@@ -271,6 +271,10 @@ void ofxLayoutElement::drawBackgroundImage(){
             
             imageTransform = styles.computeBackgroundTransform(imageTransform, boundary);
             
+            if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+                imageTransform.setPosition(styles.getPosition(imageTransform, boundary));
+            }
+            
             imagesBatch->getTexture(imageID)->draw(imageTransform);
         }
     }
@@ -297,7 +301,9 @@ void ofxLayoutElement::drawBackgroundVideo(){
             videoTransform.setHeight(video->getHeight());
             
             videoTransform = styles.computeBackgroundTransform(videoTransform, boundary);
-            
+            if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+                videoTransform.setPosition(styles.getPosition(videoTransform, parent->boundary));
+            }
             video->draw(videoTransform.x, videoTransform.y, videoTransform.width, videoTransform.height);
         }
         

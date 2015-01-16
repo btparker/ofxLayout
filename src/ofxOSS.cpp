@@ -14,6 +14,11 @@ void ofxOSS::setDefaults(){
     positionDefault.value = "0px 0px";
     this->rules[OSS_KEY::POSITION] = positionDefault;
     
+    
+    ofxOssRule bgPositionDefault;
+    bgPositionDefault.value = "center";
+    this->rules[OSS_KEY::BACKGROUND_POSITION] = bgPositionDefault;
+    
     ofxOssRule widthDefault;
     widthDefault.value = "100%";
     this->rules[OSS_KEY::WIDTH] = widthDefault;
