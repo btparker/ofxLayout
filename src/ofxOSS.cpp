@@ -49,6 +49,10 @@ void ofxOSS::setDefaults(){
     ofxOssRule colorDefault;
     colorDefault.value = "rgb(0,0,0)";
     this->rules[OSS_KEY::COLOR] = colorDefault;
+    
+    ofxOssRule maskDefault;
+    maskDefault.value = "";
+    this->rules[OSS_KEY::MASK] = maskDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -124,6 +128,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "color"){
         return OSS_KEY::COLOR;
     }
+    else if(key == "mask"){
+        return OSS_KEY::MASK;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -177,6 +184,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::OPACITY:
             keyString = "opacity";
+            break;
+        case OSS_KEY::MASK:
+            keyString = "mask";
             break;
         default:
             ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
