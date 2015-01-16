@@ -4,11 +4,13 @@
 #include "ofxXmlSettings.h"
 #include "ofxProgressiveTextureLoad.h"
 #include "ofxLoaderSpool.h"
+#include "ofxMask.h"
 
 namespace TAG {
     enum ENUM{BODY, ELEMENT, TEXT, INVALID};
 };
 
+class ofxLayout;
 class ofxLayoutElement{
     
 public:
@@ -70,12 +72,16 @@ public:
     void popTransforms();
     
     void drawBackgroundImage();
+    void drawBackgroundVideo();
     void drawBackgroundColor();
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();
+    
+    void setLayout(ofxLayout* layout);
 
 protected:
+    ofxLayout* layout;
     void drawStyles();
     virtual void drawTag(){};
     
@@ -86,11 +92,13 @@ protected:
     string classes;
     string elementValue;
     
-    ofFbo elementFbo;
+    ofxMask elementMask;
     
     string inlineStyle;
     
     map<string,string>* dataPtr;
     ofxLoaderSpool* assetsPtr;
     map<string, ofxFontStash>* fontsPtr;
+    
+    ofVideoPlayer* video;
 };

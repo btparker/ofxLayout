@@ -1,12 +1,13 @@
 #include "ofxLayoutElement.h"
+#include "ofxLayout.h"
 
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
-    
+    video = NULL;
     boundary = ofRectangle();
-    elementFbo.allocate();
+//    elementMask.setup(0, 0, ofxMask::LUMINANCE);
     
     styles.setDefaults();
 }
@@ -24,7 +25,11 @@ void ofxLayoutElement::setData(map<string, string>* dataPtr){
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
-    elementFbo.getTextureReference().clear();
+    if(video != NULL){
+        video->closeMovie();
+        video = NULL;
+    }
+    //    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -40,20 +45,29 @@ void ofxLayoutElement::update(){
     else{
         boundary = styles.computeElementTransform(parent->boundary);
     }
-    if(elementFbo.getWidth() != boundary.width || elementFbo.getHeight() != boundary.height){
-        elementFbo.allocate(boundary.width, boundary.height,GL_RGBA,4);
+    if(elementMask.getWidth() != boundary.width || elementMask.getHeight() != boundary.height){
+        elementMask.setup(boundary.width, boundary.height,ofxMask::LUMINANCE);
     }
 
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
-    elementFbo.begin();
+    elementMask.beginMask();
+    ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
+    ofRect(0,0,ofGetWidth(),ofGetHeight());
+    if(getStyle(OSS_KEY::MASK) != ""){
+        vector<string> filters;
+        filters.push_back(getStyle(OSS_KEY::MASK));
+        layout->computeFbo(elementMask.getMasker(),&filters);
+    }
+    elementMask.endMask();
+    elementMask.begin();
     ofClear(0,0,0,0);
     ofEnableAlphaBlending();
     drawStyles();
     // For subclasses
     drawTag();
     ofDisableAlphaBlending();
-    elementFbo.end();
+    elementMask.end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -79,8 +93,8 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
-    ofSetColor(255,255,255,ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    elementFbo.draw(0,0);
+    
+    elementMask.draw();
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
@@ -191,10 +205,12 @@ void ofxLayoutElement::drawStyles(){
     // based on whether blend mode is enabled or disabled
     if(blendModeActive){
         drawBackgroundImage();
+        drawBackgroundVideo();
         drawBackgroundColor();
     }
     else{
         drawBackgroundColor();
+        drawBackgroundVideo();
         drawBackgroundImage();
     }
     endBackgroundBlendMode();
@@ -255,8 +271,42 @@ void ofxLayoutElement::drawBackgroundImage(){
             
             imageTransform = styles.computeBackgroundTransform(imageTransform, boundary);
             
+            if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+                imageTransform.setPosition(styles.getPosition(imageTransform, boundary));
+            }
+            
             imagesBatch->getTexture(imageID)->draw(imageTransform);
         }
+    }
+}
+
+void ofxLayoutElement::drawBackgroundVideo(){
+    if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
+        ofSetColor(255);
+        string videoPath = getStyle(OSS_KEY::BACKGROUND_VIDEO);
+//        if(video != NULL && video->getMoviePath() != videoPath){
+//            video->closeMovie();
+//            video = NULL;
+//        }
+        if(video == NULL){
+            video = new ofVideoPlayer();
+            video->loadMovie(videoPath);
+            video->setVolume(0.0f);
+            video->play();
+        }
+        else{
+            video->update();
+            ofRectangle videoTransform = ofRectangle();
+            videoTransform.setWidth(video->getWidth());
+            videoTransform.setHeight(video->getHeight());
+            
+            videoTransform = styles.computeBackgroundTransform(videoTransform, boundary);
+            if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+                videoTransform.setPosition(styles.getPosition(videoTransform, parent->boundary));
+            }
+            video->draw(videoTransform.x, videoTransform.y, videoTransform.width, videoTransform.height);
+        }
+        
     }
 }
 
@@ -298,9 +348,13 @@ void ofxLayoutElement::setInlineStyle(string style){
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
-    return &elementFbo;
+    return elementMask.getMaskee();
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
+}
+
+void ofxLayoutElement::setLayout(ofxLayout *layout){
+    this->layout = layout;
 }

@@ -1,23 +1,30 @@
 {
 	"#container" : {
-		"background-color" : "rgba(255,0,0,150)",
 		"background-image" : "{{bf}}",
 		"position" : "center",
 		"width" : "50%",
 		"height" : "50%",
-		"opacity" : "0.5f",
-		"background-blend-mode" : "multiply"
+		"mask" : "#container4"
+	},
+	"#container4" : {
+		"background-video" : "{{mask}}",
+		"position" : "center",
+		"width" : "100%",
+		"height":"100%",
+		"background-position" : "center",
+		"background-size" : "cover"
 	},
 	".container3" : {
 		"font-family" : "fonts/Graphik-Black.ttf",
 		"text-align" : "center",
 		"font-size" : "20px",
 		"text-transform" : "capitalize",
-		"color":"rgba(0,255,0,50)"
+		"color":"rgba(0,255,0,50)",
+		"mask" : "#container4"
 	},
 	"#container2" : {
 		"background-color" : "rgba(50,50,50,255)",
-		"background-image" : "images/legs.jpg",
+		"background-video" : "{{legs}}",
 		"background-size" : "cover",
 		"background-position" : "center",
 		"position" : "center",
