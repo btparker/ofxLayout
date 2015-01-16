@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7710115F1A696CF100EDD62D /* ofxMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7710115D1A696CF100EDD62D /* ofxMask.cpp */; };
 		772B07B71A5C46DD00141777 /* ofxLayoutTextElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772B07B51A5C46DD00141777 /* ofxLayoutTextElement.cpp */; };
 		77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */; };
 		77560CFB1A41BC4600A05C1C /* fontstash.c in Sources */ = {isa = PBXBuildFile; fileRef = 77560CF61A41BC4600A05C1C /* fontstash.c */; };
@@ -92,6 +93,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7710115D1A696CF100EDD62D /* ofxMask.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxMask.cpp; sourceTree = "<group>"; };
+		7710115E1A696CF100EDD62D /* ofxMask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxMask.h; sourceTree = "<group>"; };
 		772B07B51A5C46DD00141777 /* ofxLayoutTextElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLayoutTextElement.cpp; sourceTree = "<group>"; };
 		772B07B61A5C46DD00141777 /* ofxLayoutTextElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLayoutTextElement.h; sourceTree = "<group>"; };
 		77560CF11A41BC4600A05C1C /* ofxFontStash.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxFontStash.cpp; sourceTree = "<group>"; };
@@ -306,6 +309,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7710115B1A696CF100EDD62D /* ofxMask */ = {
+			isa = PBXGroup;
+			children = (
+				7710115C1A696CF100EDD62D /* src */,
+			);
+			name = ofxMask;
+			sourceTree = "<group>";
+		};
+		7710115C1A696CF100EDD62D /* src */ = {
+			isa = PBXGroup;
+			children = (
+				7710115D1A696CF100EDD62D /* ofxMask.cpp */,
+				7710115E1A696CF100EDD62D /* ofxMask.h */,
+			);
+			name = src;
+			path = ../../ofxMask/src;
+			sourceTree = "<group>";
+		};
 		77560CEF1A41BC4600A05C1C /* ofxFontStash */ = {
 			isa = PBXGroup;
 			children = (
@@ -942,6 +963,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				7710115B1A696CF100EDD62D /* ofxMask */,
 				77DF6CAC1A5D9709004328D3 /* ofxTimeMeasurements */,
 				77E846BC1A5AFDDD00DF11CB /* ofxLoaderSpool */,
 				77560CFD1A41BC8700A05C1C /* ofxUnicode */,
@@ -1145,6 +1167,7 @@
 				77E916211A3F5FF300C1362E /* tinyxmlerror.cpp in Sources */,
 				77C609B81A40BEE900093728 /* ofxCvColorImage.cpp in Sources */,
 				772B07B71A5C46DD00141777 /* ofxLayoutTextElement.cpp in Sources */,
+				7710115F1A696CF100EDD62D /* ofxMask.cpp in Sources */,
 				77C609BB1A40BEE900093728 /* ofxCvGrayscaleImage.cpp in Sources */,
 				77560CFA1A41BC4600A05C1C /* ofxFontStash.cpp in Sources */,
 				77560D191A41BC8700A05C1C /* ofUnicode.cpp in Sources */,

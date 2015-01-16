@@ -6,7 +6,7 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     
     boundary = ofRectangle();
-    elementFbo.allocate();
+//    elementFbo.allocate();
     
     styles.setDefaults();
 }
@@ -24,7 +24,7 @@ void ofxLayoutElement::setData(map<string, string>* dataPtr){
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
-    elementFbo.getTextureReference().clear();
+//    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -40,20 +40,24 @@ void ofxLayoutElement::update(){
     else{
         boundary = styles.computeElementTransform(parent->boundary);
     }
-    if(elementFbo.getWidth() != boundary.width || elementFbo.getHeight() != boundary.height){
-        elementFbo.allocate(boundary.width, boundary.height,GL_RGBA,4);
+    if(elementMask.getWidth() != boundary.width || elementMask.getHeight() != boundary.height){
+        elementMask.setup(boundary.width, boundary.height,ofxMask::LUMINANCE);
     }
 
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
-    elementFbo.begin();
+    elementMask.beginMask();
+    ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
+    ofRect(0,0,ofGetWidth(),ofGetHeight());
+    elementMask.endMask();
+    elementMask.begin();
     ofClear(0,0,0,0);
     ofEnableAlphaBlending();
     drawStyles();
     // For subclasses
     drawTag();
     ofDisableAlphaBlending();
-    elementFbo.end();
+    elementMask.end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -79,8 +83,8 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
-    ofSetColor(255,255,255,ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    elementFbo.draw(0,0);
+    
+    elementMask.draw();
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
@@ -298,7 +302,7 @@ void ofxLayoutElement::setInlineStyle(string style){
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
-    return &elementFbo;
+    return elementMask.getMaskee();
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){

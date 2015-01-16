@@ -4,6 +4,7 @@
 #include "ofxXmlSettings.h"
 #include "ofxProgressiveTextureLoad.h"
 #include "ofxLoaderSpool.h"
+#include "ofxMask.h"
 
 namespace TAG {
     enum ENUM{BODY, ELEMENT, TEXT, INVALID};
@@ -86,7 +87,7 @@ protected:
     string classes;
     string elementValue;
     
-    ofFbo elementFbo;
+    ofxMask elementMask;
     
     string inlineStyle;
     
