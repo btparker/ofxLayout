@@ -7,8 +7,6 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
     boundary = ofRectangle();
-//    elementMask.setup(0, 0, ofxMask::LUMINANCE);
-    
     styles.setDefaults();
 }
 
@@ -28,6 +26,9 @@ ofxLayoutElement::~ofxLayoutElement(){
     if(video != NULL){
         video->closeMovie();
         video = NULL;
+    }
+    for(int i = 0 ; i < children.size(); i++){
+        delete children[i];
     }
     //    elementFbo.getTextureReference().clear();
 }
@@ -69,7 +70,7 @@ void ofxLayoutElement::update(){
     ofDisableAlphaBlending();
     elementMask.end();
     for(int i = 0 ; i < children.size(); i++){
-        children[i].update();
+        children[i]->update();
     }
     ofPopMatrix();
 
@@ -85,9 +86,14 @@ void ofxLayoutElement::popTransforms(){
 }
 
 ofxLayoutElement* ofxLayoutElement::addChild(){
-    children.push_back(ofxLayoutElement());
-    children[children.size()-1].parent = this;
-    return &children[children.size()-1];
+    ofxLayoutElement* child = new ofxLayoutElement();
+    child->parent = this;
+    child->setLayout(this->layout);
+    child->setAssets(this->assetsPtr);
+    child->setFonts(this->fontsPtr);
+    child->setData(this->dataPtr);
+    children.push_back(child);
+    return child;
 }
 
 void ofxLayoutElement::draw(){
@@ -98,7 +104,7 @@ void ofxLayoutElement::draw(){
     elementMask.draw();
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
-        children[i].draw();
+        children[i]->draw();
     }
     ofSetColor(255);
     ofPopMatrix();

@@ -7,6 +7,7 @@ ofxLayout::ofxLayout(){
     contextTreeRoot.setAssets(&assets);
     contextTreeRoot.setData(&data);
     contextTreeRoot.setFonts(&fonts);
+    contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
     // This is so that the functionality can be overwritten in the case of adding new tag types
@@ -110,6 +111,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string value = xmlLayout->getValue(tag,"", which);
     element->setValue(value);
     
+    cout << "[id, tag, which] = [" << id << ", " << tag << ", " << which << "]" << endl;
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
     loadTags(xmlLayout, element);
@@ -119,22 +121,12 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
-        ofxLayoutElement* childElement = element->addChild();
-        childElement->setLayout(this);
-        childElement->setAssets(&assets);
-        childElement->setFonts(&fonts);
-        childElement->setData(&data);
-        loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
+        loadFromXmlLayout(xmlLayout, element->addChild(), TAG::ELEMENT, i);
     }
     
     int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
-        ofxLayoutElement* childElement = element->addChild();
-        childElement->setLayout(this);
-        childElement->setAssets(&assets);
-        childElement->setFonts(&fonts);
-        childElement->setData(&data);
-        loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
+        loadFromXmlLayout(xmlLayout, element->addChild(), TAG::TEXT, i);
     }
 }
 
@@ -229,7 +221,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     for(int i = 0; i < element->children.size(); i++){
-        applyStyles(&element->children[i], &styleRulesRoot);
+        applyStyles(element->children[i], &styleRulesRoot);
     }
 }
 
@@ -272,7 +264,7 @@ void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *elemen
         element->getFbo()->draw(0,0);
     }
     for(int i = 0 ; i < element->children.size(); i++){
-        filterElements(filters, &element->children[i]);
+        filterElements(filters, element->children[i]);
     }
     element->popTransforms();
     

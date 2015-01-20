@@ -63,7 +63,7 @@ public:
     
     ofxOSS styles;
     
-    vector<ofxLayoutElement> children;
+    vector<ofxLayoutElement*> children;
     ofxLayoutElement* parent;
     
     ofFbo* getFbo();

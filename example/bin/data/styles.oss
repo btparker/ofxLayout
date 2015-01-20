@@ -4,9 +4,9 @@
 		"position" : "center",
 		"width" : "50%",
 		"height" : "50%",
-		"mask" : "#container4"
+		"mask" : "#mask"
 	},
-	"#container4" : {
+	"#mask" : {
 		"background-video" : "{{mask}}",
 		"position" : "center",
 		"width" : "100%",
@@ -14,15 +14,7 @@
 		"background-position" : "center",
 		"background-size" : "cover"
 	},
-	".container3" : {
-		"font-family" : "fonts/Graphik-Black.ttf",
-		"text-align" : "center",
-		"font-size" : "20px",
-		"text-transform" : "capitalize",
-		"color":"rgba(0,255,0,50)",
-		"mask" : "#container4"
-	},
-	"#container2" : {
+	"#main" : {
 		"background-color" : "rgba(50,50,50,255)",
 		"background-video" : "{{legs}}",
 		"background-size" : "cover",
