@@ -15,6 +15,7 @@ public:
     /// | -------------------------- | ///
     
     ofxLayout();
+    ofxLayout(int width, int height);
     ~ofxLayout();
 
     /// |   Cycle Functions  | ///
@@ -68,5 +69,7 @@ protected:
     /// \param
     /// \param
     void loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
+    
+    int pixelWidth, pixelHeight;
 
 };

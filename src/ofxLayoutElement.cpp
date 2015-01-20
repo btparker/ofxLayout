@@ -30,7 +30,6 @@ ofxLayoutElement::~ofxLayoutElement(){
     for(int i = 0 ; i < children.size(); i++){
         delete children[i];
     }
-    //    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -40,8 +39,8 @@ void ofxLayoutElement::update(){
     if(parent == NULL){
         boundary.x = 0;
         boundary.y = 0;
-        boundary.width = ofGetWidth();
-        boundary.height = ofGetHeight();
+        boundary.width = ofGetViewportWidth();
+        boundary.height = ofGetViewportHeight();
     }
     else{
         boundary = styles.computeElementTransform(parent->boundary);
@@ -54,7 +53,7 @@ void ofxLayoutElement::update(){
     ofTranslate(boundary.x, boundary.y, 0);
     elementMask.beginMask();
     ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    ofRect(0,0,ofGetWidth(),ofGetHeight());
+    ofRect(0,0,ofGetViewportWidth(),ofGetViewportHeight());
     if(getStyle(OSS_KEY::MASK) != ""){
         vector<string> filters;
         filters.push_back(getStyle(OSS_KEY::MASK));
@@ -73,7 +72,6 @@ void ofxLayoutElement::update(){
         children[i]->update();
     }
     ofPopMatrix();
-
 }
 
 void ofxLayoutElement::pushTransforms(){
@@ -85,15 +83,13 @@ void ofxLayoutElement::popTransforms(){
     ofPopMatrix();
 }
 
-ofxLayoutElement* ofxLayoutElement::addChild(){
-    ofxLayoutElement* child = new ofxLayoutElement();
+void ofxLayoutElement::addChild(ofxLayoutElement* child){
     child->parent = this;
     child->setLayout(this->layout);
     child->setAssets(this->assetsPtr);
     child->setFonts(this->fontsPtr);
     child->setData(this->dataPtr);
     children.push_back(child);
-    return child;
 }
 
 void ofxLayoutElement::draw(){

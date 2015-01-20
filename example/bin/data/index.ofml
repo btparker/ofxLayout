@@ -1,8 +1,7 @@
 <body>
 	<element id="mask">
 	</element>
-	<element id="main" class="show">
-		<element id="container">
-		</element>
+	<element id="main">
+		<text id="text">TEXT</text>
 	</element>
 </body>
