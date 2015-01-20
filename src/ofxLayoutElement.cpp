@@ -6,7 +6,7 @@
 ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
-    boundary = ofRectangle();    
+    boundary = ofRectangle();
     styles.setDefaults();
 }
 
@@ -83,9 +83,15 @@ void ofxLayoutElement::popTransforms(){
 }
 
 ofxLayoutElement* ofxLayoutElement::addChild(){
-    children.push_back(ofxLayoutElement());
-    children[children.size()-1].parent = this;
-    return &children[children.size()-1];
+    ofxLayoutElement child;
+    child.parent = this;
+    child.setLayout(this->layout);
+    child.setAssets(this->assetsPtr);
+    child.setFonts(this->fontsPtr);
+    child.setData(this->dataPtr);
+    children.push_back(child);
+    ofxLayoutElement* childPtr = &children[children.size()-1];
+    return childPtr;
 }
 
 void ofxLayoutElement::draw(){

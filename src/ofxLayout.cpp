@@ -7,6 +7,7 @@ ofxLayout::ofxLayout(){
     contextTreeRoot.setAssets(&assets);
     contextTreeRoot.setData(&data);
     contextTreeRoot.setFonts(&fonts);
+    contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
     // This is so that the functionality can be overwritten in the case of adding new tag types
@@ -119,22 +120,12 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
-        ofxLayoutElement* childElement = element->addChild();
-        childElement->setLayout(this);
-        childElement->setAssets(&assets);
-        childElement->setFonts(&fonts);
-        childElement->setData(&data);
-        loadFromXmlLayout(xmlLayout, childElement, TAG::ELEMENT, i);
+        loadFromXmlLayout(xmlLayout, element->addChild(), TAG::ELEMENT, i);
     }
     
     int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
-        ofxLayoutElement* childElement = element->addChild();
-        childElement->setLayout(this);
-        childElement->setAssets(&assets);
-        childElement->setFonts(&fonts);
-        childElement->setData(&data);
-        loadFromXmlLayout(xmlLayout, childElement, TAG::TEXT, i);
+        loadFromXmlLayout(xmlLayout, element->addChild(), TAG::TEXT, i);
     }
 }
 
