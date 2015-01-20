@@ -3,6 +3,8 @@
 #include "ofxJSON.h"
 #include "ofxFontStash.h"
 
+class ofxOSS;
+
 // Types of styles
 namespace OSS_TYPE{
     enum ENUM{INVALID, COLOR, NUMBER, POSITION, IMAGE};
@@ -25,9 +27,29 @@ namespace OSS_VALUE{
     enum ENUM{CENTER, COVER, CONTAIN, AUTO};
 };
 
-struct ofxOssRule{
+class ofxOssRule{
+public:
+    string getStringValue(){
+        return this->stringValue;
+    }
+    
+    void setValue(string value){
+        this->stringValue = value;
+    }
+    
+    OSS_TYPE::ENUM getType(){
+        return this->type;
+    }
+    
+    void setType(OSS_TYPE::ENUM type){
+        this->type = type;
+    }
+    
+protected:
     OSS_TYPE::ENUM type;
-    string value;
+    string stringValue;
+    ofColor colorValue;
+    float numberValue;
 };
 
 class ofxOSS{

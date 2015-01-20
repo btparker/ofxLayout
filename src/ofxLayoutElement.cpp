@@ -7,8 +7,6 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
     boundary = ofRectangle();
-//    elementMask.setup(0, 0, ofxMask::LUMINANCE);
-    
     styles.setDefaults();
 }
 
@@ -28,6 +26,9 @@ ofxLayoutElement::~ofxLayoutElement(){
     if(video != NULL){
         video->closeMovie();
         video = NULL;
+    }
+    for(int i = 0 ; i < children.size(); i++){
+        delete children[i];
     }
     //    elementFbo.getTextureReference().clear();
 }
@@ -84,9 +85,15 @@ void ofxLayoutElement::popTransforms(){
     ofPopMatrix();
 }
 
-void ofxLayoutElement::addChild(ofxLayoutElement* childElement){
-    childElement->parent = this;
-    children.push_back(childElement);
+ofxLayoutElement* ofxLayoutElement::addChild(){
+    ofxLayoutElement* child = new ofxLayoutElement();
+    child->parent = this;
+    child->setLayout(this->layout);
+    child->setAssets(this->assetsPtr);
+    child->setFonts(this->fontsPtr);
+    child->setData(this->dataPtr);
+    children.push_back(child);
+    return child;
 }
 
 void ofxLayoutElement::draw(){
@@ -192,7 +199,7 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].value;
+    return this->styles.rules[styleKey].getStringValue();
 }
 
 /// |   Utilities   | ///
