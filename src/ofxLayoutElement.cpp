@@ -6,9 +6,7 @@
 ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
-    boundary = ofRectangle();
-//    elementMask.setup(0, 0, ofxMask::LUMINANCE);
-    
+    boundary = ofRectangle();    
     styles.setDefaults();
 }
 
