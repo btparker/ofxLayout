@@ -6,20 +6,28 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
     ofEnableSmoothing();
+    fbo.allocate(50,500);
     loadExternalLayout();
-    filters.push_back(".show");
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    fbo.begin();
     layout.update();
+    fbo.end();
     layout.computeFbo(&activeFbo, &filters);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
+    fbo.begin();
     layout.draw();
+    fbo.end();
+    ofPushMatrix();
+    ofScale(ofGetWidth()/50.0f, ofGetHeight()/500.0f);
+    fbo.draw(0,0);
+    ofPopMatrix();
 }
 
 void ofApp::loadExternalLayout(){

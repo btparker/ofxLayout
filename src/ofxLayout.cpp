@@ -110,8 +110,6 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     
     string value = xmlLayout->getValue(tag,"", which);
     element->setValue(value);
-    
-    cout << "[id, tag, which] = [" << id << ", " << tag << ", " << which << "]" << endl;
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
     loadTags(xmlLayout, element);
@@ -121,12 +119,16 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
     for(int i = 0; i < numElements; i++){
-        loadFromXmlLayout(xmlLayout, element->addChild(), TAG::ELEMENT, i);
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
     }
     
     int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
     for(int i = 0; i < numTextElements; i++){
-        loadFromXmlLayout(xmlLayout, element->addChild(), TAG::TEXT, i);
+        ofxLayoutTextElement* child = new ofxLayoutTextElement();
+        element->addChild(child);
+        loadFromXmlLayout(xmlLayout, child, TAG::TEXT, i);
     }
 }
 
