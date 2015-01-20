@@ -7,7 +7,6 @@ void ofApp::setup(){
     ofEnableAlphaBlending();
     ofEnableSmoothing();
     loadExternalLayout();
-    filters.push_back(".show");
 }
 
 //--------------------------------------------------------------

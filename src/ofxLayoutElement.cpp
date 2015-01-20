@@ -30,7 +30,6 @@ ofxLayoutElement::~ofxLayoutElement(){
     for(int i = 0 ; i < children.size(); i++){
         delete children[i];
     }
-    //    elementFbo.getTextureReference().clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -40,8 +39,8 @@ void ofxLayoutElement::update(){
     if(parent == NULL){
         boundary.x = 0;
         boundary.y = 0;
-        boundary.width = ofGetWidth();
-        boundary.height = ofGetHeight();
+        boundary.width = layout->getWidth();
+        boundary.height = layout->getHeight();
     }
     else{
         boundary = styles.computeElementTransform(parent->boundary);
@@ -73,7 +72,6 @@ void ofxLayoutElement::update(){
         children[i]->update();
     }
     ofPopMatrix();
-
 }
 
 void ofxLayoutElement::pushTransforms(){
@@ -85,15 +83,13 @@ void ofxLayoutElement::popTransforms(){
     ofPopMatrix();
 }
 
-ofxLayoutElement* ofxLayoutElement::addChild(){
-    ofxLayoutElement* child = new ofxLayoutElement();
+void ofxLayoutElement::addChild(ofxLayoutElement* child){
     child->parent = this;
     child->setLayout(this->layout);
     child->setAssets(this->assetsPtr);
     child->setFonts(this->fontsPtr);
     child->setData(this->dataPtr);
     children.push_back(child);
-    return child;
 }
 
 void ofxLayoutElement::draw(){
