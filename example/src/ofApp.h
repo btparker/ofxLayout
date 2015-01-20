@@ -25,4 +25,5 @@ class ofApp : public ofBaseApp{
         ofxLayout layout;
         ofFbo activeFbo;
         vector<string> filters;
+        ofFbo fbo;
 };

@@ -50,9 +50,6 @@ public:
     
     void unload();
     
-    int getWidth();
-    int getHeight();
-    
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;

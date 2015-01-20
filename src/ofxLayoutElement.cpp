@@ -39,8 +39,8 @@ void ofxLayoutElement::update(){
     if(parent == NULL){
         boundary.x = 0;
         boundary.y = 0;
-        boundary.width = layout->getWidth();
-        boundary.height = layout->getHeight();
+        boundary.width = ofGetViewportWidth();
+        boundary.height = ofGetViewportHeight();
     }
     else{
         boundary = styles.computeElementTransform(parent->boundary);
@@ -53,7 +53,7 @@ void ofxLayoutElement::update(){
     ofTranslate(boundary.x, boundary.y, 0);
     elementMask.beginMask();
     ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    ofRect(0,0,ofGetWidth(),ofGetHeight());
+    ofRect(0,0,ofGetViewportWidth(),ofGetViewportHeight());
     if(getStyle(OSS_KEY::MASK) != ""){
         vector<string> filters;
         filters.push_back(getStyle(OSS_KEY::MASK));

@@ -271,12 +271,3 @@ void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *elemen
     element->popTransforms();
     
 }
-
-int ofxLayout::getWidth(){
-    return ofGetWidth();
-}
-
-
-int ofxLayout::getHeight(){
-    return ofGetHeight();
-}
