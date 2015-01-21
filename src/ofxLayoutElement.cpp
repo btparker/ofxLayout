@@ -53,7 +53,7 @@ void ofxLayoutElement::update(){
     ofTranslate(boundary.x, boundary.y, 0);
     elementMask.beginMask();
     ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    ofRect(0,0,ofGetViewportWidth(),ofGetViewportHeight());
+    ofRect(0,0,boundary.width, boundary.height);
     if(getStyle(OSS_KEY::MASK) != ""){
         vector<string> filters;
         filters.push_back(getStyle(OSS_KEY::MASK));
@@ -223,25 +223,25 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
     bool blendModeActive = true;
     
     if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
-        OSS_BLEND_MODE::ENUM bgBlendMode = ofxOSS::getBlendModeFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
+        OSS_VALUE::ENUM bgBlendMode = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
         switch (bgBlendMode) {
-            case OSS_BLEND_MODE::DISABLED:
+            case OSS_VALUE::DISABLED:
                 blendModeActive = false;
                 ofEnableBlendMode(OF_BLENDMODE_DISABLED);
                 break;
-            case OSS_BLEND_MODE::ALPHA:
+            case OSS_VALUE::ALPHA:
                 ofEnableBlendMode(OF_BLENDMODE_ALPHA);
                 break;
-            case OSS_BLEND_MODE::ADD:
+            case OSS_VALUE::ADD:
                 ofEnableBlendMode(OF_BLENDMODE_ADD);
                 break;
-            case OSS_BLEND_MODE::SUBTRACT:
+            case OSS_VALUE::SUBTRACT:
                 ofEnableBlendMode(OF_BLENDMODE_SUBTRACT);
                 break;
-            case OSS_BLEND_MODE::SCREEN:
+            case OSS_VALUE::SCREEN:
                 ofEnableBlendMode(OF_BLENDMODE_SCREEN);
                 break;
-            case OSS_BLEND_MODE::MULTIPLY:
+            case OSS_VALUE::MULTIPLY:
                 ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
                 break;
             default:
@@ -268,17 +268,7 @@ void ofxLayoutElement::drawBackgroundImage(){
         ofxLoaderBatch* imagesBatch = assetsPtr->getBatch("images");
         string imageID = getStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureDrawable(imageID)){
-            ofRectangle imageTransform = ofRectangle();
-            imageTransform.setWidth(imagesBatch->getTexture(imageID)->getWidth());
-            imageTransform.setHeight(imagesBatch->getTexture(imageID)->getHeight());
-            
-            imageTransform = styles.computeBackgroundTransform(imageTransform, boundary);
-            
-            if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
-                imageTransform.setPosition(styles.getPosition(imageTransform, boundary));
-            }
-            
-            imagesBatch->getTexture(imageID)->draw(imageTransform);
+            drawBackgroundTexture(imagesBatch->getTexture(imageID));
         }
     }
 }
@@ -287,10 +277,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
     if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
         ofSetColor(255);
         string videoPath = getStyle(OSS_KEY::BACKGROUND_VIDEO);
-//        if(video != NULL && video->getMoviePath() != videoPath){
-//            video->closeMovie();
-//            video = NULL;
-//        }
+        
         if(video == NULL){
             video = new ofVideoPlayer();
             video->loadMovie(videoPath);
@@ -299,17 +286,65 @@ void ofxLayoutElement::drawBackgroundVideo(){
         }
         else{
             video->update();
-            ofRectangle videoTransform = ofRectangle();
-            videoTransform.setWidth(video->getWidth());
-            videoTransform.setHeight(video->getHeight());
-            
-            videoTransform = styles.computeBackgroundTransform(videoTransform, boundary);
-            if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
-                videoTransform.setPosition(styles.getPosition(videoTransform, parent->boundary));
-            }
-            video->draw(videoTransform.x, videoTransform.y, videoTransform.width, videoTransform.height);
+            drawBackgroundTexture(&video->getTextureReference());
         }
         
+    }
+}
+
+
+void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
+    ofRectangle bgTextureTransform = ofRectangle();
+    bgTextureTransform.setWidth(texture->getWidth());
+    bgTextureTransform.setHeight(texture->getHeight());
+    bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, boundary);
+    if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+        bgTextureTransform.setPosition(styles.getPosition(bgTextureTransform, parent->boundary));
+    }
+    
+    float bgX = bgTextureTransform.x;
+    float bgY = bgTextureTransform.y;
+    int numRepeatX = 1;
+    int numRepeatY = 1;
+    
+    if(hasStyle(OSS_KEY::BACKGROUND_REPEAT)){
+        OSS_VALUE::ENUM repeatValue = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_REPEAT));
+        bool repeatX, repeatY;
+        switch(repeatValue){
+            case OSS_VALUE::REPEAT:
+                repeatX = true;
+                repeatY = true;
+                break;
+            case OSS_VALUE::REPEAT_X:
+                repeatX = true;
+                break;
+            case OSS_VALUE::REPEAT_Y:
+                repeatY = true;
+                break;
+            default:
+                repeatX = false;
+                repeatY = false;
+        }
+        
+        if(repeatX){
+            while(bgX > 0){
+                bgX -= bgTextureTransform.width;
+            }
+            numRepeatX = ceil((float)boundary.width/(float)bgTextureTransform.width)+1;
+        }
+        if(repeatY){
+            while(bgY > 0){
+                bgY -= bgTextureTransform.height;
+            }
+            numRepeatY = ceil((float)boundary.height/(float)bgTextureTransform.height)+1;
+        }
+        
+    }
+    
+    for(int x = 0; x < numRepeatX; x++){
+        for(int y = 0; y < numRepeatY; y++){
+            texture->draw(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y, bgTextureTransform.width, bgTextureTransform.height);
+        }
     }
 }
 
