@@ -223,25 +223,25 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
     bool blendModeActive = true;
     
     if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
-        OSS_BLEND_MODE::ENUM bgBlendMode = ofxOSS::getBlendModeFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
+        OSS_VALUE::ENUM bgBlendMode = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
         switch (bgBlendMode) {
-            case OSS_BLEND_MODE::DISABLED:
+            case OSS_VALUE::DISABLED:
                 blendModeActive = false;
                 ofEnableBlendMode(OF_BLENDMODE_DISABLED);
                 break;
-            case OSS_BLEND_MODE::ALPHA:
+            case OSS_VALUE::ALPHA:
                 ofEnableBlendMode(OF_BLENDMODE_ALPHA);
                 break;
-            case OSS_BLEND_MODE::ADD:
+            case OSS_VALUE::ADD:
                 ofEnableBlendMode(OF_BLENDMODE_ADD);
                 break;
-            case OSS_BLEND_MODE::SUBTRACT:
+            case OSS_VALUE::SUBTRACT:
                 ofEnableBlendMode(OF_BLENDMODE_SUBTRACT);
                 break;
-            case OSS_BLEND_MODE::SCREEN:
+            case OSS_VALUE::SCREEN:
                 ofEnableBlendMode(OF_BLENDMODE_SCREEN);
                 break;
-            case OSS_BLEND_MODE::MULTIPLY:
+            case OSS_VALUE::MULTIPLY:
                 ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
                 break;
             default:
@@ -302,7 +302,6 @@ void ofxLayoutElement::drawBackgroundVideo(){
             ofRectangle videoTransform = ofRectangle();
             videoTransform.setWidth(video->getWidth());
             videoTransform.setHeight(video->getHeight());
-            
             videoTransform = styles.computeBackgroundTransform(videoTransform, boundary);
             if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
                 videoTransform.setPosition(styles.getPosition(videoTransform, parent->boundary));

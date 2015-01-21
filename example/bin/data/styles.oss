@@ -17,8 +17,7 @@
 	"#main" : {
 		"background-color" : "rgba(50,50,50,255)",
 		"background-video" : "{{legs}}",
-		"background-size" : "cover",
-		"background-position" : "center",
+		"background-size" : "50px 50%",
 		"position" : "center",
 		"width" : "100%",
 		"height" : "100%"
