@@ -12,7 +12,7 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM, MASK, BACKGROUND_REPEAT};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM, MASK, BACKGROUND_REPEAT, DISPLAY};
 };
 
 namespace OSS_VALUE{
@@ -63,7 +63,7 @@ protected:
 };
 
 class ofxOSS{
-
+    
 public:
     ofxOSS();
     ~ofxOSS();
@@ -119,7 +119,7 @@ public:
     ///
     /// \param colorValue The string of the css-like color input
     static ofColor parseColor(string colorValue);
-
+    
     /// \brief Given a comma deliminated string of color channels ( '255, 0, 0' ), return the ofColor
     ///
     /// Useful because color is stored this way in the stylesMap. Can handle rgba.
@@ -163,13 +163,13 @@ public:
     ///
     /// \param ofRectangle imageDimensions
     /// \param ofRectangle elementBoundary
-//    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
+    //    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
     static ofxOssRule generateRule(string key, string value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);
     
-//    bool isBackgroundSizeDynamic();
+    //    bool isBackgroundSizeDynamic();
     
     ofxOSS* parent = NULL;
     
