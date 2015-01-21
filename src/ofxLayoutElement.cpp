@@ -94,7 +94,7 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(){
-    if(getStyle(OSS_KEY::DISPLAY) == "none"){
+    if(hasStyle(OSS_KEY::DISPLAY) && ofxOSS::getOssValueFromString(getStyle(OSS_KEY::DISPLAY)) == OSS_VALUE::NONE){
         return;
     }
     ofPushMatrix();
