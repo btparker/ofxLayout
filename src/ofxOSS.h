@@ -18,7 +18,7 @@ namespace OSS_KEY{
 namespace OSS_VALUE{
     enum ENUM{
         // GENERAL
-        INVALID = 1, NONE, AUTO,
+        INVALID, NONE, AUTO,
         
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
