@@ -280,6 +280,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
             video->loadMovie(videoPath);
             video->setVolume(0.0f);
             video->play();
+            video->setLoopState(OF_LOOP_NORMAL);
         }
         else{
             video->update();
