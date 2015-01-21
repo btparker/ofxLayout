@@ -18,7 +18,7 @@ namespace OSS_KEY{
 namespace OSS_VALUE{
     enum ENUM{
         // GENERAL
-        INVALID = 1, NONE, AUTO,
+        INVALID, NONE, AUTO,
         
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
@@ -149,6 +149,9 @@ public:
     ///
     /// \param ofRectangle boundary
     ofPoint getPosition(ofRectangle boundary, ofRectangle parentBoundary);
+    ofPoint getBackgroundPosition(ofRectangle boundary, ofRectangle parentBoundary);
+    
+    ofPoint computePosition(string posString, ofRectangle boundary, ofRectangle parentBoundary);
     
     /// \brief Based on the background size style, image dimensions, and the element boundary, returns the computed draw dimensions of the image.
     ///

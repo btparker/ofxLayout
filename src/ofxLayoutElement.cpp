@@ -52,6 +52,7 @@ void ofxLayoutElement::update(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     elementMask.beginMask();
+    ofClear(0,0,0,0);
     ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
     ofRect(0,0,boundary.width, boundary.height);
     if(getStyle(OSS_KEY::MASK) != ""){
@@ -225,10 +226,6 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
     if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
         OSS_VALUE::ENUM bgBlendMode = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
         switch (bgBlendMode) {
-            case OSS_VALUE::DISABLED:
-                blendModeActive = false;
-                ofEnableBlendMode(OF_BLENDMODE_DISABLED);
-                break;
             case OSS_VALUE::ALPHA:
                 ofEnableBlendMode(OF_BLENDMODE_ALPHA);
                 break;
@@ -299,13 +296,13 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     bgTextureTransform.setHeight(texture->getHeight());
     bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, boundary);
     if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
-        bgTextureTransform.setPosition(styles.getPosition(bgTextureTransform, parent->boundary));
+        bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, boundary));
     }
     
     float bgX = bgTextureTransform.x;
     float bgY = bgTextureTransform.y;
-    int numRepeatX = 1;
-    int numRepeatY = 1;
+    int numRepeatX = 0;
+    int numRepeatY = 0;
     
     if(hasStyle(OSS_KEY::BACKGROUND_REPEAT)){
         OSS_VALUE::ENUM repeatValue = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_REPEAT));
@@ -317,8 +314,10 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
                 break;
             case OSS_VALUE::REPEAT_X:
                 repeatX = true;
+                repeatY = false;
                 break;
             case OSS_VALUE::REPEAT_Y:
+                repeatX = false;
                 repeatY = true;
                 break;
             default:
@@ -330,19 +329,18 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
             while(bgX > 0){
                 bgX -= bgTextureTransform.width;
             }
-            numRepeatX = ceil((float)boundary.width/(float)bgTextureTransform.width)+1;
+            numRepeatX = ceil((float)boundary.width/(float)bgTextureTransform.width);
         }
         if(repeatY){
             while(bgY > 0){
                 bgY -= bgTextureTransform.height;
             }
-            numRepeatY = ceil((float)boundary.height/(float)bgTextureTransform.height)+1;
+            numRepeatY = ceil((float)boundary.height/(float)bgTextureTransform.height);
         }
         
     }
-    
-    for(int x = 0; x < numRepeatX; x++){
-        for(int y = 0; y < numRepeatY; y++){
+    for(int x = 0; x <= numRepeatX; x++){
+        for(int y = 0; y <= numRepeatY; y++){
             texture->draw(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y, bgTextureTransform.width, bgTextureTransform.height);
         }
     }

@@ -460,6 +460,16 @@ float ofxOSS::getDimensionStyleValue(string dimensionValue, float parentDimensio
 
 ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
     string posString = getStyle(OSS_KEY::POSITION);
+    return computePosition(posString,boundary, parentBoundary);
+}
+
+
+ofPoint ofxOSS::getBackgroundPosition(ofRectangle boundary, ofRectangle parentBoundary){
+    string posString = getStyle(OSS_KEY::BACKGROUND_POSITION);
+    return computePosition(posString,boundary, parentBoundary);
+}
+
+ofPoint ofxOSS::computePosition(string posString, ofRectangle boundary, ofRectangle parentBoundary){
     if(posString.length() > 0){
         ofPoint posPt;
         vector<string> posPieces = ofSplitString(posString, " ");
@@ -475,7 +485,7 @@ ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
         
         x = computeLeftPosition(xStr, boundary, parentBoundary);
         y = computeTopPosition(yStr, boundary, parentBoundary);
-
+        
         return ofPoint(x,y);
     }
     else{
