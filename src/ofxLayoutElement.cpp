@@ -94,6 +94,9 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(){
+    if(getStyle(OSS_KEY::DISPLAY) == "none"){
+        return;
+    }
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();

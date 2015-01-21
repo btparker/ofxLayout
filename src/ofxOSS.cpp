@@ -139,6 +139,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "background-repeat"){
         return OSS_KEY::BACKGROUND_REPEAT;
     }
+    else if(key == "display"){
+        return OSS_KEY::DISPLAY;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -199,6 +202,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_REPEAT:
             keyString = "background-repeat";
             break;
+        case OSS_KEY::DISPLAY:
+            keyString = "display";
+            break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
     }
@@ -208,15 +214,15 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
 string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
     string valueStr = "";
     switch(value){
-        // GENERAL
+            // GENERAL
         case OSS_VALUE::NONE:
             valueStr = "none";
             break;
         case OSS_VALUE::AUTO:
             valueStr = "auto";
             break;
-        
-        // POSITION / TEXT ALIGN
+            
+            // POSITION / TEXT ALIGN
         case OSS_VALUE::CENTER:
             valueStr = "center";
             break;
@@ -233,15 +239,15 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             valueStr = "bottom";
             break;
             
-        // SIZE
+            // SIZE
         case OSS_VALUE::COVER:
             valueStr = "cover";
             break;
         case OSS_VALUE::CONTAIN:
             valueStr = "contain";
             break;
-        
-        // BLEND MODES
+            
+            // BLEND MODES
         case OSS_VALUE::ALPHA:
             valueStr = "alpha";
             break;
@@ -261,7 +267,7 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             valueStr = "disabled";
             break;
             
-        // TEXT TRANSFORM
+            // TEXT TRANSFORM
         case OSS_VALUE::UPPERCASE:
             valueStr = "uppercase";
             break;
@@ -272,7 +278,7 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             valueStr = "capitalize";
             break;
             
-        // BACKGROUND REPEAT
+            // BACKGROUND REPEAT
         case OSS_VALUE::REPEAT:
             valueStr = "repeat";
             break;
@@ -342,7 +348,7 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     else if(value == "disabled"){
         return OSS_VALUE::DISABLED;
     }
-
+    
     // TEXT TRANSFORM
     else if (value == "uppercase"){
         return OSS_VALUE::UPPERCASE;
@@ -418,7 +424,7 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
         int a = ofToInt(splitChannels[3]);
         color = ofColor(color, a);
     }
-
+    
     return color;
 }
 
@@ -539,12 +545,12 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
 //bool ofxOSS::isBackgroundSizeDynamic(){
 //    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
 //    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
-//    
+//
 //    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
 //    // Doing this so there is no untrimmed space
-//    
+//
 //    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
-//    
+//
 //    return isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain");
 //}
 
@@ -552,15 +558,15 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
 //    ofRectangle result = ofRectangle(imageTransform);
 //    string bgPosStr = getStyle(OSS_KEY::BACKGROUND_POSITION);
 //    vector<string> bgPosStrSplit = ofSplitString(bgPosStr, " ",true, true);
-//    
+//
 //    bool isPosStyleSingleRule = bgPosStrSplit.size() == 1;
-//    
+//
 //    // Doing this so there is no untrimmed space
 //    bgPosStr = isPosStyleSingleRule ? bgPosStrSplit[0] : bgPosStr;
-//    
+//
 //    string xPosStr = bgPosStrSplit[0];
 //    string yPosStr = isPosStyleSingleRule ? xPosStr : bgPosStrSplit[1];
-//    
+//
 //    if(isBackgroundSizeDynamic()){
 //        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
 //        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
@@ -569,7 +575,7 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
 //        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
 //        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
 //    }
-//    
+//
 //    return result;
 //}
 
@@ -611,7 +617,7 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
     else{
         y = ofToFloat(yStr);
     }
-
+    
     return y;
 }
 

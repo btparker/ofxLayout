@@ -23,7 +23,8 @@
 		"width" : "50%",
 		"height" : "50%",
 		"opacity" : "0.75",
-		"position" : "center"
+		"position" : "center",
+		"display" : "none"
 	},
 	"#text" : {
 		"font-family" : "fonts/Arial.ttf",
