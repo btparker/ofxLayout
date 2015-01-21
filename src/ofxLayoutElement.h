@@ -74,6 +74,7 @@ public:
     void drawBackgroundImage();
     void drawBackgroundVideo();
     void drawBackgroundColor();
+    void drawBackgroundTexture(ofTexture* texture);
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();
