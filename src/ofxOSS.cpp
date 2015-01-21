@@ -16,7 +16,7 @@ void ofxOSS::setDefaults(){
     
     
     ofxOssRule bgPositionDefault;
-    bgPositionDefault.setValue("center");
+    bgPositionDefault.setValue(getStringFromOssValue(OSS_VALUE::AUTO));
     this->rules[OSS_KEY::BACKGROUND_POSITION] = bgPositionDefault;
     
     ofxOssRule widthDefault;
@@ -36,7 +36,7 @@ void ofxOSS::setDefaults(){
     this->rules[OSS_KEY::FONT_SIZE] = fontSizeDefault;
     
     ofxOssRule bgSizeDefault;
-    bgSizeDefault.setValue("cover");
+    bgSizeDefault.setValue(getStringFromOssValue(OSS_VALUE::AUTO));
     this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
     
     ofxOssRule bgBlendModeDefault;
@@ -48,7 +48,7 @@ void ofxOSS::setDefaults(){
     this->rules[OSS_KEY::OPACITY] = opacityDefault;
     
     ofxOssRule textTransformDefault;
-    textTransformDefault.setValue("none");
+    textTransformDefault.setValue(getStringFromOssValue(OSS_VALUE::NONE));
     this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
     
     ofxOssRule colorDefault;
@@ -194,9 +194,55 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             keyString = "mask";
             break;
         default:
-            ofLogWarning("ofxOSS::getEnumFromString","No string key found for value provided.");
+            ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
     }
     return keyString;
+}
+
+string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
+    string valueStr = "";
+    switch(value){
+        case OSS_VALUE::NONE:
+            valueStr = "none";
+            break;
+        case OSS_VALUE::COVER:
+            valueStr = "cover";
+            break;
+        case OSS_VALUE::CONTAIN:
+            valueStr = "contain";
+            break;
+        case OSS_VALUE::CENTER:
+            valueStr = "center";
+            break;
+        case OSS_VALUE::AUTO:
+            valueStr = "auto";
+            break;
+        default:
+            ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
+    }
+    return valueStr;
+}
+
+OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
+    if(value == "none"){
+        return OSS_VALUE::NONE;
+    }
+    else if(value == "cover"){
+        return OSS_VALUE::COVER;
+    }
+    else if(value == "contain"){
+        return OSS_VALUE::CONTAIN;
+    }
+    else if(value == "center"){
+        return OSS_VALUE::CENTER;
+    }
+    else if(value == "auto"){
+        return OSS_VALUE::AUTO;
+    }
+    else{
+        ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
+        return OSS_VALUE::INVALID;
+    }
 }
 
 OSS_BLEND_MODE::ENUM ofxOSS::getBlendModeFromString(string blendMode){
@@ -495,16 +541,16 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
     
     bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
     
-    if(isSizeStyleSingleRule && bgSizeStr == "auto"){
-        // Don't bother doing anything
+    if(isSizeStyleSingleRule && bgSizeStr == getStringFromOssValue(OSS_VALUE::AUTO)){
+        //does nothing, the result being the dimensions
     }
-    if(isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain")){
+    else if(isSizeStyleSingleRule && (bgSizeStr == getStringFromOssValue(OSS_VALUE::COVER) || bgSizeStr == getStringFromOssValue(OSS_VALUE::CONTAIN))){
         float wRatio = (dimensions.getWidth())/boundary.getWidth();
         float hRatio = (dimensions.getHeight())/boundary.getHeight();
         
         float scale;
         
-        if(bgSizeStr == "cover"){
+        if(bgSizeStr == getStringFromOssValue(OSS_VALUE::COVER)){
             scale = 1.0/min(wRatio,hRatio);
         }
         else{
@@ -513,6 +559,7 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
         
         result.scale(scale);
     }
+    // example: "50px 75%"
     else{
         string wSizeStr = bgSizeStrSplit[0];
         string hSizeStr = isSizeStyleSingleRule ? wSizeStr : bgSizeStrSplit[1];

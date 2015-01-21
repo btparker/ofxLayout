@@ -302,7 +302,6 @@ void ofxLayoutElement::drawBackgroundVideo(){
             ofRectangle videoTransform = ofRectangle();
             videoTransform.setWidth(video->getWidth());
             videoTransform.setHeight(video->getHeight());
-            
             videoTransform = styles.computeBackgroundTransform(videoTransform, boundary);
             if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
                 videoTransform.setPosition(styles.getPosition(videoTransform, parent->boundary));

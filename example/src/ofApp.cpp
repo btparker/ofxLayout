@@ -6,7 +6,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     ofEnableAlphaBlending();
     ofEnableSmoothing();
-    fbo.allocate(50,500);
+    fbo.allocate(ofGetWidth(), ofGetHeight());
     loadExternalLayout();
 }
 
@@ -25,7 +25,7 @@ void ofApp::draw(){
     layout.draw();
     fbo.end();
     ofPushMatrix();
-    ofScale(ofGetWidth()/50.0f, ofGetHeight()/500.0f);
+//    ofScale(ofGetWidth()/50.0f, ofGetHeight()/500.0f);
     fbo.draw(0,0);
     ofPopMatrix();
 }
@@ -67,6 +67,7 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
+    fbo.allocate(w,h);
 }
 
 //--------------------------------------------------------------

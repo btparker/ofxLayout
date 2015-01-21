@@ -12,7 +12,7 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM,MASK};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM, MASK};
 };
 
 namespace OSS_BLEND_MODE{
@@ -24,7 +24,7 @@ namespace OSS_TEXT_TRANSFORM{
 };
 
 namespace OSS_VALUE{
-    enum ENUM{CENTER, COVER, CONTAIN, AUTO};
+    enum ENUM{INVALID, CENTER, COVER, CONTAIN, AUTO, NONE};
 };
 
 class ofxOssRule{
@@ -86,6 +86,9 @@ public:
     ///
     /// \param key The enum of the css-like key
     static string getStringFromOssKey(OSS_KEY::ENUM key);
+    static string getStringFromOssValue(OSS_VALUE::ENUM value);
+    
+    static OSS_VALUE::ENUM getOssValueFromString(string value);
     
     static OSS_BLEND_MODE::ENUM getBlendModeFromString(string blendMode);
     static string getStringFromBlendMode(OSS_BLEND_MODE::ENUM blendMode);
