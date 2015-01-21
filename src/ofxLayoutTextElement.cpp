@@ -15,18 +15,18 @@ void ofxLayoutTextElement::drawTag(){
             string text = getValue();
             if(hasStyle(OSS_KEY::TEXT_TRANSFORM)){
                 vector<string> words = ofSplitString(text, " ",true,true);
-                OSS_TEXT_TRANSFORM::ENUM textTransform = ofxOSS::getTextTransformFromString(getStyle(OSS_KEY::TEXT_TRANSFORM));
+                OSS_VALUE::ENUM textTransform = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::TEXT_TRANSFORM));
                 switch(textTransform){
-                    case OSS_TEXT_TRANSFORM::NONE:
+                    case OSS_VALUE::NONE:
                         //do nothing
                         break;
-                    case OSS_TEXT_TRANSFORM::UPPERCASE:
+                    case OSS_VALUE::UPPERCASE:
                         text = ofToUpper(text);
                         break;
-                    case OSS_TEXT_TRANSFORM::LOWERCASE:
+                    case OSS_VALUE::LOWERCASE:
                         text = ofToLower(text);
                         break;
-                    case OSS_TEXT_TRANSFORM::CAPITALIZE:
+                    case OSS_VALUE::CAPITALIZE:
                         for(int i = 0; i < words.size(); i++) {
                             words[i] = ofToLower(words[i]);
                             words[i] = ofToUpper(words[i].substr(0,1))+words[i].substr(1,words[i].size());

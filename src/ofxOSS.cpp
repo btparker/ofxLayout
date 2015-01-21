@@ -40,7 +40,7 @@ void ofxOSS::setDefaults(){
     this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
     
     ofxOssRule bgBlendModeDefault;
-    bgBlendModeDefault.setValue(getStringFromBlendMode(OSS_BLEND_MODE::DISABLED));
+    bgBlendModeDefault.setValue(getStringFromOssValue(OSS_VALUE::DISABLED));
     this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
     
     ofxOssRule opacityDefault;
@@ -202,21 +202,71 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
 string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
     string valueStr = "";
     switch(value){
+        // GENERAL
         case OSS_VALUE::NONE:
             valueStr = "none";
             break;
+        case OSS_VALUE::AUTO:
+            valueStr = "auto";
+            break;
+        
+        // POSITION / TEXT ALIGN
+        case OSS_VALUE::CENTER:
+            valueStr = "center";
+            break;
+        case OSS_VALUE::LEFT:
+            valueStr = "left";
+            break;
+        case OSS_VALUE::RIGHT:
+            valueStr = "right";
+            break;
+        case OSS_VALUE::TOP:
+            valueStr = "top";
+            break;
+        case OSS_VALUE::BOTTOM:
+            valueStr = "bottom";
+            break;
+            
+        // SIZE
         case OSS_VALUE::COVER:
             valueStr = "cover";
             break;
         case OSS_VALUE::CONTAIN:
             valueStr = "contain";
             break;
-        case OSS_VALUE::CENTER:
-            valueStr = "center";
+        
+        // BLEND MODES
+        case OSS_VALUE::ALPHA:
+            valueStr = "alpha";
             break;
-        case OSS_VALUE::AUTO:
-            valueStr = "auto";
+        case OSS_VALUE::ADD:
+            valueStr = "add";
             break;
+        case OSS_VALUE::SUBTRACT:
+            valueStr = "subtract";
+            break;
+        case OSS_VALUE::SCREEN:
+            valueStr = "screen";
+            break;
+        case OSS_VALUE::MULTIPLY:
+            valueStr = "multiply";
+            break;
+        case OSS_VALUE::DISABLED:
+            valueStr = "disabled";
+            break;
+            
+        // TEXT TRANSFORM
+        case OSS_VALUE::UPPERCASE:
+            valueStr = "uppercase";
+            break;
+        case OSS_VALUE::LOWERCASE:
+            valueStr = "lowercase";
+            break;
+        case OSS_VALUE::CAPITALIZE:
+            valueStr = "capitalize";
+            break;
+
+            
         default:
             ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
     }
@@ -224,196 +274,71 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
 }
 
 OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
+    // GENERAL
     if(value == "none"){
         return OSS_VALUE::NONE;
     }
+    else if(value == "auto"){
+        return OSS_VALUE::AUTO;
+    }
+    
+    // POSITION / TEXT ALIGN
+    else if(value == "center"){
+        return OSS_VALUE::CENTER;
+    }
+    else if(value == "left"){
+        return OSS_VALUE::LEFT;
+    }
+    else if(value == "right"){
+        return OSS_VALUE::RIGHT;
+    }
+    else if(value == "top"){
+        return OSS_VALUE::TOP;
+    }
+    else if(value == "bottom"){
+        return OSS_VALUE::BOTTOM;
+    }
+    
+    // SIZE
     else if(value == "cover"){
         return OSS_VALUE::COVER;
     }
     else if(value == "contain"){
         return OSS_VALUE::CONTAIN;
     }
-    else if(value == "center"){
-        return OSS_VALUE::CENTER;
+    
+    // BLEND MODES
+    else if(value == "alpha"){
+        return OSS_VALUE::ALPHA;
     }
-    else if(value == "auto"){
-        return OSS_VALUE::AUTO;
+    else if(value == "add"){
+        return OSS_VALUE::ADD;
     }
+    else if(value == "subtract"){
+        return OSS_VALUE::SUBTRACT;
+    }
+    else if(value == "screen"){
+        return OSS_VALUE::SCREEN;
+    }
+    else if(value == "multiply"){
+        return OSS_VALUE::MULTIPLY;
+    }
+
+    // TEXT TRANSFORM
+    else if (value == "uppercase"){
+        return OSS_VALUE::UPPERCASE;
+    }
+    else if (value == "lowercase"){
+        return OSS_VALUE::LOWERCASE;
+    }
+    else if (value == "capitalize"){
+        return OSS_VALUE::CAPITALIZE;
+    }
+    
     else{
         ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
         return OSS_VALUE::INVALID;
     }
-}
-
-OSS_BLEND_MODE::ENUM ofxOSS::getBlendModeFromString(string blendMode){
-    if(blendMode == "disabled"){
-        return OSS_BLEND_MODE::DISABLED;
-    }
-    else if(blendMode == "alpha"){
-        return OSS_BLEND_MODE::ALPHA;
-    }
-    else if(blendMode == "add"){
-        return OSS_BLEND_MODE::ADD;
-    }
-    else if(blendMode == "subtract"){
-        return OSS_BLEND_MODE::SUBTRACT;
-    }
-    else if(blendMode == "screen"){
-        return OSS_BLEND_MODE::SCREEN;
-    }
-    else if(blendMode == "multiply"){
-        return OSS_BLEND_MODE::MULTIPLY;
-    }
-//    else if(blendMode == "overlay"){
-//        return OSS_BLEND_MODE::OVERLAY;
-//    }
-//    else if(blendMode == "darken"){
-//        return OSS_BLEND_MODE::DARKEN;
-//    }
-//    else if(blendMode == "lighten"){
-//        return OSS_BLEND_MODE::LIGHTEN;
-//    }
-//    else if(blendMode == "color-dodge"){
-//        return OSS_BLEND_MODE::COLOR_DODGE;
-//    }
-//    else if(blendMode == "color-burn"){
-//        return OSS_BLEND_MODE::COLOR_BURN;
-//    }
-//    else if(blendMode == "hard-light"){
-//        return OSS_BLEND_MODE::HARD_LIGHT;
-//    }
-//    else if(blendMode == "soft-light"){
-//        return OSS_BLEND_MODE::SOFT_LIGHT;
-//    }
-//    else if(blendMode == "difference"){
-//        return OSS_BLEND_MODE::DIFFERENCE;
-//    }
-//    else if(blendMode == "exclusion"){
-//        return OSS_BLEND_MODE::EXCLUSION;
-//    }
-//    else if(blendMode == "hue"){
-//        return OSS_BLEND_MODE::HUE;
-//    }
-//    else if(blendMode == "saturation"){
-//        return OSS_BLEND_MODE::SATURATION;
-//    }
-//    else if(blendMode == "color"){
-//        return OSS_BLEND_MODE::COLOR;
-//    }
-//    else if(blendMode == "luminosity"){
-//        return OSS_BLEND_MODE::LUMINOSITY;
-//    }
-    else{
-        ofLogWarning("ofxOSS::getBlendModeFromString","No blend-mode for "+blendMode+" found.");
-        return OSS_BLEND_MODE::INVALID_BLEND_MODE;
-    }
-}
-
-string ofxOSS::getStringFromBlendMode(OSS_BLEND_MODE::ENUM blendMode){
-    string blendModeStr;
-    switch(blendMode){
-        case OSS_BLEND_MODE::DISABLED:
-            blendModeStr = "disabled";
-            break;
-        case OSS_BLEND_MODE::ALPHA:
-            blendModeStr = "alpha";
-            break;
-        case OSS_BLEND_MODE::ADD:
-            blendModeStr = "add";
-            break;
-        case OSS_BLEND_MODE::SUBTRACT:
-            blendModeStr = "subtract";
-            break;
-        case OSS_BLEND_MODE::SCREEN:
-            blendModeStr = "screen";
-            break;
-        case OSS_BLEND_MODE::MULTIPLY:
-            blendModeStr = "multiply";
-            break;
-//        case OSS_BLEND_MODE::OVERLAY:
-//            blendModeStr = "overlay";
-//            break;
-//        case OSS_BLEND_MODE::DARKEN:
-//            blendModeStr = "darken";
-//            break;
-//        case OSS_BLEND_MODE::LIGHTEN:
-//            blendModeStr = "lighten";
-//            break;
-//        case OSS_BLEND_MODE::COLOR_DODGE:
-//            blendModeStr = "color-dodge";
-//            break;
-//        case OSS_BLEND_MODE::COLOR_BURN:
-//            blendModeStr = "color-burn";
-//            break;
-//        case OSS_BLEND_MODE::HARD_LIGHT:
-//            blendModeStr = "hard-light";
-//            break;
-//        case OSS_BLEND_MODE::SOFT_LIGHT:
-//            blendModeStr = "soft-light";
-//            break;
-//        case OSS_BLEND_MODE::DIFFERENCE:
-//            blendModeStr = "difference";
-//            break;
-//        case OSS_BLEND_MODE::EXCLUSION:
-//            blendModeStr = "exclusion";
-//            break;
-//        case OSS_BLEND_MODE::HUE:
-//            blendModeStr = "hue";
-//            break;
-//        case OSS_BLEND_MODE::SATURATION:
-//            blendModeStr = "saturation";
-//            break;
-//        case OSS_BLEND_MODE::COLOR:
-//            blendModeStr = "color";
-//            break;
-//        case OSS_BLEND_MODE::LUMINOSITY:
-//            blendModeStr = "luminosity";
-//            break;
-        default:
-            ofLogWarning("ofxOSS::getStringFromBlendMode","No string for given OSS_BLEND_MODE found.");
-    }
-    return blendModeStr;
-}
-
-
-OSS_TEXT_TRANSFORM::ENUM ofxOSS::getTextTransformFromString(string textTransform){
-    if(textTransform == "none"){
-        return OSS_TEXT_TRANSFORM::NONE;
-    }
-    else if (textTransform == "uppercase"){
-        return OSS_TEXT_TRANSFORM::UPPERCASE;
-    }
-    else if (textTransform == "lowercase"){
-        return OSS_TEXT_TRANSFORM::LOWERCASE;
-    }
-    else if (textTransform == "capitalize"){
-        return OSS_TEXT_TRANSFORM::CAPITALIZE;
-    }
-    else{
-        ofLogWarning("ofxOSS::getTextTransformFromString","No text-transform for "+textTransform+" found.");
-        return OSS_TEXT_TRANSFORM::INVALID_TEXT_TRANSFORM;
-    }
-}
-
-string ofxOSS::getStringFromTextTransform(OSS_TEXT_TRANSFORM::ENUM textTransform){
-    string textTransformStr;
-    switch(textTransform){
-        case OSS_TEXT_TRANSFORM::NONE:
-            textTransformStr = "none";
-            break;
-        case OSS_TEXT_TRANSFORM::UPPERCASE:
-            textTransformStr = "uppercase";
-            break;
-        case OSS_TEXT_TRANSFORM::LOWERCASE:
-            textTransformStr = "lowercase";
-            break;
-        case OSS_TEXT_TRANSFORM::CAPITALIZE:
-            textTransformStr = "capitalize";
-            break;
-        default:
-            ofLogWarning("ofxOSS::getStringFromTextTransform","No string for given OSS_TEXT_TRANSFORM found.");
-    }
-    return textTransformStr;
 }
 
 /// |   Color Styles   | ///
