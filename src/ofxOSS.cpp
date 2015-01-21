@@ -28,7 +28,7 @@ void ofxOSS::setDefaults(){
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
     
     ofxOssRule textAlignDefault;
-    textAlignDefault.setValue("left");
+    textAlignDefault.setValue(getStringFromOssValue(OSS_VALUE::LEFT));
     this->rules[OSS_KEY::TEXT_ALIGN] = textAlignDefault;
     
     ofxOssRule fontSizeDefault;
@@ -136,6 +136,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "mask"){
         return OSS_KEY::MASK;
     }
+    else if(key == "background-repeat"){
+        return OSS_KEY::BACKGROUND_REPEAT;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -192,6 +195,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::MASK:
             keyString = "mask";
+            break;
+        case OSS_KEY::BACKGROUND_REPEAT:
+            keyString = "background-repeat";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -265,7 +271,17 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
         case OSS_VALUE::CAPITALIZE:
             valueStr = "capitalize";
             break;
-
+            
+        // BACKGROUND REPEAT
+        case OSS_VALUE::REPEAT:
+            valueStr = "repeat";
+            break;
+        case OSS_VALUE::REPEAT_X:
+            valueStr = "repeat-x";
+            break;
+        case OSS_VALUE::REPEAT_Y:
+            valueStr = "repeat-y";
+            break;
             
         default:
             ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
@@ -323,6 +339,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     else if(value == "multiply"){
         return OSS_VALUE::MULTIPLY;
     }
+    else if(value == "disabled"){
+        return OSS_VALUE::DISABLED;
+    }
 
     // TEXT TRANSFORM
     else if (value == "uppercase"){
@@ -335,8 +354,19 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
         return OSS_VALUE::CAPITALIZE;
     }
     
+    // BACKGROUND REPEAT
+    else if (value == "repeat"){
+        return OSS_VALUE::REPEAT;
+    }
+    else if (value == "repeat-x"){
+        return OSS_VALUE::REPEAT_X;
+    }
+    else if (value == "repeat-y"){
+        return OSS_VALUE::REPEAT_Y;
+    }
+    
     else{
-        ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
+        ofLogWarning("ofxOSS::getOssValueFromString","No OSS_VALUE found for "+value+".");
         return OSS_VALUE::INVALID;
     }
 }

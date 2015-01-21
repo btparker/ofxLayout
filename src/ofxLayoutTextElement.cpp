@@ -38,9 +38,6 @@ void ofxLayoutTextElement::drawTag(){
                 }
             }
             
-            
-            
-            
             float fontSize;
             if(hasStyle(OSS_KEY::FONT_SIZE)){
                 fontSize = ofToFloat(getStyle(OSS_KEY::FONT_SIZE));
