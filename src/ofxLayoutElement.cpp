@@ -214,13 +214,70 @@ void ofxLayoutElement::drawStyles(){
         drawBackgroundImage();
         drawBackgroundVideo();
         drawBackgroundColor();
+        drawBackgroundGradient();
     }
     else{
         drawBackgroundColor();
+        drawBackgroundGradient();
         drawBackgroundVideo();
         drawBackgroundImage();
     }
+    
     endBackgroundBlendMode();
+}
+
+void ofxLayoutElement::drawBackgroundGradient(){
+    bool vertical = false;
+    ofColor firstColor(1.0f, 0.0f, 0.0f, 0.0f);
+    ofColor secondColor(0.0f, 0.0f, 1.0f, 1.0f  );
+    // Maybe there is a simpler OF way, but I was having issues with
+    // boundary using ofBackgroundGradient
+    
+    glDepthMask(false);
+    glEnable(GL_BLEND);
+    glBegin(GL_QUADS);
+    
+    //FIRST COLOR
+    glColor4f( firstColor.r, firstColor.g, firstColor.b, firstColor.a );
+    
+    // TL
+    glVertex3f( 0.0f, 0.0f, 0.0f );
+    
+    // FOR TR
+    if(vertical){
+        //FIRST COLOR
+        glColor4f( firstColor.r, firstColor.g, firstColor.b, firstColor.a  );
+    }
+    else{
+        //SECOND COLOR
+        glColor4f( secondColor.r, secondColor.g, secondColor.b, secondColor.a  );
+    }
+    
+    //TR
+    glVertex3f( boundary.width, 0.0f, 0.0f );
+    
+
+    //SECOND COLOR (FOR BR)
+    glColor4f( secondColor.r, secondColor.g, secondColor.b, secondColor.a  );
+  
+    //BR
+    glVertex3f( boundary.width, boundary.height, 0.0f );
+
+    // FOR BL
+    if(vertical){
+        //SECOND COLOR
+        glColor4f( secondColor.r, secondColor.g, secondColor.b, secondColor.a  );
+    }
+    else{
+        //FIRST COLOR
+        glColor4f( firstColor.r, firstColor.g, firstColor.b, firstColor.a  );
+    }
+    
+    //BL
+    glVertex3f( 0.0f, boundary.height, 0.0f );
+    
+    glEnd();
+    glDepthMask(true);
 }
 
 bool ofxLayoutElement::beginBackgroundBlendMode(){
