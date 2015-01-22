@@ -26,7 +26,7 @@ public:
     
     /// |   Utilities   | ///
     /// | ------------- | ///
-    void computeFbo(ofFbo* fboPtr, vector<string>* filters = new vector<string>());
+    void computeFbo(ofFbo* fboPtr, vector<string>* filters = new vector<string>(), ofxLayoutElement* startElement = NULL);
     void filterElements(vector<string>* filters, ofxLayoutElement* element);
     bool ready();
     bool drawable();
@@ -49,6 +49,9 @@ public:
     map<string, string> data;
     
     void unload();
+    
+    ofxLayoutElement* getElementById(string ID);
+    map<string, ofxLayoutElement*> idElementMap;
     
 protected:
     ofxLayoutElement contextTreeRoot;
