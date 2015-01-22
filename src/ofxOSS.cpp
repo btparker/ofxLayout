@@ -142,6 +142,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "display"){
         return OSS_KEY::DISPLAY;
     }
+    else if(key == "background-gradient"){
+        return OSS_KEY::BACKGROUND_GRADIENT;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -204,6 +207,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::DISPLAY:
             keyString = "display";
+            break;
+        case OSS_KEY::BACKGROUND_GRADIENT:
+            keyString = "background-gradient";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -542,43 +548,6 @@ ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectang
     return result;
 }
 
-//bool ofxOSS::isBackgroundSizeDynamic(){
-//    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
-//    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
-//
-//    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
-//    // Doing this so there is no untrimmed space
-//
-//    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
-//
-//    return isSizeStyleSingleRule && (bgSizeStr == "cover" || bgSizeStr == "contain");
-//}
-
-//ofRectangle ofxOSS::getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary){
-//    ofRectangle result = ofRectangle(imageTransform);
-//    string bgPosStr = getStyle(OSS_KEY::BACKGROUND_POSITION);
-//    vector<string> bgPosStrSplit = ofSplitString(bgPosStr, " ",true, true);
-//
-//    bool isPosStyleSingleRule = bgPosStrSplit.size() == 1;
-//
-//    // Doing this so there is no untrimmed space
-//    bgPosStr = isPosStyleSingleRule ? bgPosStrSplit[0] : bgPosStr;
-//
-//    string xPosStr = bgPosStrSplit[0];
-//    string yPosStr = isPosStyleSingleRule ? xPosStr : bgPosStrSplit[1];
-//
-//    if(isBackgroundSizeDynamic()){
-//        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
-//        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
-//    }
-//    else{
-//        result.setX(computeLeftPosition(xPosStr, imageTransform, elementBoundary));
-//        result.setY(computeTopPosition(yPosStr, imageTransform, elementBoundary));
-//    }
-//
-//    return result;
-//}
-
 
 /// |   Private Functions   | ///
 /// | --------------------- | ///
@@ -627,3 +596,9 @@ ofxOssRule ofxOSS::generateRule(string key, string value){
     return ossRule;
 }
 
+void ofxOSS::parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical){
+    vector<string> pieces = ofSplitString(bgGradientStr, " ", true, true);
+    firstColor->set(parseColor(pieces[0]));
+    secondColor->set(parseColor(pieces[1]));
+    *vertical = !(pieces.size() > 2 && pieces[2] == "horizontal");
+}

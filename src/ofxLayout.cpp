@@ -5,7 +5,6 @@
 
 ofxLayout::ofxLayout(){
     contextTreeRoot.setAssets(&assets);
-    contextTreeRoot.setData(&data);
     contextTreeRoot.setFonts(&fonts);
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
@@ -108,7 +107,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     element->setInlineStyle(style);
     
-    string value = xmlLayout->getValue(tag,"", which);
+    string value = populateValueExpressions(xmlLayout->getValue(tag,"", which));
     element->setValue(value);
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
@@ -160,15 +159,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
         else if(ofxOSS::validKey(key)){
-            string value = (*jsonElement)[key].asString();
-            if(ofStringTimesInString(value, "{{") > 0){
-                string dataKey = value.substr(2,value.size()-4);
-                
-                if(data.count(dataKey) > 0){
-                    value = data[dataKey];
-                }
-            }
-
+            string value = populateValueExpressions((*jsonElement)[key].asString());
             ofxOssRule ossRule = ofxOSS::generateRule(key, value);
             
             styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
@@ -283,4 +274,27 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     else{
         return idElementMap[ID];
     }
+}
+
+string ofxLayout::populateValueExpressions(string input){
+    string value = input;
+    if(ofStringTimesInString(input, "{{") > 0){
+        string dataKey = input;
+        vector<string> left = ofSplitString(dataKey, "{{", true);
+        if(left.size() == 1){
+            dataKey = left[0];
+        }
+        vector<string> right = ofSplitString(dataKey, "}}", true);
+        dataKey = right[0];
+        
+        if(data.count(dataKey) > 0){
+            value = data[dataKey];
+        }
+        
+        if(right.size() > 1){
+            right.erase(right.begin());
+            value =  value + populateValueExpressions(ofJoinString(right, ""));
+        }
+    }
+    return value;
 }
