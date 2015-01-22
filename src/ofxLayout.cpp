@@ -227,14 +227,20 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
 }
 
-void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters){
-    fboPtr->allocate(contextTreeRoot.getFbo()->getWidth(), contextTreeRoot.getFbo()->getHeight());
+void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters, ofxLayoutElement* startElement){
+    if(startElement == NULL){
+        startElement = &contextTreeRoot;
+    }
+    fboPtr->allocate(startElement->getFbo()->getWidth(), startElement->getFbo()->getHeight());
+    ofPushMatrix();
+    ofTranslate(-1*startElement->getBoundary().getX(), -1*startElement->getBoundary().getY());
     fboPtr->begin();
-    ofClear(0,0,0,0);
+    ofBackground(255, 0, 0);
     ofEnableAlphaBlending();
-    filterElements(filters, &contextTreeRoot);
+    filterElements(filters, startElement);
     ofClearAlpha();
     fboPtr->end();
+    ofPopMatrix();
 }
 
 void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *element){
@@ -261,13 +267,20 @@ void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *elemen
     bool noFilters = filters->size() == 0;
     bool drawElement = noFilters || hasFilterID || hasFilterClass;
    
-    element->pushTransforms();
     if(drawElement){
         element->getFbo()->draw(0,0);
     }
     for(int i = 0 ; i < element->children.size(); i++){
         filterElements(filters, element->children[i]);
     }
-    element->popTransforms();
     
+}
+
+ofxLayoutElement* ofxLayout::getElementById(string ID){
+    if(idElementMap.count(ID) == 0){
+        return NULL;
+    }
+    else{
+        return idElementMap[ID];
+    }
 }

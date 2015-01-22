@@ -57,8 +57,7 @@ void ofxLayoutElement::update(){
     ofRect(0,0,boundary.width, boundary.height);
     if(getStyle(OSS_KEY::MASK) != ""){
         vector<string> filters;
-        filters.push_back(getStyle(OSS_KEY::MASK));
-        layout->computeFbo(elementMask.getMasker(),&filters);
+        layout->computeFbo(elementMask.getMasker(),&filters, layout->getElementById(getStyle(OSS_KEY::MASK)));
     }
     elementMask.endMask();
     elementMask.begin();
@@ -192,6 +191,7 @@ string ofxLayoutElement::getID(){
 
 void ofxLayoutElement::setID(string ID){
     this->ID = ID;
+    this->layout->idElementMap["#"+ID] = this;
 }
 
 bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
