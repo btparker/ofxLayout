@@ -53,6 +53,8 @@ public:
     ofxLayoutElement* getElementById(string ID);
     map<string, ofxLayoutElement*> idElementMap;
     
+    string populateExpressions(string value);
+    
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;

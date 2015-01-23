@@ -18,9 +18,6 @@ void ofxLayoutElement::setFonts(map<string, ofxFontStash>* fontsPtr){
     this->fontsPtr = fontsPtr;
 }
 
-void ofxLayoutElement::setData(map<string, string>* dataPtr){
-    this->dataPtr = dataPtr;
-}
 
 ofxLayoutElement::~ofxLayoutElement(){
     if(video != NULL){
@@ -88,7 +85,6 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
     child->setLayout(this->layout);
     child->setAssets(this->assetsPtr);
     child->setFonts(this->fontsPtr);
-    child->setData(this->dataPtr);
     children.push_back(child);
 }
 
@@ -116,13 +112,6 @@ string ofxLayoutElement::getValue(){
 }
 
 void ofxLayoutElement::setValue(string value){
-    if(ofStringTimesInString(value, "{{") > 0){
-        string dataKey = value.substr(2,value.size()-4);
-        
-        if(dataPtr->count(dataKey) > 0){
-            value = dataPtr->at(dataKey);
-        }
-    }
     this->elementValue = value;
 }
 
@@ -214,13 +203,86 @@ void ofxLayoutElement::drawStyles(){
         drawBackgroundImage();
         drawBackgroundVideo();
         drawBackgroundColor();
+        drawBackgroundGradient();
     }
     else{
         drawBackgroundColor();
+        drawBackgroundGradient();
         drawBackgroundVideo();
         drawBackgroundImage();
     }
+    
     endBackgroundBlendMode();
+}
+
+void ofxLayoutElement::drawBackgroundGradient(){
+    if(hasStyle(OSS_KEY::BACKGROUND_GRADIENT)){
+        
+        bool vertical;// = true;
+        ofColor firstColor;//(1.0f, 0.0f, 0.0f, 0.0f);
+        ofColor secondColor;//(0.0f, 0.0f, 1.0f, 1.0f  );
+        ofxOSS::parseBackgroundGradient(getStyle(OSS_KEY::BACKGROUND_GRADIENT), &firstColor, &secondColor, &vertical);
+        
+        ofFloatColor firstColorF = firstColor;
+        if(firstColor.limit() == 255){
+            firstColorF.set(firstColor.r/255.0f, firstColor.g/255.0f, firstColor.b/255.0f, firstColor.a/255.0f);
+        }
+        
+        ofFloatColor secondColorF = secondColor;
+        if(secondColor.limit() == 255){
+            secondColorF.set(secondColor.r/255.0f, secondColor.g/255.0f, secondColor.b/255.0f, secondColor.a/255.0f);
+        }
+        // Maybe there is a simpler OF way, but I was having issues with
+        // boundary using ofBackgroundGradient
+        
+        glDepthMask(false);
+        glEnable(GL_BLEND);
+        glBegin(GL_QUADS);
+        
+        //FIRST COLOR
+        glColor4f( firstColorF.r, firstColorF.g, firstColorF.b, firstColorF.a );
+        
+        // TL
+        glVertex3f( 0.0f, 0.0f, 0.0f );
+        
+        // FOR TR
+        if(vertical){
+            //FIRST COLOR
+            glColor4f( firstColorF.r, firstColorF.g, firstColorF.b, firstColorF.a  );
+        }
+        else{
+            //SECOND COLOR
+            glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
+        }
+        
+        //TR
+        glVertex3f( boundary.width, 0.0f, 0.0f );
+        
+        
+        //SECOND COLOR (FOR BR)
+        glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
+        
+        //BR
+        glVertex3f( boundary.width, boundary.height, 0.0f );
+        
+        // FOR BL
+        if(vertical){
+            //SECOND COLOR
+            glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
+        }
+        else{
+            //FIRST COLOR
+            glColor4f( firstColorF.r, firstColorF.g, firstColorF.b, firstColorF.a  );
+        }
+        
+        //BL
+        glVertex3f( 0.0f, boundary.height, 0.0f );
+        
+        glDisable(GL_BLEND);
+        glEnd();
+        glDepthMask(true);
+    }
+    
 }
 
 bool ofxLayoutElement::beginBackgroundBlendMode(){

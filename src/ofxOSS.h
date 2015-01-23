@@ -7,18 +7,34 @@ class ofxOSS;
 
 // Types of styles
 namespace OSS_TYPE{
-    enum ENUM{INVALID, COLOR, NUMBER, POSITION, IMAGE};
+    enum ENUM{COLOR, NUMBER, POSITION, IMAGE, INVALID};
 };
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM, MASK, BACKGROUND_REPEAT, DISPLAY};
+    enum ENUM{
+        // DRAWING
+        OPACITY, MASK, DISPLAY,
+        
+        // TRANSFORMS
+        WIDTH, HEIGHT, POSITION,
+        
+        // BACKGROUND
+        BACKGROUND_COLOR, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE,
+        BACKGROUND_POSITION, BACKGROUND_BLEND_MODE, BACKGROUND_GRADIENT, BACKGROUND_REPEAT,
+        
+        // TEXT
+        FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, TEXT_TRANSFORM,
+        
+        // Invalid is last in case we want to extend the enum
+        INVALID
+    };
 };
 
 namespace OSS_VALUE{
     enum ENUM{
         // GENERAL
-        INVALID, NONE, AUTO,
+        NONE, AUTO,
         
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
@@ -33,7 +49,10 @@ namespace OSS_VALUE{
         UPPERCASE, LOWERCASE, CAPITALIZE,
         
         // BACKGROUND REPEAT
-        REPEAT, REPEAT_X, REPEAT_Y
+        REPEAT, REPEAT_X, REPEAT_Y,
+        
+        // Invalid is last in case we want to extend the enum
+        INVALID
     };
 };
 
@@ -120,14 +139,9 @@ public:
     /// \param colorValue The string of the css-like color input
     static ofColor parseColor(string colorValue);
     
-    /// \brief Given a comma deliminated string of color channels ( '255, 0, 0' ), return the ofColor
-    ///
-    /// Useful because color is stored this way in the stylesMap. Can handle rgba.
-    ///
-    /// \param colorChannels The string of color channels ( '255, 0, 0' )
-    static ofColor parseColorChannels(string colorChannels);
     
     
+    static void parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical);
     
     
     
@@ -181,6 +195,13 @@ public:
     
     
 private:
+    /// \brief Given a comma deliminated string of color channels ( '255, 0, 0' ), return the ofColor
+    ///
+    /// Useful because color is stored this way in the stylesMap. Can handle rgba.
+    ///
+    /// \param colorChannels The string of color channels ( '255, 0, 0' )
+    static ofColor parseColorChannels(string colorChannels);
+    
     /// \brief Calculates the x position (from the left) given a style string and relevant boundary information
     ///
     /// \param string xStr Describes the x position ('center', 50px, 25%)

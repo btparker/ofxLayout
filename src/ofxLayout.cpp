@@ -5,7 +5,6 @@
 
 ofxLayout::ofxLayout(){
     contextTreeRoot.setAssets(&assets);
-    contextTreeRoot.setData(&data);
     contextTreeRoot.setFonts(&fonts);
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
@@ -100,15 +99,19 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string tag = ofxLayoutElement::getTagString(tagEnum);
     
     string id = xmlLayout->getAttribute(tag,"id", "", which);
+    id = populateExpressions(id);
     element->setID(id);
     
     string classes = xmlLayout->getAttribute(tag,"class", "", which);
+    classes = populateExpressions(classes);
     element->setClasses(classes);
     
     string style = xmlLayout->getAttribute(tag,"style", "", which);
+    style = populateExpressions(style);
     element->setInlineStyle(style);
     
     string value = xmlLayout->getValue(tag,"", which);
+    value = populateExpressions(value);
     element->setValue(value);
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
@@ -161,16 +164,9 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
         }
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
-            if(ofStringTimesInString(value, "{{") > 0){
-                string dataKey = value.substr(2,value.size()-4);
-                
-                if(data.count(dataKey) > 0){
-                    value = data[dataKey];
-                }
-            }
-
-            ofxOssRule ossRule = ofxOSS::generateRule(key, value);
+            value = populateExpressions(value);
             
+            ofxOssRule ossRule = ofxOSS::generateRule(key, value);
             styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
         }
         else{
@@ -283,4 +279,29 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     else{
         return idElementMap[ID];
     }
+}
+
+string ofxLayout::populateExpressions(string input){
+    string value = input;
+    while(ofStringTimesInString(value, "{{") > 0){
+        string leftDeliminator = "{{";
+        string rightDeliminator = "}}";
+        
+        int leftDeliminatorPos = input.find(leftDeliminator);
+        int rightDeliminatorPos = input.find(rightDeliminator);
+        
+        int dataKeyPos = leftDeliminatorPos+leftDeliminator.length();
+        int dataKeyLength = rightDeliminatorPos-dataKeyPos;
+
+        string dataKey = input.substr(dataKeyPos, dataKeyLength);
+        
+        if(data.count(dataKey) > 0){
+            ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, data[dataKey]);
+        }
+        else{
+            ofLogWarning("ofxLayout::populateExpressions","Could not find data value for key '{{"+dataKey+"}}', replaced with ''.");
+            ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, "");
+        }
+    }
+    return value;
 }
