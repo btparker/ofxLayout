@@ -12,7 +12,7 @@ namespace OSS_TYPE{
 
 // Style keys, in order to enforce string input
 namespace OSS_KEY{
-    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM, MASK, BACKGROUND_REPEAT, DISPLAY};
+    enum ENUM{INVALID, BACKGROUND_COLOR, WIDTH, HEIGHT, POSITION, BACKGROUND_IMAGE, BACKGROUND_VIDEO, BACKGROUND_SIZE, BACKGROUND_POSITION, FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, BACKGROUND_BLEND_MODE, OPACITY, TEXT_TRANSFORM, MASK, BACKGROUND_REPEAT, DISPLAY, BACKGROUND_GRADIENT};
 };
 
 namespace OSS_VALUE{
@@ -127,7 +127,7 @@ public:
     /// \param colorChannels The string of color channels ( '255, 0, 0' )
     static ofColor parseColorChannels(string colorChannels);
     
-    
+    static void parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical);
     
     
     

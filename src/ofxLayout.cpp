@@ -5,7 +5,6 @@
 
 ofxLayout::ofxLayout(){
     contextTreeRoot.setAssets(&assets);
-    contextTreeRoot.setData(&data);
     contextTreeRoot.setFonts(&fonts);
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
@@ -108,7 +107,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     element->setInlineStyle(style);
     
-    string value = xmlLayout->getValue(tag,"", which);
+    string value = populateValueExpressions(xmlLayout->getValue(tag,"", which));
     element->setValue(value);
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
@@ -160,15 +159,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
         else if(ofxOSS::validKey(key)){
-            string value = (*jsonElement)[key].asString();
-            if(ofStringTimesInString(value, "{{") > 0){
-                string dataKey = value.substr(2,value.size()-4);
-                
-                if(data.count(dataKey) > 0){
-                    value = data[dataKey];
-                }
-            }
-
+            string value = populateValueExpressions((*jsonElement)[key].asString());
             ofxOssRule ossRule = ofxOSS::generateRule(key, value);
             
             styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
@@ -283,4 +274,28 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     else{
         return idElementMap[ID];
     }
+}
+
+string ofxLayout::populateValueExpressions(string input){
+    string value = input;
+    while(ofStringTimesInString(value, "{{") > 0){
+        string leftDeliminator = "{{";
+        string rightDeliminator = "}}";
+        
+        int leftDeliminatorPos = input.find(leftDeliminator);
+        int rightDeliminatorPos = input.find(rightDeliminator);
+        
+        int dataKeyPos = leftDeliminatorPos+leftDeliminator.length();
+        int dataKeyLength = rightDeliminatorPos-dataKeyPos;
+
+        string dataKey = input.substr(dataKeyPos, dataKeyLength);
+        
+        if(data.count(dataKey) > 0){
+            ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, data[dataKey]);
+        }
+        else{
+            ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, "");
+        }
+    }
+    return value;
 }
