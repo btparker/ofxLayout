@@ -51,7 +51,7 @@ void ofxLayoutElement::update(){
     elementMask.beginMask();
     ofClear(0,0,0,0);
     ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    ofRect(0,0,boundary.width, boundary.height);
+    ofDrawRectangle(0,0,boundary.width, boundary.height);
     if(getStyle(OSS_KEY::MASK) != ""){
         vector<string> filters;
         layout->computeFbo(elementMask.getMasker(),&filters, layout->getElementById(getStyle(OSS_KEY::MASK)));
@@ -342,14 +342,14 @@ void ofxLayoutElement::drawBackgroundVideo(){
         
         if(video == NULL){
             video = new ofVideoPlayer();
-            video->loadMovie(videoPath);
+            video->load(videoPath);
             video->setVolume(0.0f);
             video->play();
             video->setLoopState(OF_LOOP_NORMAL);
         }
         else{
             video->update();
-            drawBackgroundTexture(&video->getTextureReference());
+            drawBackgroundTexture(&video->getTexture());
         }
         
     }
@@ -416,7 +416,7 @@ void ofxLayoutElement::drawBackgroundColor(){
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
         ofFill();
-        ofRect(0,0,boundary.width,boundary.height);
+        ofDrawRectangle(0,0,boundary.width,boundary.height);
     }
 }
 
