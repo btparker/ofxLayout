@@ -99,15 +99,19 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string tag = ofxLayoutElement::getTagString(tagEnum);
     
     string id = xmlLayout->getAttribute(tag,"id", "", which);
+    id = populateExpressions(id);
     element->setID(id);
     
     string classes = xmlLayout->getAttribute(tag,"class", "", which);
+    classes = populateExpressions(classes);
     element->setClasses(classes);
     
     string style = xmlLayout->getAttribute(tag,"style", "", which);
+    style = populateExpressions(style);
     element->setInlineStyle(style);
     
-    string value = populateValueExpressions(xmlLayout->getValue(tag,"", which));
+    string value = xmlLayout->getValue(tag,"", which);
+    value = populateExpressions(value);
     element->setValue(value);
     // Push into current element, and load all children of different valid tag types
     xmlLayout->pushTag(tag, which);
@@ -159,9 +163,10 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
         else if(ofxOSS::validKey(key)){
-            string value = populateValueExpressions((*jsonElement)[key].asString());
-            ofxOssRule ossRule = ofxOSS::generateRule(key, value);
+            string value = (*jsonElement)[key].asString();
+            value = populateExpressions(value);
             
+            ofxOssRule ossRule = ofxOSS::generateRule(key, value);
             styleObject->rules[ofxOSS::getOssKeyFromString(key)] = ossRule;
         }
         else{
@@ -276,7 +281,7 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     }
 }
 
-string ofxLayout::populateValueExpressions(string input){
+string ofxLayout::populateExpressions(string input){
     string value = input;
     while(ofStringTimesInString(value, "{{") > 0){
         string leftDeliminator = "{{";
@@ -294,7 +299,7 @@ string ofxLayout::populateValueExpressions(string input){
             ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, data[dataKey]);
         }
         else{
-            ofLogWarning("ofxLayout::populateValueExpressions","Could not find data value for key '{{"+dataKey+"}}', replaced with ''.");
+            ofLogWarning("ofxLayout::populateExpressions","Could not find data value for key '{{"+dataKey+"}}', replaced with ''.");
             ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, "");
         }
     }
