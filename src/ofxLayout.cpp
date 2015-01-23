@@ -278,32 +278,24 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
 
 string ofxLayout::populateValueExpressions(string input){
     string value = input;
-    if(ofStringTimesInString(input, "{{") > 0){
-        string dataKey = input;
-        string dataValue = "";
-        string leftValue = "";
-        string rightValue = "";
-        vector<string> left = ofSplitString(dataKey, "{{", true);
-        if(left.size() == 1){
-            dataKey = left[0];
-        }
-        else{
-            leftValue = left[0];
-            left.erase(left.begin());
-            dataKey = ofJoinString(left, "");
-        }
-        vector<string> right = ofSplitString(dataKey, "}}", true);
-        dataKey = right[0];
+    while(ofStringTimesInString(value, "{{") > 0){
+        string leftDeliminator = "{{";
+        string rightDeliminator = "}}";
+        
+        int leftDeliminatorPos = input.find(leftDeliminator);
+        int rightDeliminatorPos = input.find(rightDeliminator);
+        
+        int dataKeyPos = leftDeliminatorPos+leftDeliminator.length();
+        int dataKeyLength = rightDeliminatorPos-dataKeyPos;
+
+        string dataKey = input.substr(dataKeyPos, dataKeyLength);
         
         if(data.count(dataKey) > 0){
-            dataValue = data[dataKey];
+            ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, data[dataKey]);
         }
-        
-        if(right.size() > 1){
-            right.erase(right.begin());
-            rightValue = populateValueExpressions(ofJoinString(right, ""));
+        else{
+            ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, "");
         }
-        value = leftValue + dataValue + rightValue;
     }
     return value;
 }
