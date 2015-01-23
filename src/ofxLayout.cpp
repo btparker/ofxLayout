@@ -294,6 +294,7 @@ string ofxLayout::populateValueExpressions(string input){
             ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, data[dataKey]);
         }
         else{
+            ofLogWarning("ofxLayout::populateValueExpressions","Could not find data value for key '{{"+dataKey+"}}', replaced with ''.");
             ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, "");
         }
     }
