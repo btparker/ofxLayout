@@ -188,7 +188,7 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].getStringValue();
+    return this->styles.rules[styleKey].getString();
 }
 
 /// |   Utilities   | ///

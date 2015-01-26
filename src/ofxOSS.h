@@ -2,12 +2,11 @@
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxFontStash.h"
-
-class ofxOSS;
+#include "ofxAnimatableManager.h"
 
 // Types of styles
 namespace OSS_TYPE{
-    enum ENUM{COLOR, NUMBER, POSITION, IMAGE, INVALID};
+    enum ENUM{NONE, COLOR, NUMBER, POSITION, IMAGE, INVALID};
 };
 
 // Style keys, in order to enforce string input
@@ -56,33 +55,9 @@ namespace OSS_VALUE{
     };
 };
 
-class ofxOssRule{
-public:
-    string getStringValue(){
-        return this->stringValue;
-    }
-    
-    void setValue(string value){
-        this->stringValue = value;
-    }
-    
-    OSS_TYPE::ENUM getType(){
-        return this->type;
-    }
-    
-    void setType(OSS_TYPE::ENUM type){
-        this->type = type;
-    }
-    
-protected:
-    OSS_TYPE::ENUM type;
-    string stringValue;
-    ofColor colorValue;
-    float numberValue;
-};
+class ofxOssRule;
 
 class ofxOSS{
-    
 public:
     ofxOSS();
     ~ofxOSS();
@@ -138,6 +113,7 @@ public:
     ///
     /// \param colorValue The string of the css-like color input
     static ofColor parseColor(string colorValue);
+    static string stringifyColor(ofColor color);
     
     
     
@@ -217,4 +193,71 @@ private:
     float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
     
     map<string,ofxFontStash*> fonts;
+};
+
+class ofxOssRule{
+public:
+    ofxOssRule(){
+        setType(OSS_TYPE::NONE);
+    }
+    
+    ofxOssRule(string value){
+        setType(OSS_TYPE::NONE);
+        this->stringValue = value;
+    }
+    
+    ofxOssRule(ofColor color){
+        setType(OSS_TYPE::COLOR);
+    }
+    string getString(){
+        switch(getType()){
+            case OSS_TYPE::COLOR:
+                this->stringValue = ofxOSS::stringifyColor(getColor());
+                break;
+            case OSS_TYPE::NUMBER:
+                this->stringValue = ofToString(numberValue.getCurrentValue());
+                break;
+            default:;
+        }
+        return this->stringValue;
+    }
+    
+    void setValue(string value){
+        switch(getType()){
+            case OSS_TYPE::COLOR:
+                this->colorValue.setColor(ofxOSS::parseColor(value));
+                break;
+            case OSS_TYPE::NUMBER:
+                this->numberValue.animateTo(ofToFloat(value));
+                break;
+            default:;
+        }
+        this->stringValue = value;
+    }
+    
+    void setColor(ofColor color){
+        this->colorValue.setColor(color);
+    }
+    
+    ofColor getColor(){
+        return colorValue.getCurrentColor();
+    }
+    
+    ofxAnimatableOfColor* getAnimatableColor(){
+        return &colorValue;
+    }
+    
+    OSS_TYPE::ENUM getType(){
+        return this->type;
+    }
+    
+    void setType(OSS_TYPE::ENUM type){
+        this->type = type;
+    }
+    
+protected:
+    OSS_TYPE::ENUM type = OSS_TYPE::NONE;
+    string stringValue;
+    ofxAnimatableOfColor colorValue;
+    ofxAnimatableFloat numberValue;
 };
