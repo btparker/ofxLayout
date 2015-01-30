@@ -128,6 +128,18 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "background-gradient"){
         return OSS_KEY::BACKGROUND_GRADIENT;
     }
+    else if(key == "text-background-color"){
+        return OSS_KEY::TEXT_BACKGROUND_COLOR;
+    }
+    else if(key == "text-padding"){
+        return OSS_KEY::TEXT_PADDING;
+    }
+    else if(key == "text-max-width"){
+        return OSS_KEY::TEXT_MAX_WIDTH;
+    }
+    else if(key == "line-height"){
+        return OSS_KEY::LINE_HEIGHT;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -193,6 +205,18 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BACKGROUND_GRADIENT:
             keyString = "background-gradient";
+            break;
+        case OSS_KEY::TEXT_BACKGROUND_COLOR:
+            keyString = "text-background-color";
+            break;
+        case OSS_KEY::TEXT_PADDING:
+            keyString = "text-padding";
+            break;
+        case OSS_KEY::TEXT_MAX_WIDTH:
+            keyString = "text-max-width";
+            break;
+        case OSS_KEY::LINE_HEIGHT:
+            keyString = "line-height";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
