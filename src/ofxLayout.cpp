@@ -126,13 +126,6 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         element->addChild(child);
         loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
     }
-    
-    int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
-    for(int i = 0; i < numTextElements; i++){
-        ofxLayoutTextElement* child = new ofxLayoutTextElement();
-        element->addChild(child);
-        loadFromXmlLayout(xmlLayout, child, TAG::TEXT, i);
-    }
 }
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
@@ -142,6 +135,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
         ofxJSONElement value = (*jsonElement)[key];
         bool keyIsId = key.substr(0,1) == "#";
         bool keyIsClass = key.substr(0,1) == ".";
+        // ID
         if(keyIsId){
             string idName = key.substr(1);
             bool idExists = styleObject->idMap.count(idName) > 0;
@@ -152,6 +146,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             
             loadFromOss(&value, &(styleObject->idMap[idName]));
         }
+        // Class
         else if(keyIsClass){
             string className = key.substr(1);
             bool classExists = styleObject->classMap.count(className) > 0;
@@ -162,6 +157,16 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
             
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
+        // Animation keyframes
+        else if(ofStringTimesInString(key, "@keyframes") > 0){
+            string animationName = ofSplitString(key, "@keyframes ", true, true)[0];
+            vector<string> keyframes = value.getMemberNames();
+            for(int i = 0; i < keyframes.size(); i++){
+                string keyframeKey = keyframes[i];
+                float normalizedPercentage = ofToFloat(keyframeKey)/100.0f;
+            }
+        }
+        // Style Key
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
             value = populateExpressions(value);

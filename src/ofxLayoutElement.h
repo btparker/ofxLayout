@@ -7,7 +7,7 @@
 #include "ofxMask.h"
 
 namespace TAG {
-    enum ENUM{BODY, ELEMENT, TEXT, INVALID};
+    enum ENUM{BODY, ELEMENT, INVALID};
 };
 
 class ofxLayout;
@@ -67,14 +67,13 @@ public:
     
     ofFbo* getFbo();
     
-    void pushTransforms();
-    void popTransforms();
-    
+    void drawBackground();
     void drawBackgroundImage();
     void drawBackgroundVideo();
     void drawBackgroundColor();
     void drawBackgroundGradient();
     void drawBackgroundTexture(ofTexture* texture);
+    void drawText();
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();

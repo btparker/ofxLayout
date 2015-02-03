@@ -6,58 +6,41 @@ ofxOSS::ofxOSS(){
 
 void ofxOSS::setDefaults(){
     // Create defaults
-    ofxOssRule backgroundColorDefault;
-    backgroundColorDefault.setValue("rgba(0,0,0,0)");
+    ofxOssRule backgroundColorDefault(ofColor(0,0,0,0));
     this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
     
-    ofxOssRule positionDefault;
-    positionDefault.setValue("0px 0px");
+    ofxOssRule positionDefault("0px 0px");
     this->rules[OSS_KEY::POSITION] = positionDefault;
     
-    
-    ofxOssRule bgPositionDefault;
-    bgPositionDefault.setValue(getStringFromOssValue(OSS_VALUE::AUTO));
+    ofxOssRule bgPositionDefault(getStringFromOssValue(OSS_VALUE::AUTO));
     this->rules[OSS_KEY::BACKGROUND_POSITION] = bgPositionDefault;
     
-    ofxOssRule widthDefault;
-    widthDefault.setValue("100%");
+    ofxOssRule widthDefault("100%");
     this->rules[OSS_KEY::WIDTH] = widthDefault;
     
-    ofxOssRule heightDefault;
-    heightDefault.setValue("100%");
+    ofxOssRule heightDefault("100%");
     this->rules[OSS_KEY::HEIGHT] = heightDefault;
     
-    ofxOssRule textAlignDefault;
-    textAlignDefault.setValue(getStringFromOssValue(OSS_VALUE::LEFT));
+    ofxOssRule textAlignDefault(getStringFromOssValue(OSS_VALUE::LEFT));
     this->rules[OSS_KEY::TEXT_ALIGN] = textAlignDefault;
     
-    ofxOssRule fontSizeDefault;
-    fontSizeDefault.setValue("50");
+    ofxOssRule fontSizeDefault("50");
     this->rules[OSS_KEY::FONT_SIZE] = fontSizeDefault;
     
-    ofxOssRule bgSizeDefault;
-    bgSizeDefault.setValue(getStringFromOssValue(OSS_VALUE::AUTO));
+    ofxOssRule bgSizeDefault(getStringFromOssValue(OSS_VALUE::AUTO));
     this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
     
-    ofxOssRule bgBlendModeDefault;
-    bgBlendModeDefault.setValue(getStringFromOssValue(OSS_VALUE::DISABLED));
+    ofxOssRule bgBlendModeDefault(getStringFromOssValue(OSS_VALUE::DISABLED));
     this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
     
-    ofxOssRule opacityDefault;
-    opacityDefault.setValue("1.0f");
+    ofxOssRule opacityDefault("1.0f");
     this->rules[OSS_KEY::OPACITY] = opacityDefault;
     
-    ofxOssRule textTransformDefault;
-    textTransformDefault.setValue(getStringFromOssValue(OSS_VALUE::NONE));
+    ofxOssRule textTransformDefault(getStringFromOssValue(OSS_VALUE::NONE));
     this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
     
-    ofxOssRule colorDefault;
-    colorDefault.setValue("rgb(0,0,0)");
+    ofxOssRule colorDefault(ofColor::black);
     this->rules[OSS_KEY::COLOR] = colorDefault;
-    
-    ofxOssRule maskDefault;
-    maskDefault.setValue("");
-    this->rules[OSS_KEY::MASK] = maskDefault;
 }
 
 ofxOSS::~ofxOSS(){
@@ -70,12 +53,12 @@ ofxOSS::~ofxOSS(){
 /// |   Setters/Getters   | ///
 /// | ------------------- | ///
 
-string ofxOSS::getStyle(string key){
+ofxOssRule ofxOSS::getStyle(string key){
     return getStyle(getOssKeyFromString(key));
 }
 
-string ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
-    return this->rules[styleKey].getStringValue();
+ofxOssRule ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
+    return this->rules[styleKey].getString();
 }
 
 bool ofxOSS::validKey(string key){
@@ -145,6 +128,21 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "background-gradient"){
         return OSS_KEY::BACKGROUND_GRADIENT;
     }
+    else if(key == "text-background-color"){
+        return OSS_KEY::TEXT_BACKGROUND_COLOR;
+    }
+    else if(key == "text-padding"){
+        return OSS_KEY::TEXT_PADDING;
+    }
+    else if(key == "text-max-width"){
+        return OSS_KEY::TEXT_MAX_WIDTH;
+    }
+    else if(key == "line-height"){
+        return OSS_KEY::LINE_HEIGHT;
+    }
+    else if(key == "blur"){
+        return OSS_KEY::BLUR;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -210,6 +208,21 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BACKGROUND_GRADIENT:
             keyString = "background-gradient";
+            break;
+        case OSS_KEY::TEXT_BACKGROUND_COLOR:
+            keyString = "text-background-color";
+            break;
+        case OSS_KEY::TEXT_PADDING:
+            keyString = "text-padding";
+            break;
+        case OSS_KEY::TEXT_MAX_WIDTH:
+            keyString = "text-max-width";
+            break;
+        case OSS_KEY::LINE_HEIGHT:
+            keyString = "line-height";
+            break;
+        case OSS_KEY::BLUR:
+            keyString = "blur";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -383,6 +396,49 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
 }
 
+OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
+    OSS_TYPE::ENUM type;
+    switch (key) {
+        case OSS_KEY::BACKGROUND_COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::OPACITY:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::HEIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::FONT_SIZE:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::LINE_HEIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::TEXT_MAX_WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::TEXT_BACKGROUND_COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::TEXT_TRANSFORM:
+            type = OSS_TYPE::OSS_VALUE;
+        default:
+            type = OSS_TYPE::NONE;
+            break;
+    }
+    return type;
+}
+
+OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(string key){
+    return getOssTypeFromOssKey(getOssKeyFromString(key));
+}
+
 /// |   Color Styles   | ///
 /// | ---------------- | ///
 
@@ -438,9 +494,9 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
 /// | ------------------------- | ///
 ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
     ofRectangle transform = ofRectangle();
-    float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH), parentBoundary.width);
+    float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH).getString(), parentBoundary.width);
     transform.width = width;
-    float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT), parentBoundary.height);
+    float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT).getString(), parentBoundary.height);
     transform.height = height;
     ofPoint pos = getPosition(transform, parentBoundary);
     transform.setPosition(pos);
@@ -448,7 +504,7 @@ ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
 }
 
 float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension){
-    string dimensionValue = getStyle(dimensionKey);
+    string dimensionValue = getStyle(dimensionKey).getString();
     return getDimensionStyleValue(dimensionValue, parentDimension);
 }
 
@@ -471,13 +527,13 @@ float ofxOSS::getDimensionStyleValue(string dimensionValue, float parentDimensio
 }
 
 ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
-    string posString = getStyle(OSS_KEY::POSITION);
+    string posString = getStyle(OSS_KEY::POSITION).getString();
     return computePosition(posString,boundary, parentBoundary);
 }
 
 
 ofPoint ofxOSS::getBackgroundPosition(ofRectangle boundary, ofRectangle parentBoundary){
-    string posString = getStyle(OSS_KEY::BACKGROUND_POSITION);
+    string posString = getStyle(OSS_KEY::BACKGROUND_POSITION).getString();
     return computePosition(posString,boundary, parentBoundary);
 }
 
@@ -508,7 +564,7 @@ ofPoint ofxOSS::computePosition(string posString, ofRectangle boundary, ofRectan
 ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectangle boundary){
     ofRectangle result = ofRectangle(dimensions);
     
-    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE);
+    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE).getString();
     
     
     vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
@@ -592,6 +648,7 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 
 ofxOssRule ofxOSS::generateRule(string key, string value){
     ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
     ossRule.setValue(value);
     return ossRule;
 }
@@ -601,4 +658,8 @@ void ofxOSS::parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, 
     firstColor->set(parseColor(pieces[0]));
     secondColor->set(parseColor(pieces[1]));
     *vertical = !(pieces.size() > 2 && pieces[2] == "horizontal");
+}
+
+string ofxOSS::stringifyColor(ofColor color){
+    return "rgba("+ofJoinString(ofSplitString(ofToString(color), ", ", true, true),",")+")";
 }

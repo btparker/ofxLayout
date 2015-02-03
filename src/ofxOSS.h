@@ -2,12 +2,11 @@
 #include "ofMain.h"
 #include "ofxJSON.h"
 #include "ofxFontStash.h"
-
-class ofxOSS;
+#include "ofxAnimatableManager.h"
 
 // Types of styles
 namespace OSS_TYPE{
-    enum ENUM{COLOR, NUMBER, POSITION, IMAGE, INVALID};
+    enum ENUM{NONE, COLOR, NUMBER, OSS_VALUE, PERCENT, INVALID};
 };
 
 // Style keys, in order to enforce string input
@@ -24,7 +23,10 @@ namespace OSS_KEY{
         BACKGROUND_POSITION, BACKGROUND_BLEND_MODE, BACKGROUND_GRADIENT, BACKGROUND_REPEAT,
         
         // TEXT
-        FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, TEXT_TRANSFORM,
+        FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, TEXT_TRANSFORM, TEXT_BACKGROUND_COLOR,
+        TEXT_PADDING, TEXT_MAX_WIDTH, LINE_HEIGHT,
+        
+        BLUR,
         
         // Invalid is last in case we want to extend the enum
         INVALID
@@ -56,33 +58,9 @@ namespace OSS_VALUE{
     };
 };
 
-class ofxOssRule{
-public:
-    string getStringValue(){
-        return this->stringValue;
-    }
-    
-    void setValue(string value){
-        this->stringValue = value;
-    }
-    
-    OSS_TYPE::ENUM getType(){
-        return this->type;
-    }
-    
-    void setType(OSS_TYPE::ENUM type){
-        this->type = type;
-    }
-    
-protected:
-    OSS_TYPE::ENUM type;
-    string stringValue;
-    ofColor colorValue;
-    float numberValue;
-};
+class ofxOssRule;
 
 class ofxOSS{
-    
 public:
     ofxOSS();
     ~ofxOSS();
@@ -90,8 +68,8 @@ public:
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
     
-    string getStyle(OSS_KEY::ENUM key);
-    string getStyle(string key);
+    ofxOssRule getStyle(OSS_KEY::ENUM key);
+    ofxOssRule getStyle(string key);
     
     static bool validKey(string key);
     static bool validKey(OSS_KEY::ENUM key);
@@ -118,7 +96,8 @@ public:
     
     static string getStringFromOssValue(OSS_VALUE::ENUM value);
     static OSS_VALUE::ENUM getOssValueFromString(string value);
-    
+    static OSS_TYPE::ENUM getOssTypeFromOssKey(OSS_KEY::ENUM key);
+    static OSS_TYPE::ENUM getOssTypeFromOssKey(string key);
     /// \brief Loads and parses an OSS file, stores in relevant styles
     ///
     /// \param string filename
@@ -138,6 +117,7 @@ public:
     ///
     /// \param colorValue The string of the css-like color input
     static ofColor parseColor(string colorValue);
+    static string stringifyColor(ofColor color);
     
     
     
@@ -217,4 +197,110 @@ private:
     float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
     
     map<string,ofxFontStash*> fonts;
+};
+
+class ofxOssRule{
+public:
+    ofxOssRule(){
+        setType(OSS_TYPE::NONE);
+    }
+    
+    ofxOssRule(string value){
+        setType(OSS_TYPE::NONE);
+        setValue(value);
+    }
+    
+    ofxOssRule(ofColor color){
+        setType(OSS_TYPE::COLOR);
+        setColor(color);
+    }
+    
+    ofxOssRule(float number){
+        setType(OSS_TYPE::NUMBER);
+        setNumber(number);
+    }
+    
+    string getString(){
+        switch(getType()){
+            case OSS_TYPE::COLOR:
+                this->stringValue = ofxOSS::stringifyColor(getColor());
+                break;
+            case OSS_TYPE::OSS_VALUE:
+                this->stringValue = ofxOSS::getStringFromOssValue(getOssValue());
+                break;
+            case OSS_TYPE::NUMBER:
+                this->stringValue = ofToString(numberValue.getCurrentValue());
+                break;
+            case OSS_TYPE::PERCENT:
+                this->stringValue = ofToString(numberValue.getCurrentValue())+"%";
+                break;
+            default:;
+        }
+        return this->stringValue;
+    }
+    
+    void setValue(string value){
+        switch(getType()){
+            case OSS_TYPE::COLOR:
+                this->colorValue.setColor(ofxOSS::parseColor(value));
+                break;
+            case OSS_TYPE::OSS_VALUE:
+                this->ossValue = ofxOSS::getOssValueFromString(value);
+                break;
+            case OSS_TYPE::NUMBER:
+                if(ofStringTimesInString(value, "%") > 0){
+                    setType(OSS_TYPE::PERCENT);
+                }
+                this->numberValue.reset(ofToFloat(value));
+                break;
+            default:;
+        }
+        this->stringValue = value;
+    }
+    
+    void setColor(ofColor color){
+        this->colorValue.setColor(color);
+    }
+    
+    ofColor getColor(){
+        return colorValue.getCurrentColor();
+    }
+    
+    void setNumber(float number){
+        this->numberValue.reset(number);
+    }
+    
+    ofColor getNumber(){
+        return numberValue.getCurrentValue();
+    }
+    
+    void setOssValue(OSS_VALUE::ENUM ossValue){
+        this->ossValue = ossValue;
+    }
+    
+    OSS_VALUE::ENUM getOssValue(){
+        return this->ossValue;
+    }
+    
+    ofxAnimatableOfColor* getAnimatableColor(){
+        return &colorValue;
+    }
+    ofxAnimatableFloat* getAnimatableFloat(){
+        return &numberValue;
+    }
+    
+    OSS_TYPE::ENUM getType(){
+        return this->type;
+    }
+    
+    void setType(OSS_TYPE::ENUM type){
+        this->type = type;
+    }
+    
+protected:
+    OSS_TYPE::ENUM type = OSS_TYPE::NONE;
+    OSS_VALUE::ENUM ossValue = OSS_VALUE::NONE;
+    string stringValue;
+    ofxAnimatableOfColor colorValue;
+    ofxAnimatableFloat numberValue;
 };

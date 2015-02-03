@@ -1,7 +1,6 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxLayoutElement.h"
-#include "ofxLayoutTextElement.h"
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
