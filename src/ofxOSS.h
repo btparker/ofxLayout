@@ -94,7 +94,8 @@ public:
     
     static string getStringFromOssValue(OSS_VALUE::ENUM value);
     static OSS_VALUE::ENUM getOssValueFromString(string value);
-    
+    static OSS_TYPE::ENUM getOssTypeFromOssKey(OSS_KEY::ENUM key);
+    static OSS_TYPE::ENUM getOssTypeFromOssKey(string key);
     /// \brief Loads and parses an OSS file, stores in relevant styles
     ///
     /// \param string filename
@@ -216,7 +217,6 @@ public:
         setType(OSS_TYPE::NUMBER);
         setNumber(number);
     }
-    
     
     string getString(){
         switch(getType()){

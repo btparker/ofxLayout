@@ -390,6 +390,23 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
 }
 
+OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
+    OSS_TYPE::ENUM type;
+    switch (key) {
+        case OSS_KEY::BACKGROUND_COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        default:
+            type = OSS_TYPE::NONE;
+            break;
+    }
+    return type;
+}
+
+OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(string key){
+    return getOssTypeFromOssKey(getOssKeyFromString(key));
+}
+
 /// |   Color Styles   | ///
 /// | ---------------- | ///
 
@@ -598,7 +615,9 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 }
 
 ofxOssRule ofxOSS::generateRule(string key, string value){
-    ofxOssRule ossRule(value);
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setValue(value);
     return ossRule;
 }
 
@@ -610,11 +629,5 @@ void ofxOSS::parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, 
 }
 
 string ofxOSS::stringifyColor(ofColor color){
-    return
-    "rgba("+
-        ofToString(color.r)+","+
-        ofToString(color.g)+","+
-        ofToString(color.b)+","+
-        ofToString(color.a)+
-    ")";
+    return "rgba("+ofJoinString(ofSplitString(ofToString(color), ", ", true, true),",")+")";
 }
