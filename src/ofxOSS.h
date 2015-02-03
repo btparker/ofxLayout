@@ -66,8 +66,8 @@ public:
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
     
-    string getStyle(OSS_KEY::ENUM key);
-    string getStyle(string key);
+    ofxOssRule getStyle(OSS_KEY::ENUM key);
+    ofxOssRule getStyle(string key);
     
     static bool validKey(string key);
     static bool validKey(OSS_KEY::ENUM key);
