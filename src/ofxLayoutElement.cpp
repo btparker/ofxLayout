@@ -195,17 +195,16 @@ void ofxLayoutElement::drawBackground(){
     bool blendModeActive = beginBackgroundBlendMode();
     // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
     // based on whether blend mode is enabled or disabled
-    if(blendModeActive){
-        drawBackgroundImage();
-        drawBackgroundVideo();
+    if(!blendModeActive){
         drawBackgroundColor();
-        drawBackgroundGradient();
     }
-    else{
+    
+    drawBackgroundGradient();
+    drawBackgroundImage();
+    drawBackgroundVideo();
+    
+    if(blendModeActive){
         drawBackgroundColor();
-        drawBackgroundGradient();
-        drawBackgroundVideo();
-        drawBackgroundImage();
     }
     endBackgroundBlendMode();
 }
