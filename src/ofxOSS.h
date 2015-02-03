@@ -204,12 +204,20 @@ public:
     
     ofxOssRule(string value){
         setType(OSS_TYPE::NONE);
-        this->stringValue = value;
+        setValue(value);
     }
     
     ofxOssRule(ofColor color){
         setType(OSS_TYPE::COLOR);
+        setColor(color);
     }
+    
+    ofxOssRule(float number){
+        setType(OSS_TYPE::NUMBER);
+        setNumber(number);
+    }
+    
+    
     string getString(){
         switch(getType()){
             case OSS_TYPE::COLOR:
@@ -244,8 +252,19 @@ public:
         return colorValue.getCurrentColor();
     }
     
+    void setNumber(float number){
+        this->numberValue.reset(number);
+    }
+    
+    ofColor getNumber(){
+        return numberValue.getCurrentValue();
+    }
+    
     ofxAnimatableOfColor* getAnimatableColor(){
         return &colorValue;
+    }
+    ofxAnimatableFloat* getAnimatableFloat(){
+        return &numberValue;
     }
     
     OSS_TYPE::ENUM getType(){
