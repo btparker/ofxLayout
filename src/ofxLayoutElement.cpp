@@ -69,15 +69,6 @@ void ofxLayoutElement::update(){
     ofPopMatrix();
 }
 
-void ofxLayoutElement::pushTransforms(){
-    ofPushMatrix();
-    ofTranslate(boundary.x, boundary.y, 0);
-}
-
-void ofxLayoutElement::popTransforms(){
-    ofPopMatrix();
-}
-
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
     child->parent = this;
     child->setLayout(this->layout);
@@ -93,7 +84,6 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
-    
     elementMask.draw();
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){

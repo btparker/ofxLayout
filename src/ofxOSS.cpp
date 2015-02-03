@@ -140,6 +140,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "line-height"){
         return OSS_KEY::LINE_HEIGHT;
     }
+    else if(key == "blur"){
+        return OSS_KEY::BLUR;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -217,6 +220,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::LINE_HEIGHT:
             keyString = "line-height";
+            break;
+        case OSS_KEY::BLUR:
+            keyString = "blur";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -395,6 +401,24 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
     switch (key) {
         case OSS_KEY::BACKGROUND_COLOR:
             type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::OPACITY:
+            type = OSS_TYPE::NUMBER;
+            break;
+//        case OSS_KEY::WIDTH:
+//            type = OSS_TYPE::NUMBER;
+//            break;
+//        case OSS_KEY::HEIGHT:
+//            type = OSS_TYPE::NUMBER;
+//            break;
+        case OSS_KEY::FONT_SIZE:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::LINE_HEIGHT:
+            type = OSS_TYPE::NUMBER;
             break;
         default:
             type = OSS_TYPE::NONE;

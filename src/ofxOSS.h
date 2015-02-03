@@ -26,6 +26,8 @@ namespace OSS_KEY{
         FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, TEXT_TRANSFORM, TEXT_BACKGROUND_COLOR,
         TEXT_PADDING, TEXT_MAX_WIDTH, LINE_HEIGHT,
         
+        BLUR,
+        
         // Invalid is last in case we want to extend the enum
         INVALID
     };
@@ -237,7 +239,7 @@ public:
                 this->colorValue.setColor(ofxOSS::parseColor(value));
                 break;
             case OSS_TYPE::NUMBER:
-                this->numberValue.animateTo(ofToFloat(value));
+                this->numberValue.reset(ofToFloat(value));
                 break;
             default:;
         }
