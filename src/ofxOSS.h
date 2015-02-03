@@ -6,7 +6,7 @@
 
 // Types of styles
 namespace OSS_TYPE{
-    enum ENUM{NONE, COLOR, NUMBER, POSITION, IMAGE, INVALID};
+    enum ENUM{NONE, COLOR, NUMBER, OSS_VALUE, PERCENT, INVALID};
 };
 
 // Style keys, in order to enforce string input
@@ -225,8 +225,14 @@ public:
             case OSS_TYPE::COLOR:
                 this->stringValue = ofxOSS::stringifyColor(getColor());
                 break;
+            case OSS_TYPE::OSS_VALUE:
+                this->stringValue = ofxOSS::getStringFromOssValue(getOssValue());
+                break;
             case OSS_TYPE::NUMBER:
                 this->stringValue = ofToString(numberValue.getCurrentValue());
+                break;
+            case OSS_TYPE::PERCENT:
+                this->stringValue = ofToString(numberValue.getCurrentValue())+"%";
                 break;
             default:;
         }
@@ -238,7 +244,13 @@ public:
             case OSS_TYPE::COLOR:
                 this->colorValue.setColor(ofxOSS::parseColor(value));
                 break;
+            case OSS_TYPE::OSS_VALUE:
+                this->ossValue = ofxOSS::getOssValueFromString(value);
+                break;
             case OSS_TYPE::NUMBER:
+                if(ofStringTimesInString(value, "%") > 0){
+                    setType(OSS_TYPE::PERCENT);
+                }
                 this->numberValue.reset(ofToFloat(value));
                 break;
             default:;
@@ -262,6 +274,14 @@ public:
         return numberValue.getCurrentValue();
     }
     
+    void setOssValue(OSS_VALUE::ENUM ossValue){
+        this->ossValue = ossValue;
+    }
+    
+    OSS_VALUE::ENUM getOssValue(){
+        return this->ossValue;
+    }
+    
     ofxAnimatableOfColor* getAnimatableColor(){
         return &colorValue;
     }
@@ -279,6 +299,7 @@ public:
     
 protected:
     OSS_TYPE::ENUM type = OSS_TYPE::NONE;
+    OSS_VALUE::ENUM ossValue = OSS_VALUE::NONE;
     string stringValue;
     ofxAnimatableOfColor colorValue;
     ofxAnimatableFloat numberValue;

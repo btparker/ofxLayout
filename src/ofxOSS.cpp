@@ -408,18 +408,26 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::OPACITY:
             type = OSS_TYPE::NUMBER;
             break;
-//        case OSS_KEY::WIDTH:
-//            type = OSS_TYPE::NUMBER;
-//            break;
-//        case OSS_KEY::HEIGHT:
-//            type = OSS_TYPE::NUMBER;
-//            break;
+        case OSS_KEY::WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::HEIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
         case OSS_KEY::FONT_SIZE:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::LINE_HEIGHT:
             type = OSS_TYPE::NUMBER;
             break;
+        case OSS_KEY::TEXT_MAX_WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::TEXT_BACKGROUND_COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::TEXT_TRANSFORM:
+            type = OSS_TYPE::OSS_VALUE;
         default:
             type = OSS_TYPE::NONE;
             break;
