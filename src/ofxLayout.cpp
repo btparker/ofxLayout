@@ -126,13 +126,6 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         element->addChild(child);
         loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
     }
-    
-    int numTextElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::TEXT));
-    for(int i = 0; i < numTextElements; i++){
-        ofxLayoutTextElement* child = new ofxLayoutTextElement();
-        element->addChild(child);
-        loadFromXmlLayout(xmlLayout, child, TAG::TEXT, i);
-    }
 }
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
