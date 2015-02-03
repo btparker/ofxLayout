@@ -67,9 +67,6 @@ public:
     
     ofFbo* getFbo();
     
-    void pushTransforms();
-    void popTransforms();
-    
     void drawBackground();
     void drawBackgroundImage();
     void drawBackgroundVideo();
