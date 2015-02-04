@@ -161,6 +161,8 @@ public:
     
     static ofxOssRule generateRule(string key, string value);
     static ofxOssRule generateRule(OSS_KEY::ENUM key, string value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, float value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, ofColor value);
     static ofxOssRule generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);

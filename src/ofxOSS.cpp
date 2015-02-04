@@ -6,8 +6,7 @@ ofxOSS::ofxOSS(){
 
 void ofxOSS::setDefaults(){
     // Create defaults
-    ofxOssRule backgroundColorDefault(ofColor(0,0,0,0));
-    this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
+    this->rules[OSS_KEY::BACKGROUND_COLOR] = generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
     
     ofxOssRule positionDefault("0px 0px");
     this->rules[OSS_KEY::POSITION] = positionDefault;
@@ -660,6 +659,20 @@ ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
     ofxOssRule ossRule;
     ossRule.setType(getOssTypeFromOssKey(key));
     ossRule.setOssValue(value);
+    return ossRule;
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, float value){
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setFloat(value);
+    return ossRule;
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, ofColor value){
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setColor(value);
     return ossRule;
 }
 

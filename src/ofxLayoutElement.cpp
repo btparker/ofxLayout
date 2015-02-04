@@ -177,6 +177,10 @@ float ofxLayoutElement::getFloatStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules[styleKey].getFloat();
 }
 
+ofColor ofxLayoutElement::getColorStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey].getColor();
+}
+
 /// |   Utilities   | ///
 /// | ------------- | ///
 
@@ -319,9 +323,7 @@ void ofxLayoutElement::drawText(){
             
             ofFill();
             if(hasStyle(OSS_KEY::TEXT_BACKGROUND_COLOR)){
-                string colorStr = getStyle(OSS_KEY::TEXT_BACKGROUND_COLOR);
-                ofColor textBackgroundColor = ofxOSS::parseColor(colorStr);
-                ofSetColor(textBackgroundColor);
+                ofSetColor(getColorStyle(OSS_KEY::TEXT_BACKGROUND_COLOR));
                 ofDrawRectangle(drawBox);
             }
             
