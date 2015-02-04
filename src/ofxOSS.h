@@ -160,6 +160,7 @@ public:
     //    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
     static ofxOssRule generateRule(string key, string value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, string value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);
     
@@ -217,7 +218,7 @@ public:
     
     ofxOssRule(float number){
         setType(OSS_TYPE::NUMBER);
-        setNumber(number);
+        setFloat(number);
     }
     
     string getString(){
@@ -267,11 +268,11 @@ public:
         return colorValue.getCurrentColor();
     }
     
-    void setNumber(float number){
+    void setFloat(float number){
         this->numberValue.reset(number);
     }
     
-    ofColor getNumber(){
+    float getFloat(){
         return numberValue.getCurrentValue();
     }
     

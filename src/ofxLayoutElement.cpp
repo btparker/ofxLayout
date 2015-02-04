@@ -173,6 +173,10 @@ string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules[styleKey].getString();
 }
 
+float ofxLayoutElement::getFloatStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey].getFloat();
+}
+
 /// |   Utilities   | ///
 /// | ------------- | ///
 

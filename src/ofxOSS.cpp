@@ -33,8 +33,7 @@ void ofxOSS::setDefaults(){
     ofxOssRule bgBlendModeDefault(getStringFromOssValue(OSS_VALUE::DISABLED));
     this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
     
-    ofxOssRule opacityDefault("1.0f");
-    this->rules[OSS_KEY::OPACITY] = opacityDefault;
+    this->rules[OSS_KEY::OPACITY] = generateRule(OSS_KEY::OPACITY, "1.0f");
     
     ofxOssRule textTransformDefault(getStringFromOssValue(OSS_VALUE::NONE));
     this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
@@ -647,6 +646,10 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 }
 
 ofxOssRule ofxOSS::generateRule(string key, string value){
+    return generateRule(getOssKeyFromString(key), value);
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
     ofxOssRule ossRule;
     ossRule.setType(getOssTypeFromOssKey(key));
     ossRule.setValue(value);
