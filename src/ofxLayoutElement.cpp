@@ -181,6 +181,10 @@ ofColor ofxLayoutElement::getColorStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules[styleKey].getColor();
 }
 
+OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey].getOssValue();
+}
+
 /// |   Utilities   | ///
 /// | ------------- | ///
 
@@ -412,7 +416,7 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
     bool blendModeActive = true;
     
     if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
-        OSS_VALUE::ENUM bgBlendMode = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
+        OSS_VALUE::ENUM bgBlendMode = getOssValueStyle(OSS_KEY::BACKGROUND_BLEND_MODE);
         switch (bgBlendMode) {
             case OSS_VALUE::ALPHA:
                 ofEnableBlendMode(OF_BLENDMODE_ALPHA);

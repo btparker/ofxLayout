@@ -55,6 +55,8 @@ public:
     string getStyle(OSS_KEY::ENUM styleKey);
     float getFloatStyle(OSS_KEY::ENUM styleKey);
     ofColor getColorStyle(OSS_KEY::ENUM styleKey);
+    OSS_VALUE::ENUM getOssValueStyle(OSS_KEY::ENUM styleKey);
+
     string getInlineStyle();
     ofxOSS getInlineStyles();
     void setInlineStyle(string style);
