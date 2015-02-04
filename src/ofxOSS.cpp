@@ -6,41 +6,29 @@ ofxOSS::ofxOSS(){
 
 void ofxOSS::setDefaults(){
     // Create defaults
-    ofxOssRule backgroundColorDefault(ofColor(0,0,0,0));
-    this->rules[OSS_KEY::BACKGROUND_COLOR] = backgroundColorDefault;
+    this->rules[OSS_KEY::BACKGROUND_COLOR] = generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
     
-    ofxOssRule positionDefault("0px 0px");
-    this->rules[OSS_KEY::POSITION] = positionDefault;
+    this->rules[OSS_KEY::POSITION] = generateRule(OSS_KEY::POSITION, "0px 0px");
     
-    ofxOssRule bgPositionDefault(getStringFromOssValue(OSS_VALUE::AUTO));
-    this->rules[OSS_KEY::BACKGROUND_POSITION] = bgPositionDefault;
+    this->rules[OSS_KEY::BACKGROUND_POSITION] = generateRule(OSS_KEY::BACKGROUND_POSITION, OSS_VALUE::AUTO);
     
-    ofxOssRule widthDefault("100%");
-    this->rules[OSS_KEY::WIDTH] = widthDefault;
+    this->rules[OSS_KEY::WIDTH] = generateRule(OSS_KEY::WIDTH, "100%");
     
-    ofxOssRule heightDefault("100%");
-    this->rules[OSS_KEY::HEIGHT] = heightDefault;
+    this->rules[OSS_KEY::HEIGHT] = generateRule(OSS_KEY::HEIGHT, "100%");
     
-    ofxOssRule textAlignDefault(getStringFromOssValue(OSS_VALUE::LEFT));
-    this->rules[OSS_KEY::TEXT_ALIGN] = textAlignDefault;
+    this->rules[OSS_KEY::TEXT_ALIGN] = generateRule(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
     
-    ofxOssRule fontSizeDefault("50");
-    this->rules[OSS_KEY::FONT_SIZE] = fontSizeDefault;
+    this->rules[OSS_KEY::FONT_SIZE] = generateRule(OSS_KEY::FONT_SIZE, 50);
     
-    ofxOssRule bgSizeDefault(getStringFromOssValue(OSS_VALUE::AUTO));
-    this->rules[OSS_KEY::BACKGROUND_SIZE] = bgSizeDefault;
+    this->rules[OSS_KEY::BACKGROUND_SIZE] = generateRule(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
     
-    ofxOssRule bgBlendModeDefault(getStringFromOssValue(OSS_VALUE::DISABLED));
-    this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = bgBlendModeDefault;
+    this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::DISABLED);
     
-    ofxOssRule opacityDefault("1.0f");
-    this->rules[OSS_KEY::OPACITY] = opacityDefault;
+    this->rules[OSS_KEY::OPACITY] = generateRule(OSS_KEY::OPACITY, "1.0f");
     
-    ofxOssRule textTransformDefault(getStringFromOssValue(OSS_VALUE::NONE));
-    this->rules[OSS_KEY::TEXT_TRANSFORM] = textTransformDefault;
+    this->rules[OSS_KEY::TEXT_TRANSFORM] = generateRule(OSS_KEY::TEXT_TRANSFORM, OSS_VALUE::NONE);
     
-    ofxOssRule colorDefault(ofColor::black);
-    this->rules[OSS_KEY::COLOR] = colorDefault;
+    this->rules[OSS_KEY::COLOR] = generateRule(OSS_KEY::COLOR, ofColor::black);
 }
 
 ofxOSS::~ofxOSS(){
@@ -315,6 +303,7 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
 }
 
 OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
+    
     // GENERAL
     if(value == "none"){
         return OSS_VALUE::NONE;
@@ -399,6 +388,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
 OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
     OSS_TYPE::ENUM type;
     switch (key) {
+        case OSS_KEY::BACKGROUND_BLEND_MODE:
+            type = OSS_TYPE::OSS_VALUE;
+            break;
         case OSS_KEY::BACKGROUND_COLOR:
             type = OSS_TYPE::COLOR;
             break;
@@ -647,9 +639,34 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
 }
 
 ofxOssRule ofxOSS::generateRule(string key, string value){
+    return generateRule(getOssKeyFromString(key), value);
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
     ofxOssRule ossRule;
     ossRule.setType(getOssTypeFromOssKey(key));
     ossRule.setValue(value);
+    return ossRule;
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setOssValue(value);
+    return ossRule;
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, float value){
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setFloat(value);
+    return ossRule;
+}
+
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, ofColor value){
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setColor(value);
     return ossRule;
 }
 

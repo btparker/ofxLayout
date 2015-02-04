@@ -160,6 +160,10 @@ public:
     //    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
     static ofxOssRule generateRule(string key, string value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, string value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, float value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, ofColor value);
+    static ofxOssRule generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);
     
@@ -217,7 +221,7 @@ public:
     
     ofxOssRule(float number){
         setType(OSS_TYPE::NUMBER);
-        setNumber(number);
+        setFloat(number);
     }
     
     string getString(){
@@ -248,6 +252,7 @@ public:
                 this->ossValue = ofxOSS::getOssValueFromString(value);
                 break;
             case OSS_TYPE::NUMBER:
+            case OSS_TYPE::PERCENT:
                 if(ofStringTimesInString(value, "%") > 0){
                     setType(OSS_TYPE::PERCENT);
                 }
@@ -266,11 +271,11 @@ public:
         return colorValue.getCurrentColor();
     }
     
-    void setNumber(float number){
+    void setFloat(float number){
         this->numberValue.reset(number);
     }
     
-    ofColor getNumber(){
+    float getFloat(){
         return numberValue.getCurrentValue();
     }
     
