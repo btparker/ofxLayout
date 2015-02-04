@@ -173,6 +173,18 @@ string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules[styleKey].getString();
 }
 
+float ofxLayoutElement::getFloatStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey].getFloat();
+}
+
+ofColor ofxLayoutElement::getColorStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey].getColor();
+}
+
+OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey].getOssValue();
+}
+
 /// |   Utilities   | ///
 /// | ------------- | ///
 
@@ -315,9 +327,7 @@ void ofxLayoutElement::drawText(){
             
             ofFill();
             if(hasStyle(OSS_KEY::TEXT_BACKGROUND_COLOR)){
-                string colorStr = getStyle(OSS_KEY::TEXT_BACKGROUND_COLOR);
-                ofColor textBackgroundColor = ofxOSS::parseColor(colorStr);
-                ofSetColor(textBackgroundColor);
+                ofSetColor(getColorStyle(OSS_KEY::TEXT_BACKGROUND_COLOR));
                 ofDrawRectangle(drawBox);
             }
             
@@ -406,7 +416,7 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
     bool blendModeActive = true;
     
     if(hasStyle(OSS_KEY::BACKGROUND_BLEND_MODE)){
-        OSS_VALUE::ENUM bgBlendMode = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_BLEND_MODE));
+        OSS_VALUE::ENUM bgBlendMode = getOssValueStyle(OSS_KEY::BACKGROUND_BLEND_MODE);
         switch (bgBlendMode) {
             case OSS_VALUE::ALPHA:
                 ofEnableBlendMode(OF_BLENDMODE_ALPHA);
