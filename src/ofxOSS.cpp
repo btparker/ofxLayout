@@ -22,7 +22,7 @@ void ofxOSS::setDefaults(){
     
     this->rules[OSS_KEY::BACKGROUND_SIZE] = generateRule(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
     
-    this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::DISABLED);
+    this->rules[OSS_KEY::BACKGROUND_BLEND_MODE] = generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
     
     this->rules[OSS_KEY::OPACITY] = generateRule(OSS_KEY::OPACITY, "1.0f");
     
