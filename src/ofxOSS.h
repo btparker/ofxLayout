@@ -248,6 +248,7 @@ public:
                 this->ossValue = ofxOSS::getOssValueFromString(value);
                 break;
             case OSS_TYPE::NUMBER:
+            case OSS_TYPE::PERCENT:
                 if(ofStringTimesInString(value, "%") > 0){
                     setType(OSS_TYPE::PERCENT);
                 }
