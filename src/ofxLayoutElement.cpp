@@ -437,9 +437,6 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
                 blendModeActive = false;
                 ofEnableBlendMode(OF_BLENDMODE_DISABLED);
         }
-        if(blendModeActive){
-            ofBackground(0);
-        }
     }
     
     return blendModeActive;
