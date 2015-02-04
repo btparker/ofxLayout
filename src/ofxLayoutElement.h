@@ -69,8 +69,6 @@ public:
     vector<ofxLayoutElement*> children;
     ofxLayoutElement* parent;
     
-    ofFbo* getFbo();
-    
     void drawBackground();
     void drawBackgroundImage();
     void drawBackgroundVideo();

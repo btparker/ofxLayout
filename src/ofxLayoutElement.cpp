@@ -42,24 +42,7 @@ void ofxLayoutElement::update(){
     else{
         boundary = styles.computeElementTransform(parent->boundary);
     }
-    if(elementMask.getWidth() != boundary.width || elementMask.getHeight() != boundary.height){
-        elementMask.setup(boundary.width, boundary.height,ofxMask::LUMINANCE);
-    }
 
-//    ofPushMatrix();
-//    ofTranslate(boundary.x, boundary.y, 0);
-//    elementMask.beginMask();
-//    ofClear(0,0,0,0);
-//    ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-//    ofDrawRectangle(0,0,boundary.width, boundary.height);
-//    
-//    elementMask.endMask();
-//    elementMask.begin();
-//    ofClear(0,0,0,0);
-//    ofEnableAlphaBlending();
-//    drawStyles();
-//    ofDisableAlphaBlending();
-//    elementMask.end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -568,10 +551,6 @@ ofxOSS ofxLayoutElement::getInlineStyles(){
 
 void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
-}
-
-ofFbo* ofxLayoutElement::getFbo(){
-    return elementMask.getMaskee();
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){
