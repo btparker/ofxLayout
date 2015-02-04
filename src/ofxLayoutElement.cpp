@@ -46,23 +46,20 @@ void ofxLayoutElement::update(){
         elementMask.setup(boundary.width, boundary.height,ofxMask::LUMINANCE);
     }
 
-    ofPushMatrix();
-    ofTranslate(boundary.x, boundary.y, 0);
-    elementMask.beginMask();
-    ofClear(0,0,0,0);
-    ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
-    ofDrawRectangle(0,0,boundary.width, boundary.height);
-    if(getStyle(OSS_KEY::MASK) != ""){
-        vector<string> filters;
-        layout->computeFbo(elementMask.getMasker(),&filters, layout->getElementById(getStyle(OSS_KEY::MASK)));
-    }
-    elementMask.endMask();
-    elementMask.begin();
-    ofClear(0,0,0,0);
-    ofEnableAlphaBlending();
-    drawStyles();
-    ofDisableAlphaBlending();
-    elementMask.end();
+//    ofPushMatrix();
+//    ofTranslate(boundary.x, boundary.y, 0);
+//    elementMask.beginMask();
+//    ofClear(0,0,0,0);
+//    ofSetColor(ofToFloat(getStyle(OSS_KEY::OPACITY))*255);
+//    ofDrawRectangle(0,0,boundary.width, boundary.height);
+//    
+//    elementMask.endMask();
+//    elementMask.begin();
+//    ofClear(0,0,0,0);
+//    ofEnableAlphaBlending();
+//    drawStyles();
+//    ofDisableAlphaBlending();
+//    elementMask.end();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -84,7 +81,7 @@ void ofxLayoutElement::draw(){
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
     ofEnableAlphaBlending();
-    elementMask.draw();
+    drawStyles();
     ofDisableAlphaBlending();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();

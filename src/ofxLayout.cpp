@@ -228,55 +228,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
 }
 
-void ofxLayout::computeFbo(ofFbo* fboPtr, vector<string>* filters, ofxLayoutElement* startElement){
-    if(startElement == NULL){
-        startElement = &contextTreeRoot;
-    }
-    fboPtr->allocate(startElement->getFbo()->getWidth(), startElement->getFbo()->getHeight());
-    ofPushMatrix();
-    ofTranslate(-1*startElement->getBoundary().getX(), -1*startElement->getBoundary().getY());
-    fboPtr->begin();
-    ofBackground(255, 0, 0);
-    ofEnableAlphaBlending();
-    filterElements(filters, startElement);
-    ofClearAlpha();
-    fboPtr->end();
-    ofPopMatrix();
-}
-
-void ofxLayout::filterElements(vector<string> *filters, ofxLayoutElement *element){
-    vector<string> classes = ofSplitString(element->getClasses()," ",true,true);
-    string elementID = element->getID();
-    bool hasFilterID = false;
-    bool hasFilterClass = false;
-    for(vector<string>::iterator filter = filters->begin(); filter != filters->end(); ++filter) {
-        bool filterIsId = filter->substr(0,1) == "#";
-        bool filterIsClass = filter->substr(0,1) == ".";
-        
-        if(filterIsId){
-            string idFilter = filter->substr(1,filter->length());
-            hasFilterID = elementID == idFilter;
-        }
-        if(filterIsClass){
-            string classFilter = filter->substr(1,filter->length());
-            if (find(classes.begin(), classes.end(), classFilter) != classes.end()){
-                hasFilterClass = true;
-            }
-        }
-    }
-    
-    bool noFilters = filters->size() == 0;
-    bool drawElement = noFilters || hasFilterID || hasFilterClass;
-   
-    if(drawElement){
-        element->getFbo()->draw(0,0);
-    }
-    for(int i = 0 ; i < element->children.size(); i++){
-        filterElements(filters, element->children[i]);
-    }
-    
-}
-
 ofxLayoutElement* ofxLayout::getElementById(string ID){
     if(idElementMap.count(ID) == 0){
         return NULL;
