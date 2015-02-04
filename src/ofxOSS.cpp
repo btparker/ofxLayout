@@ -656,6 +656,13 @@ ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
     return ossRule;
 }
 
+ofxOssRule ofxOSS::generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
+    ofxOssRule ossRule;
+    ossRule.setType(getOssTypeFromOssKey(key));
+    ossRule.setOssValue(value);
+    return ossRule;
+}
+
 void ofxOSS::parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical){
     vector<string> pieces = ofSplitString(bgGradientStr, " ", true, true);
     firstColor->set(parseColor(pieces[0]));
