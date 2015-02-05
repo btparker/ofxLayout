@@ -150,19 +150,19 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
 }
 
 string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].getString();
+    return this->styles.rules[styleKey]->getString();
 }
 
 float ofxLayoutElement::getFloatStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].getFloat();
+    return this->styles.rules[styleKey]->getFloat();
 }
 
 ofColor ofxLayoutElement::getColorStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].getColor();
+    return this->styles.rules[styleKey]->getColor();
 }
 
 OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey].getOssValue();
+    return this->styles.rules[styleKey]->getOssValue();
 }
 
 /// |   Utilities   | ///
@@ -518,7 +518,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
 
 void ofxLayoutElement::drawBackgroundColor(){
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
-        ofSetColor(ofxOSS::parseColor(getStyle(OSS_KEY::BACKGROUND_COLOR)));
+        ofSetColor(getColorStyle(OSS_KEY::BACKGROUND_COLOR));
         ofFill();
         ofDrawRectangle(0,0,boundary.width,boundary.height);
     }
@@ -542,8 +542,7 @@ ofxOSS ofxLayoutElement::getInlineStyles(){
         string styleKey = styleKeyValueVec[0];
         string styleValue = styleKeyValueVec[1];
         if(ofxOSS::validKey(styleKey)){
-            ofxOssRule rule = ofxOSS::generateRule(styleKey, styleValue);
-            inlineStyles.rules[ofxOSS::getOssKeyFromString(styleKey)] = rule;
+            inlineStyles.generateRule(ofxOSS::getOssKeyFromString(styleKey), styleValue);
         }
     }
     return inlineStyles;

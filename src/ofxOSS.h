@@ -68,8 +68,8 @@ public:
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
     
-    ofxOssRule getStyle(OSS_KEY::ENUM key);
-    ofxOssRule getStyle(string key);
+    ofxOssRule* getStyle(OSS_KEY::ENUM key);
+    ofxOssRule* getStyle(string key);
     
     static bool validKey(string key);
     static bool validKey(OSS_KEY::ENUM key);
@@ -159,11 +159,11 @@ public:
     /// \param ofRectangle elementBoundary
     //    ofRectangle getBackgroundPosition(ofRectangle imageTransform, ofRectangle elementBoundary);
     
-    static ofxOssRule generateRule(string key, string value);
-    static ofxOssRule generateRule(OSS_KEY::ENUM key, string value);
-    static ofxOssRule generateRule(OSS_KEY::ENUM key, float value);
-    static ofxOssRule generateRule(OSS_KEY::ENUM key, ofColor value);
-    static ofxOssRule generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
+    void generateRule(string key, string value);
+    void generateRule(OSS_KEY::ENUM key, string value);
+    void generateRule(OSS_KEY::ENUM key, float value);
+    void generateRule(OSS_KEY::ENUM key, ofColor value);
+    void generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
     
     ofRectangle computeElementTransform(ofRectangle parentBoundary);
     
@@ -171,7 +171,7 @@ public:
     
     ofxOSS* parent = NULL;
     
-    map<OSS_KEY::ENUM, ofxOssRule> rules;
+    map<OSS_KEY::ENUM, ofxOssRule*> rules;
     
     map<string,ofxOSS> idMap;
     map<string,ofxOSS> classMap;
