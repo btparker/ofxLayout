@@ -51,8 +51,10 @@ public:
     map<string, ofxLayoutElement*> idElementMap;
     
     string populateExpressions(string value);
-    
+
+    ofxAnimatableManager animatableManager;
 protected:
+
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
     
@@ -71,6 +73,10 @@ protected:
     /// \param
     /// \param
     void loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
+    
+    void loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
+    
+    void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
     
     int pixelWidth, pixelHeight;
 
