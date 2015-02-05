@@ -63,6 +63,10 @@ void ofxLayoutElement::draw(){
     }
     ofPushMatrix();
     ofTranslate(boundary.x, boundary.y, 0);
+//    ofRotate(ofGetFrameNum() * .01, 0, 0, 1);
+    if(hasStyle(OSS_KEY::SCALE)){
+        ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
+    }
     ofEnableAlphaBlending();
     drawStyles();
     ofDisableAlphaBlending();

@@ -22,7 +22,7 @@ ofxLayout::~ofxLayout(){
 
 void ofxLayout::update(){
     assets.update();
-    animatableManager.update( 1.0f/ofGetFrameRate() );
+    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
 }
 
@@ -154,7 +154,7 @@ void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* style
                         keyframe->setValue(keyframeValueKeys[k], ofxOSS::parseColor(keyframeValue[keyframeValueKeys[k]].asString()));
                     }
                     if(type == OSS_TYPE::NUMBER){
-                        keyframe->setValue(keyframeValueKeys[k], keyframeValue[keyframeValueKeys[k]].asFloat());
+                        keyframe->setValue(keyframeValueKeys[k], ofToFloat(keyframeValue[keyframeValueKeys[k]].asString()));
                     }
                 }
                 
@@ -229,6 +229,7 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
             string animationID = animationParams[1];
             float duration = ofToFloat(animationParams[2]);
             float delay = ofToFloat(animationParams[3]);
+            AnimCurve curve = ofxAnimatableManager::getCurveFromName(animationParams[4]);
             
             animationName = populateExpressions(animationName);
             
@@ -236,6 +237,7 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
                 ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
                 animationInstance->setDuration(duration);
                 animationInstance->setDelay(delay);
+                animationInstance->setCurve(curve);
                 set<string> keyframeKeys = animatableManager.getAnimation(animationName)->getKeyframeSequence()[0]->getKeys();
                 
                 for(auto k : keyframeKeys) {

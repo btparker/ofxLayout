@@ -8,7 +8,8 @@ void ofxOSS::setDefaults(){
     // Create defaults
     generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
     
-    generateRule(OSS_KEY::POSITION, "0px 0px");
+    generateRule(OSS_KEY::TOP, "0px");
+    generateRule(OSS_KEY::LEFT, "0px");
     
     generateRule(OSS_KEY::BACKGROUND_POSITION, OSS_VALUE::AUTO);
     
@@ -82,6 +83,21 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     }
     else if(key == "height"){
         return OSS_KEY::HEIGHT;
+    }
+    else if(key == "scale"){
+        return OSS_KEY::SCALE;
+    }
+    else if(key == "top"){
+        return OSS_KEY::TOP;
+    }
+    else if(key == "right"){
+        return OSS_KEY::RIGHT;
+    }
+    else if(key == "bottom"){
+        return OSS_KEY::BOTTOM;
+    }
+    else if(key == "left"){
+        return OSS_KEY::LEFT;
     }
     else if(key == "position"){
         return OSS_KEY::POSITION;
@@ -164,6 +180,18 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::HEIGHT:
             keyString = "height";
             break;
+        case OSS_KEY::TOP:
+            keyString = "top";
+            break;
+        case OSS_KEY::RIGHT:
+            keyString = "right";
+            break;
+        case OSS_KEY::BOTTOM:
+            keyString = "bottom";
+            break;
+        case OSS_KEY::LEFT:
+            keyString = "left";
+            break;
         case OSS_KEY::POSITION:
             keyString = "position";
             break;
@@ -175,6 +203,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::TEXT_TRANSFORM:
             keyString = "text-transform";
+            break;
+        case OSS_KEY::SCALE:
+            keyString = "scale";
             break;
         case OSS_KEY::FONT_SIZE:
             keyString = "font-size";
@@ -400,10 +431,25 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::OPACITY:
             type = OSS_TYPE::NUMBER;
             break;
+        case OSS_KEY::SCALE:
+            type = OSS_TYPE::NUMBER;
+            break;
         case OSS_KEY::WIDTH:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::HEIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::TOP:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::RIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::BOTTOM:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::LEFT:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::FONT_SIZE:
@@ -519,7 +565,14 @@ float ofxOSS::getDimensionStyleValue(string dimensionValue, float parentDimensio
 }
 
 ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
-    string posString = getStyle(OSS_KEY::POSITION)->getString();
+    string posString;
+    if(getStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->getString() != ""){
+        posString = getStyle(OSS_KEY::POSITION)->getString();
+    }
+    else{
+        posString = getStyle(OSS_KEY::LEFT)->getString()+" "+getStyle(OSS_KEY::TOP)->getString();
+    }
+    
     return computePosition(posString,boundary, parentBoundary);
 }
 
