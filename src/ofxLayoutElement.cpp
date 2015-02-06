@@ -46,7 +46,6 @@ void ofxLayoutElement::update(){
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
-    ofPopMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
@@ -70,11 +69,12 @@ void ofxLayoutElement::draw(){
     ofEnableAlphaBlending();
     drawStyles();
     ofDisableAlphaBlending();
+    
+    ofPopMatrix();
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
     ofSetColor(255);
-    ofPopMatrix();
 }
 
 /// |   Setters/Getters   | ///

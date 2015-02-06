@@ -668,7 +668,7 @@ float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle
     else{
         x = ofToFloat(xStr);
     }
-    return x;
+    return x+parentBoundary.x;
 }
 
 float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary){
@@ -688,7 +688,7 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
         y = ofToFloat(yStr);
     }
     
-    return y;
+    return y+parentBoundary.y;
 }
 
 void ofxOSS::generateRule(string key, string value){

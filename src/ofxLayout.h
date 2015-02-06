@@ -55,6 +55,8 @@ public:
     string populateExpressions(string value);
 
     ofxAnimatableManager animatableManager;
+    
+    ofxLayoutElement* hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements = NULL, ofxLayoutElement* startElement = NULL);
 protected:
 
     ofxLayoutElement contextTreeRoot;

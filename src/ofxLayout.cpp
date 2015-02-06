@@ -324,6 +324,31 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     }
 }
 
+ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements, ofxLayoutElement* startElement){
+    cout << "PT " << pt << endl;
+    if(returnedElements == NULL){
+        returnedElements = new vector<ofxLayoutElement*>();
+    }
+    if(startElement == NULL){
+        startElement = &contextTreeRoot;
+    }
+    
+    cout << "Boundary " << startElement->getBoundary() << endl;
+    // If intersects
+    if(startElement->getBoundary().inside(pt)){
+        returnedElements->push_back(startElement);
+        for(int i = 0; i < startElement->children.size(); i++){
+            hittest(pt,returnedElements,startElement->children[i]);
+        }
+    }
+    if(returnedElements->size() > 0){
+        return returnedElements->at(returnedElements->size()-1);
+    }
+    else{
+        return NULL;
+    }
+}
+
 string ofxLayout::populateExpressions(string input){
     string value = input;
     while(ofStringTimesInString(value, "{{") > 0){
