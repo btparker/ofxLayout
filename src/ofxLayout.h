@@ -30,6 +30,8 @@ public:
     void init();
     void applyChanges();
     
+    void loadFromFile(string filename);
+    
     /// \brief Loads an external OFML file (basically, xml or html), ties this element to the root element described in the file,
     /// and generates all child elements as well
     ///
