@@ -8,7 +8,25 @@ ofxLayoutElement::ofxLayoutElement(){
     video = NULL;
     boundary = ofRectangle();
     styles.setDefaults();
+    mouseState = MOUSE_STATE::NONE;
+    
+    ofAddListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
+    ofAddListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
+    ofAddListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
 }
+
+void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
+    if(boundary.inside(args.x, args.y)){
+        
+    }
+}
+
+void ofxLayoutElement::mouseReleased(ofMouseEventArgs &args){
+}
+
+void ofxLayoutElement::mousePressed(ofMouseEventArgs &args){
+}
+
 
 void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
     this->assetsPtr = assetsPtr;
@@ -18,8 +36,19 @@ void ofxLayoutElement::setFonts(map<string, ofxFontStash>* fontsPtr){
     this->fontsPtr = fontsPtr;
 }
 
+void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
+    this->mouseState = mouseState;
+}
+
+MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
+    return this->mouseState;
+}
 
 ofxLayoutElement::~ofxLayoutElement(){
+    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
+    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
+    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
+    
     if(video != NULL){
         video->closeMovie();
         video = NULL;

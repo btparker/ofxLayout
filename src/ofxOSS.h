@@ -4,6 +4,10 @@
 #include "ofxFontStash.h"
 #include "ofxAnimatableManager.h"
 
+namespace MOUSE_STATE{
+    enum ENUM{NONE, HOVER, ACTIVE};
+}
+
 // Types of styles
 namespace OSS_TYPE{
     enum ENUM{NONE, COLOR, NUMBER, OSS_VALUE, PERCENT, INVALID};
