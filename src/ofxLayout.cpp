@@ -51,6 +51,18 @@ bool ofxLayout::drawable(){
     return assets.isBatchDrawable("images");
 }
 
+void ofxLayout::loadFromFile(string filename){
+    ofxJSONElement layoutConfig;
+    bool layoutParsingSuccessful = layoutConfig.open(filename);
+    if(layoutParsingSuccessful){
+        loadDataFromFile(filename);
+        loadOfmlFromFile(layoutConfig["template"].asString()+"/index.ofml");
+        loadOssFromFile(layoutConfig["template"].asString()+"/styles.oss");
+    }
+    else{
+        ofLogError("ofxLayout::loadFromFile","Unable to parse config file "+filename+".");
+    }
+}
 void ofxLayout::loadDataFromFile(string dataFilename){
     ofxJSONElement jsonData;
     bool dataParsingSuccessful = jsonData.open(dataFilename);
