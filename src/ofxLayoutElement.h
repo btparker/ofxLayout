@@ -81,6 +81,13 @@ public:
     void endBackgroundBlendMode();
     
     void setLayout(ofxLayout* layout);
+    
+    MOUSE_STATE::ENUM getMouseState();
+    void setMouseState(MOUSE_STATE::ENUM mouseState);
+    
+    void mouseMoved(ofMouseEventArgs& args);
+    void mousePressed(ofMouseEventArgs& args);
+    void mouseReleased(ofMouseEventArgs& args);
 
 protected:
     ofxLayout* layout;
@@ -101,6 +108,8 @@ protected:
     map<string,string>* dataPtr;
     ofxLoaderSpool* assetsPtr;
     map<string, ofxFontStash>* fontsPtr;
+    
+    MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
 };

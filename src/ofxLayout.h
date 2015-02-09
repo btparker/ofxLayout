@@ -20,7 +20,7 @@ public:
     /// |   Cycle Functions  | ///
     /// | ------------------ | ///
     
-    void update();
+    void update(ofEventArgs& args);
     void draw();
     
     /// |   Utilities   | ///
@@ -55,6 +55,12 @@ public:
     string populateExpressions(string value);
 
     ofxAnimatableManager animatableManager;
+    
+    ofxLayoutElement* hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements = NULL, ofxLayoutElement* startElement = NULL);
+    
+    void mouseMoved(ofMouseEventArgs& args);
+    void mousePressed(ofMouseEventArgs& args);
+    void mouseReleased(ofMouseEventArgs& args);
 protected:
 
     ofxLayoutElement contextTreeRoot;

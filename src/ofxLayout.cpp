@@ -11,16 +11,36 @@ ofxLayout::ofxLayout(){
     
     // This is so that the functionality can be overwritten in the case of adding new tag types
     init();
+    
+    
+    ofAddListener(ofEvents().update, this, &ofxLayout::update);
+    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
+    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
+    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+}
+
+void ofxLayout::mouseMoved(ofMouseEventArgs &args){
+}
+
+void ofxLayout::mouseReleased(ofMouseEventArgs &args){
+}
+
+void ofxLayout::mousePressed(ofMouseEventArgs &args){
 }
 
 ofxLayout::~ofxLayout(){
+    ofRemoveListener(ofEvents().update, this, &ofxLayout::update);
+    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
+    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
+    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    
     unload();
 }
 
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
-void ofxLayout::update(){
+void ofxLayout::update(ofEventArgs &args){
     assets.update();
     animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
@@ -321,6 +341,31 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     }
     else{
         return idElementMap[ID];
+    }
+}
+
+ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements, ofxLayoutElement* startElement){
+    cout << "PT " << pt << endl;
+    if(returnedElements == NULL){
+        returnedElements = new vector<ofxLayoutElement*>();
+    }
+    if(startElement == NULL){
+        startElement = &contextTreeRoot;
+    }
+    
+    cout << "Boundary " << startElement->getBoundary() << endl;
+    // If intersects
+    if(startElement->getBoundary().inside(pt)){
+        returnedElements->push_back(startElement);
+        for(int i = 0; i < startElement->children.size(); i++){
+            hittest(pt,returnedElements,startElement->children[i]);
+        }
+    }
+    if(returnedElements->size() > 0){
+        return returnedElements->at(returnedElements->size()-1);
+    }
+    else{
+        return NULL;
     }
 }
 
