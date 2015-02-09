@@ -4,8 +4,6 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    contextTreeRoot.setAssets(&assets);
-    contextTreeRoot.setFonts(&fonts);
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
@@ -19,6 +17,13 @@ ofxLayout::ofxLayout(){
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
 }
 
+map<string, ofxFontStash>* ofxLayout::getFonts(){
+    return &fonts;
+}
+
+ofxLoaderSpool* ofxLayout::getAssets(){
+    return &assets;
+}
 void ofxLayout::mouseMoved(ofMouseEventArgs &args){
 }
 

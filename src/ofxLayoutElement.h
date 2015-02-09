@@ -30,9 +30,6 @@ public:
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
     
-    void setAssets(ofxLoaderSpool* assetsPtr);
-    void setFonts(map<string, ofxFontStash>* fontsPtr);
-    
     TAG::ENUM getTag();
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
@@ -104,10 +101,6 @@ protected:
     ofxMask elementMask;
     
     string inlineStyle;
-    
-    map<string,string>* dataPtr;
-    ofxLoaderSpool* assetsPtr;
-    map<string, ofxFontStash>* fontsPtr;
     
     MOUSE_STATE::ENUM mouseState;
     
