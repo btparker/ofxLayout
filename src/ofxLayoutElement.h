@@ -29,9 +29,8 @@ public:
     
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
-    
-    void setAssets(ofxLoaderSpool* assetsPtr);
-    void setFonts(map<string, ofxFontStash>* fontsPtr);
+    void setParent(ofxLayoutElement* parent);
+    ofxLayoutElement* getParent();
     
     TAG::ENUM getTag();
     void setTag(TAG::ENUM tag);
@@ -49,6 +48,7 @@ public:
     string getClasses();
     void setClasses(string classes);
     
+    void setBoundary(ofRectangle boundary);
     ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);
@@ -88,10 +88,15 @@ public:
     void mouseMoved(ofMouseEventArgs& args);
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
+    
+    // Display methods
+    void show();
+    void hide();
+    
+    bool visible();
 
 protected:
     ofxLayout* layout;
-    void drawStyles();
     virtual void drawTag(){};
     
     ofRectangle boundary;
@@ -104,10 +109,6 @@ protected:
     ofxMask elementMask;
     
     string inlineStyle;
-    
-    map<string,string>* dataPtr;
-    ofxLoaderSpool* assetsPtr;
-    map<string, ofxFontStash>* fontsPtr;
     
     MOUSE_STATE::ENUM mouseState;
     

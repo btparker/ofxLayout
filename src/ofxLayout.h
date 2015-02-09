@@ -22,6 +22,8 @@ public:
     
     void update(ofEventArgs& args);
     void draw();
+    map<string, ofxFontStash>* getFonts();
+    ofxLoaderSpool* getAssets();
     
     /// |   Utilities   | ///
     /// | ------------- | ///

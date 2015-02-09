@@ -27,17 +27,17 @@ void ofxLayoutElement::mouseReleased(ofMouseEventArgs &args){
 void ofxLayoutElement::mousePressed(ofMouseEventArgs &args){
 }
 
-
-void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
-    this->assetsPtr = assetsPtr;
-}
-
-void ofxLayoutElement::setFonts(map<string, ofxFontStash>* fontsPtr){
-    this->fontsPtr = fontsPtr;
-}
-
 void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
     this->mouseState = mouseState;
+}
+
+void ofxLayoutElement::setParent(ofxLayoutElement *parent){
+    this->parent = parent;
+    this->layout = parent->layout;
+}
+
+ofxLayoutElement* ofxLayoutElement::getParent(){
+    return this->parent;
 }
 
 MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
@@ -58,18 +58,29 @@ ofxLayoutElement::~ofxLayoutElement(){
     }
 }
 
+void ofxLayoutElement::show(){
+    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+}
+
+void ofxLayoutElement::hide(){
+    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+}
+
+bool ofxLayoutElement::visible(){
+    bool displayNone = hasStyle(OSS_KEY::DISPLAY) && getOssValueStyle(OSS_KEY::DISPLAY) == OSS_VALUE::NONE;
+    bool opacityZero = hasStyle(OSS_KEY::OPACITY) && getFloatStyle(OSS_KEY::OPACITY) == 0.0f;
+    return !displayNone && !opacityZero;
+}
+
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
     if(parent == NULL){
-        boundary.x = 0;
-        boundary.y = 0;
-        boundary.width = ofGetViewportWidth();
-        boundary.height = ofGetViewportHeight();
+        setBoundary(ofGetCurrentViewport());
     }
     else{
-        boundary = styles.computeElementTransform(parent->boundary);
+        setBoundary(styles.computeElementTransform(parent->getBoundary()));
     }
 
     for(int i = 0 ; i < children.size(); i++){
@@ -78,32 +89,29 @@ void ofxLayoutElement::update(){
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
-    child->parent = this;
-    child->setLayout(this->layout);
-    child->setAssets(this->assetsPtr);
-    child->setFonts(this->fontsPtr);
+    child->setParent(this);
     children.push_back(child);
 }
 
 void ofxLayoutElement::draw(){
-    if(hasStyle(OSS_KEY::DISPLAY) && ofxOSS::getOssValueFromString(getStyle(OSS_KEY::DISPLAY)) == OSS_VALUE::NONE){
-        return;
+    if(visible()){
+        ofPushMatrix();
+        
+        ofTranslate(getBoundary().getPosition());
+        ofRotate(0,0,0,0);
+        if(hasStyle(OSS_KEY::SCALE)){
+            ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
+        }
+        
+        drawBackground();
+        drawText();
+        
+        ofPopMatrix();
+        
+        for(int i = 0 ; i < children.size(); i++){
+            children[i]->draw();
+        }
     }
-    ofPushMatrix();
-    ofTranslate(boundary.x, boundary.y, 0);
-//    ofRotate(ofGetFrameNum() * .01, 0, 0, 1);
-    if(hasStyle(OSS_KEY::SCALE)){
-        ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
-    }
-    ofEnableAlphaBlending();
-    drawStyles();
-    ofDisableAlphaBlending();
-    
-    ofPopMatrix();
-    for(int i = 0 ; i < children.size(); i++){
-        children[i]->draw();
-    }
-    ofSetColor(255);
 }
 
 /// |   Setters/Getters   | ///
@@ -200,12 +208,6 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
-
-void ofxLayoutElement::drawStyles(){
-    drawBackground();
-    drawText();
-}
-
 void ofxLayoutElement::drawBackground(){
     bool blendModeActive = beginBackgroundBlendMode();
     // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
@@ -230,7 +232,7 @@ void ofxLayoutElement::drawText(){
         ofRectangle drawBox;
         
         string fontFilename = getStyle(OSS_KEY::FONT_FAMILY);
-        if(fontsPtr->count(fontFilename) > 0){
+        if(layout->getFonts()->count(fontFilename) > 0){
             string text = getValue();
             if(hasStyle(OSS_KEY::TEXT_TRANSFORM)){
                 vector<string> words = ofSplitString(text, " ",true,true);
@@ -270,7 +272,7 @@ void ofxLayoutElement::drawText(){
                 lineHeight = 1.0f;
             }
             
-            fontsPtr->at(fontFilename).setLineHeight(lineHeight);
+            layout->getFonts()->at(fontFilename).setLineHeight(lineHeight);
             
             float textMaxWidth = boundary.width;
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
@@ -281,13 +283,13 @@ void ofxLayoutElement::drawText(){
             
             
             int numLines;
-            ofRectangle fontBBox = fontsPtr->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
+            ofRectangle fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
             drawBox.width = fontBBox.width;
             drawBox.height = fontBBox.height;
             
             
             float x;
-            float y = fontSize*fontsPtr->at(fontFilename).getLineHeight();
+            float y = fontSize*layout->getFonts()->at(fontFilename).getLineHeight();
             
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
                 string textAlign = getStyle(OSS_KEY::TEXT_ALIGN);
@@ -350,7 +352,7 @@ void ofxLayoutElement::drawText(){
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
                 ofSetColor(fontColor);
             }
-            fontsPtr->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
+            layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
         }
     }
     ofDisableAlphaBlending();
@@ -464,7 +466,7 @@ void ofxLayoutElement::endBackgroundBlendMode(){
 void ofxLayoutElement::drawBackgroundImage(){
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
-        ofxLoaderBatch* imagesBatch = assetsPtr->getBatch("images");
+        ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch("images");
         string imageID = getStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureDrawable(imageID)){
             drawBackgroundTexture(imagesBatch->getTexture(imageID));
@@ -587,6 +589,10 @@ void ofxLayoutElement::setInlineStyle(string style){
 
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
+}
+
+void ofxLayoutElement::setBoundary(ofRectangle boundary){
+    this->boundary = boundary;
 }
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){

@@ -32,6 +32,22 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::COLOR, ofColor::black);
 }
 
+void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
+    generateRule(key, value);
+}
+
+void ofxOSS::setStyle(OSS_KEY::ENUM key, string value){
+    generateRule(key, value);
+}
+
+void ofxOSS::setStyle(OSS_KEY::ENUM key, float value){
+    generateRule(key, value);
+}
+
+void ofxOSS::setStyle(OSS_KEY::ENUM key, ofColor value){
+    generateRule(key, value);
+}
+
 ofxOSS::~ofxOSS(){
     rules.clear();
     idMap.clear();
@@ -260,6 +276,11 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             valueStr = "auto";
             break;
             
+        // DISPLAY
+        case OSS_VALUE::BLOCK:
+            valueStr = "block";
+            break;
+            
             // POSITION / TEXT ALIGN
         case OSS_VALUE::CENTER:
             valueStr = "center";
@@ -341,6 +362,11 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     else if(value == "auto"){
         return OSS_VALUE::AUTO;
+    }
+    
+    // DISPLAY
+    else if(value == "block"){
+        return OSS_VALUE::BLOCK;
     }
     
     // POSITION / TEXT ALIGN
