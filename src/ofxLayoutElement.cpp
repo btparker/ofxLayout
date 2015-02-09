@@ -63,13 +63,10 @@ ofxLayoutElement::~ofxLayoutElement(){
 
 void ofxLayoutElement::update(){
     if(parent == NULL){
-        boundary.x = 0;
-        boundary.y = 0;
-        boundary.width = ofGetViewportWidth();
-        boundary.height = ofGetViewportHeight();
+        boundary = ofGetCurrentViewport();
     }
     else{
-        boundary = styles.computeElementTransform(parent->boundary);
+        boundary = styles.computeElementTransform(parent->getBoundary());
     }
 
     for(int i = 0 ; i < children.size(); i++){
