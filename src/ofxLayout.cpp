@@ -157,10 +157,35 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string value = xmlLayout->getValue(tag,"", which);
     value = populateExpressions(value);
     element->setValue(value);
-    // Push into current element, and load all children of different valid tag types
-    xmlLayout->pushTag(tag, which);
-    loadTags(xmlLayout, element);
-    xmlLayout->popTag();
+    
+    string svg = xmlLayout->getAttribute(tag,"svg", "", which);
+    svg = populateExpressions(svg);
+    
+    if(tag == "svg"){
+        if(svg != ""){
+            ofxXmlSettings svgLayout;
+            bool svgParsingSuccessful = svgLayout.loadFile(svg);
+            if(svgParsingSuccessful){
+                xmlLayout->pushTag(tag, which);
+                loadSvg(&svgLayout, element);
+                xmlLayout->popTag();
+            }
+            else{
+                ofLogError("ofxLayout::loadFromXmlLayout","Unable to parse SVG file "+svg+".");
+            }
+        }
+        else{
+            xmlLayout->pushTag(tag, which);
+            loadSvg(xmlLayout, element);
+            xmlLayout->popTag();
+        }
+    }
+    else{
+        // Push into current element, and load all children of different valid tag types
+        xmlLayout->pushTag(tag, which);
+        loadTags(xmlLayout, element);
+        xmlLayout->popTag();
+    }
 }
 
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
@@ -170,7 +195,25 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         element->addChild(child);
         loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
     }
+    
 }
+
+void ofxLayout::loadSvg(ofxXmlSettings *svgLayout, ofxLayoutElement *element){
+    int numSvg = svgLayout->getNumTags(ofxLayoutElement::getTagString(TAG::SVG));
+    for(int i = 0; i < numSvg; i++){
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        loadFromXmlLayout(svgLayout, child, TAG::SVG, i);
+    }
+    
+    int numG = svgLayout->getNumTags(ofxLayoutElement::getTagString(TAG::G));
+    for(int i = 0; i < numG; i++){
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        loadFromXmlLayout(svgLayout, child, TAG::G, i);
+    }
+}
+
 void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     vector<string> keys = jsonElement->getMemberNames();
     for(int i = 0; i < keys.size(); i++){
@@ -228,9 +271,9 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
-//        else if(key == "animation" || ofStringTimesInString(key, "@keyframes") > 0){
-//            return;
-//        }
+        else if(key == "animation" || ofStringTimesInString(key, "@keyframes") > 0){
+            continue;
+        }
         // Style Key
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
@@ -350,7 +393,6 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
 }
 
 ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements, ofxLayoutElement* startElement){
-    cout << "PT " << pt << endl;
     if(returnedElements == NULL){
         returnedElements = new vector<ofxLayoutElement*>();
     }
@@ -358,7 +400,6 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* retu
         startElement = &contextTreeRoot;
     }
     
-    cout << "Boundary " << startElement->getBoundary() << endl;
     // If intersects
     if(startElement->getBoundary().inside(pt)){
         returnedElements->push_back(startElement);

@@ -7,7 +7,7 @@
 #include "ofxMask.h"
 
 namespace TAG {
-    enum ENUM{BODY, ELEMENT, INVALID};
+    enum ENUM{BODY, ELEMENT, SVG, G, INVALID};
 };
 
 class ofxLayout;

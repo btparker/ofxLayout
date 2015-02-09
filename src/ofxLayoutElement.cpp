@@ -147,6 +147,12 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::ELEMENT:
             tag = "element";
             break;
+        case TAG::SVG:
+            tag = "svg";
+            break;
+        case TAG::G:
+            tag = "g";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -161,6 +167,12 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "element") {
         return TAG::ELEMENT;
+    }
+    else if(tagString == "svg") {
+        return TAG::SVG;
+    }
+    else if(tagString == "g") {
+        return TAG::G;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");

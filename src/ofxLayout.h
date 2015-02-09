@@ -5,8 +5,6 @@
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
 
-
-
 class ofxLayout{
     
 public:
@@ -77,6 +75,8 @@ protected:
     void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, TAG::ENUM tagEnum, int which = 0);
     
     void loadTags(ofxXmlSettings* xmlLayout, ofxLayoutElement* element);
+    
+    void loadSvg(ofxXmlSettings* svgLayout, ofxLayoutElement* element);
     
     /// \brief
     ///
