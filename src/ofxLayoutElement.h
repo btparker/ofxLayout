@@ -87,6 +87,12 @@ public:
     void mouseMoved(ofMouseEventArgs& args);
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
+    
+    // Display methods
+    void show();
+    void hide();
+    
+    bool visible();
 
 protected:
     ofxLayout* layout;

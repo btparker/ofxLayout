@@ -42,6 +42,9 @@ namespace OSS_VALUE{
         // GENERAL
         NONE, AUTO,
         
+        // DISPLAY
+        BLOCK,
+        
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
         
@@ -74,6 +77,11 @@ public:
     
     ofxOssRule* getStyle(OSS_KEY::ENUM key);
     ofxOssRule* getStyle(string key);
+    
+    void setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
+    void setStyle(OSS_KEY::ENUM key, string value);
+    void setStyle(OSS_KEY::ENUM key, float value);
+    void setStyle(OSS_KEY::ENUM key, ofColor value);
     
     static bool validKey(string key);
     static bool validKey(OSS_KEY::ENUM key);

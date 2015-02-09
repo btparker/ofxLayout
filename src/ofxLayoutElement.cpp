@@ -58,6 +58,20 @@ ofxLayoutElement::~ofxLayoutElement(){
     }
 }
 
+void ofxLayoutElement::show(){
+    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+}
+
+void ofxLayoutElement::hide(){
+    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+}
+
+bool ofxLayoutElement::visible(){
+    bool displayNone = hasStyle(OSS_KEY::DISPLAY) && getOssValueStyle(OSS_KEY::DISPLAY) == OSS_VALUE::NONE;
+    bool opacityZero = hasStyle(OSS_KEY::OPACITY) && getFloatStyle(OSS_KEY::OPACITY) == 0.0f;
+    return !displayNone && !opacityZero;
+}
+
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
@@ -80,24 +94,22 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(){
-    if(hasStyle(OSS_KEY::DISPLAY) && ofxOSS::getOssValueFromString(getStyle(OSS_KEY::DISPLAY)) == OSS_VALUE::NONE){
-        return;
-    }
-    
-    ofPushMatrix();
-    
-    ofTranslate(boundary.getPosition());
-    ofRotate(0,0,0,0);
-    if(hasStyle(OSS_KEY::SCALE)){
-        ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
-    }
-    
-    drawStyles();
-    
-    ofPopMatrix();
-    
-    for(int i = 0 ; i < children.size(); i++){
-        children[i]->draw();
+    if(visible()){
+        ofPushMatrix();
+        
+        ofTranslate(boundary.getPosition());
+        ofRotate(0,0,0,0);
+        if(hasStyle(OSS_KEY::SCALE)){
+            ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
+        }
+        
+        drawStyles();
+        
+        ofPopMatrix();
+        
+        for(int i = 0 ; i < children.size(); i++){
+            children[i]->draw();
+        }
     }
 }
 
