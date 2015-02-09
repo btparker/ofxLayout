@@ -599,6 +599,10 @@ void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
 }
 
+void ofxLayoutElement::appendInlineStyle(string style){
+    this->inlineStyle += (" "+style);
+}
+
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
 }

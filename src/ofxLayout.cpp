@@ -161,6 +161,17 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string svg = xmlLayout->getAttribute(tag,"svg", "", which);
     svg = populateExpressions(svg);
     
+    vector<string> attributes;
+    
+    xmlLayout->getAttributeNames(tag, attributes, which);
+    
+    for(int i = 0; i < attributes.size(); i++){
+        string attribute = attributes[i];
+        if(ofxOSS::getOssKeyFromString(attribute) != OSS_KEY::INVALID){
+            element->appendInlineStyle(" "+attribute+" : "+xmlLayout->getAttribute(tag, attribute, "", which)+";");
+        }
+    }
+    
     if(tag == "svg"){
         if(svg != ""){
             ofxXmlSettings svgLayout;

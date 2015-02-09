@@ -60,6 +60,7 @@ public:
     string getInlineStyle();
     ofxOSS getInlineStyles();
     void setInlineStyle(string style);
+    void appendInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
     void addChild(ofxLayoutElement* child);
@@ -113,4 +114,6 @@ protected:
     MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
+    ofPath shape;
+    
 };
