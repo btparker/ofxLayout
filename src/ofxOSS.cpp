@@ -163,6 +163,15 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "blur"){
         return OSS_KEY::BLUR;
     }
+    else if(key == "fill"){
+        return OSS_KEY::FILL;
+    }
+    else if(key == "stroke"){
+        return OSS_KEY::STROKE;
+    }
+    else if(key == "stroke-miterlimit"){
+        return OSS_KEY::STROKE_MITERLIMIT;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -258,6 +267,15 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BLUR:
             keyString = "blur";
+            break;
+        case OSS_KEY::FILL:
+            keyString = "fill";
+            break;
+        case OSS_KEY::STROKE:
+            keyString = "stroke";
+            break;
+        case OSS_KEY::STROKE_MITERLIMIT:
+            keyString = "stroke-miterlimit";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -492,6 +510,16 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::TEXT_TRANSFORM:
             type = OSS_TYPE::OSS_VALUE;
+            break;
+        case OSS_KEY::FILL:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::STROKE:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::STROKE_MITERLIMIT:
+            type = OSS_TYPE::NUMBER;
+            break;
         default:
             type = OSS_TYPE::NONE;
             break;

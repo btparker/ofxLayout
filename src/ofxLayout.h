@@ -76,8 +76,6 @@ protected:
     
     void loadTags(ofxXmlSettings* xmlLayout, ofxLayoutElement* element);
     
-    void loadSvg(ofxXmlSettings* svgLayout, ofxLayoutElement* element);
-    
     /// \brief
     ///
     /// \param

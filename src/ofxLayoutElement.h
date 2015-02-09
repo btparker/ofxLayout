@@ -7,7 +7,7 @@
 #include "ofxMask.h"
 
 namespace TAG {
-    enum ENUM{BODY, ELEMENT, SVG, G, INVALID};
+    enum ENUM{BODY, ELEMENT, SVG, G, POLYGON, INVALID};
 };
 
 class ofxLayout;
@@ -35,6 +35,9 @@ public:
     TAG::ENUM getTag();
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
+    
+    void setShape(ofPath shape);
+    ofPath* getShape();
     
     static string getTagString(TAG::ENUM tagEnum);
     static TAG::ENUM getTagEnum(string tagString);
@@ -77,6 +80,7 @@ public:
     void drawBackgroundGradient();
     void drawBackgroundTexture(ofTexture* texture);
     void drawText();
+    void drawShape();
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();

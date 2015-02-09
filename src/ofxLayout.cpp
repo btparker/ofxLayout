@@ -158,8 +158,6 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     value = populateExpressions(value);
     element->setValue(value);
     
-    string svg = xmlLayout->getAttribute(tag,"svg", "", which);
-    svg = populateExpressions(svg);
     
     vector<string> attributes;
     
@@ -167,29 +165,24 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     
     for(int i = 0; i < attributes.size(); i++){
         string attribute = attributes[i];
-        if(ofxOSS::getOssKeyFromString(attribute) != OSS_KEY::INVALID){
+        if(ofxOSS::validKey(attribute)){
             element->appendInlineStyle(" "+attribute+" : "+xmlLayout->getAttribute(tag, attribute, "", which)+";");
         }
     }
     
-    if(tag == "svg"){
-        if(svg != ""){
-            ofxXmlSettings svgLayout;
-            bool svgParsingSuccessful = svgLayout.loadFile(svg);
-            if(svgParsingSuccessful){
-                xmlLayout->pushTag(tag, which);
-                loadSvg(&svgLayout, element);
-                xmlLayout->popTag();
-            }
-            else{
-                ofLogError("ofxLayout::loadFromXmlLayout","Unable to parse SVG file "+svg+".");
-            }
+    string file = xmlLayout->getAttribute(tag,"file", "", which);
+    file = populateExpressions(file);
+    
+    if(file != ""){
+        ofxXmlSettings fileLayout;
+        bool fileParsingSuccessful = fileLayout.loadFile(file);
+        if(fileParsingSuccessful){
+            loadFromXmlLayout(&fileLayout, element, tagEnum, which);
         }
         else{
-            xmlLayout->pushTag(tag, which);
-            loadSvg(xmlLayout, element);
-            xmlLayout->popTag();
+            ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+file+".");
         }
+
     }
     else{
         // Push into current element, and load all children of different valid tag types
@@ -207,23 +200,43 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
     }
     
-}
-
-void ofxLayout::loadSvg(ofxXmlSettings *svgLayout, ofxLayoutElement *element){
-    int numSvg = svgLayout->getNumTags(ofxLayoutElement::getTagString(TAG::SVG));
+    int numSvg = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::SVG));
     for(int i = 0; i < numSvg; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        loadFromXmlLayout(svgLayout, child, TAG::SVG, i);
+        loadFromXmlLayout(xmlLayout, child, TAG::SVG, i);
     }
     
-    int numG = svgLayout->getNumTags(ofxLayoutElement::getTagString(TAG::G));
+    int numG = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::G));
     for(int i = 0; i < numG; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        loadFromXmlLayout(svgLayout, child, TAG::G, i);
+        loadFromXmlLayout(xmlLayout, child, TAG::G, i);
+    }
+    
+    int numPolygons = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::POLYGON));
+    for(int i = 0; i < numPolygons; i++){
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        ofPath shape;
+        string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
+        vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
+        for(int j = 0; j < ptsStr.size(); j++){
+            vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
+            ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
+            if(j==0){
+                shape.moveTo(pt);
+            }
+            else{
+                shape.lineTo(pt);
+            }
+        }
+        shape.close();
+        child->setShape(shape);
+        loadFromXmlLayout(xmlLayout, child, TAG::POLYGON, i);
     }
 }
+
 
 void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     vector<string> keys = jsonElement->getMemberNames();

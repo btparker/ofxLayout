@@ -104,6 +104,7 @@ void ofxLayoutElement::draw(){
         }
         
         drawBackground();
+        drawShape();
         drawText();
         
         ofPopMatrix();
@@ -153,6 +154,9 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::G:
             tag = "g";
             break;
+        case TAG::POLYGON:
+            tag = "polygon";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -173,6 +177,9 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "g") {
         return TAG::G;
+    }
+    else if(tagString == "polygon") {
+        return TAG::POLYGON;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
@@ -220,6 +227,21 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
+void ofxLayoutElement::drawShape(){
+    if(hasStyle(OSS_KEY::FILL)){
+        shape.setFillColor(getColorStyle(OSS_KEY::FILL));
+    }
+
+    if(hasStyle(OSS_KEY::STROKE)){
+        shape.setStrokeColor(getColorStyle(OSS_KEY::STROKE));
+    }
+    
+    if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
+        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
+    }
+    shape.draw();
+}
+
 void ofxLayoutElement::drawBackground(){
     bool blendModeActive = beginBackgroundBlendMode();
     // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
@@ -613,4 +635,12 @@ void ofxLayoutElement::setBoundary(ofRectangle boundary){
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){
     this->layout = layout;
+}
+
+void ofxLayoutElement::setShape(ofPath shape){
+    this->shape = shape;
+}
+
+ofPath* ofxLayoutElement::getShape(){
+    return &this->shape;
 }
