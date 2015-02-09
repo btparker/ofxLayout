@@ -83,17 +83,19 @@ void ofxLayoutElement::draw(){
     if(hasStyle(OSS_KEY::DISPLAY) && ofxOSS::getOssValueFromString(getStyle(OSS_KEY::DISPLAY)) == OSS_VALUE::NONE){
         return;
     }
+    
     ofPushMatrix();
-    ofTranslate(boundary.x, boundary.y, 0);
-//    ofRotate(ofGetFrameNum() * .01, 0, 0, 1);
+    
+    ofTranslate(boundary.getPosition());
+    ofRotate(0,0,0,0);
     if(hasStyle(OSS_KEY::SCALE)){
         ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
     }
-    ofEnableAlphaBlending();
+    
     drawStyles();
-    ofDisableAlphaBlending();
     
     ofPopMatrix();
+    
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
