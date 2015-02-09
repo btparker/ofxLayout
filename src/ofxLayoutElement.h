@@ -29,6 +29,8 @@ public:
     
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
+    void setParent(ofxLayoutElement* parent);
+    ofxLayoutElement* getParent();
     
     TAG::ENUM getTag();
     void setTag(TAG::ENUM tag);

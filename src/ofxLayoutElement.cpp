@@ -31,6 +31,15 @@ void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
     this->mouseState = mouseState;
 }
 
+void ofxLayoutElement::setParent(ofxLayoutElement *parent){
+    this->parent = parent;
+    this->layout = parent->layout;
+}
+
+ofxLayoutElement* ofxLayoutElement::getParent(){
+    return this->parent;
+}
+
 MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
     return this->mouseState;
 }
@@ -69,8 +78,7 @@ void ofxLayoutElement::update(){
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
-    child->parent = this;
-    child->setLayout(this->layout);
+    child->setParent(this);
     children.push_back(child);
 }
 
@@ -92,7 +100,6 @@ void ofxLayoutElement::draw(){
     for(int i = 0 ; i < children.size(); i++){
         children[i]->draw();
     }
-    ofSetColor(255);
 }
 
 /// |   Setters/Getters   | ///
