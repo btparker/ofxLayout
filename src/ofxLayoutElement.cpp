@@ -77,10 +77,10 @@ bool ofxLayoutElement::visible(){
 
 void ofxLayoutElement::update(){
     if(parent == NULL){
-        boundary = ofGetCurrentViewport();
+        setBoundary(ofGetCurrentViewport());
     }
     else{
-        boundary = styles.computeElementTransform(parent->getBoundary());
+        setBoundary(styles.computeElementTransform(parent->getBoundary()));
     }
 
     for(int i = 0 ; i < children.size(); i++){
@@ -97,13 +97,14 @@ void ofxLayoutElement::draw(){
     if(visible()){
         ofPushMatrix();
         
-        ofTranslate(boundary.getPosition());
+        ofTranslate(getBoundary().getPosition());
         ofRotate(0,0,0,0);
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
         
-        drawStyles();
+        drawBackground();
+        drawText();
         
         ofPopMatrix();
         
@@ -207,12 +208,6 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
-
-void ofxLayoutElement::drawStyles(){
-    drawBackground();
-    drawText();
-}
-
 void ofxLayoutElement::drawBackground(){
     bool blendModeActive = beginBackgroundBlendMode();
     // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
@@ -594,6 +589,10 @@ void ofxLayoutElement::setInlineStyle(string style){
 
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
+}
+
+void ofxLayoutElement::setBoundary(ofRectangle boundary){
+    this->boundary = boundary;
 }
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){

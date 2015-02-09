@@ -48,6 +48,7 @@ public:
     string getClasses();
     void setClasses(string classes);
     
+    void setBoundary(ofRectangle boundary);
     ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);
@@ -96,7 +97,6 @@ public:
 
 protected:
     ofxLayout* layout;
-    void drawStyles();
     virtual void drawTag(){};
     
     ofRectangle boundary;

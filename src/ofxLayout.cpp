@@ -52,7 +52,6 @@ void ofxLayout::update(ofEventArgs &args){
 }
 
 void ofxLayout::draw(){
-    ofBackground(0);
     if(drawable()){
         contextTreeRoot.draw();
     }
@@ -62,6 +61,7 @@ void ofxLayout::unload(){
     assets.getBatch("images")->clear();
     idElementMap.clear();
 }
+
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayout::init(){
