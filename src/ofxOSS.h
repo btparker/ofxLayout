@@ -4,6 +4,10 @@
 #include "ofxFontStash.h"
 #include "ofxAnimatableManager.h"
 
+namespace MOUSE_STATE{
+    enum ENUM{NONE, HOVER, ACTIVE};
+}
+
 // Types of styles
 namespace OSS_TYPE{
     enum ENUM{NONE, COLOR, NUMBER, OSS_VALUE, PERCENT, INVALID};
@@ -28,6 +32,9 @@ namespace OSS_KEY{
         
         BLUR,
         
+        // SHAPE
+        FILL, STROKE, STROKE_MITERLIMIT,
+        
         // Invalid is last in case we want to extend the enum
         INVALID
     };
@@ -37,6 +44,9 @@ namespace OSS_VALUE{
     enum ENUM{
         // GENERAL
         NONE, AUTO,
+        
+        // DISPLAY
+        BLOCK,
         
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
@@ -70,6 +80,11 @@ public:
     
     ofxOssRule* getStyle(OSS_KEY::ENUM key);
     ofxOssRule* getStyle(string key);
+    
+    void setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
+    void setStyle(OSS_KEY::ENUM key, string value);
+    void setStyle(OSS_KEY::ENUM key, float value);
+    void setStyle(OSS_KEY::ENUM key, ofColor value);
     
     static bool validKey(string key);
     static bool validKey(OSS_KEY::ENUM key);

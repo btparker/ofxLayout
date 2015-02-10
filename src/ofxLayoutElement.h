@@ -7,7 +7,7 @@
 #include "ofxMask.h"
 
 namespace TAG {
-    enum ENUM{BODY, ELEMENT, INVALID};
+    enum ENUM{BODY, ELEMENT, SVG, G, POLYGON, INVALID};
 };
 
 class ofxLayout;
@@ -29,13 +29,15 @@ public:
     
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
-    
-    void setAssets(ofxLoaderSpool* assetsPtr);
-    void setFonts(map<string, ofxFontStash>* fontsPtr);
+    void setParent(ofxLayoutElement* parent);
+    ofxLayoutElement* getParent();
     
     TAG::ENUM getTag();
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
+    
+    void setShape(ofPath shape);
+    ofPath* getShape();
     
     static string getTagString(TAG::ENUM tagEnum);
     static TAG::ENUM getTagEnum(string tagString);
@@ -49,6 +51,7 @@ public:
     string getClasses();
     void setClasses(string classes);
     
+    void setBoundary(ofRectangle boundary);
     ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);
@@ -60,8 +63,11 @@ public:
     string getInlineStyle();
     ofxOSS getInlineStyles();
     void setInlineStyle(string style);
+    void appendInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
+    void copyStyles(ofxOSS* styleObject);
+    
     void addChild(ofxLayoutElement* child);
     
     ofxOSS styles;
@@ -76,15 +82,28 @@ public:
     void drawBackgroundGradient();
     void drawBackgroundTexture(ofTexture* texture);
     void drawText();
+    void drawShape();
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();
     
     void setLayout(ofxLayout* layout);
+    
+    MOUSE_STATE::ENUM getMouseState();
+    void setMouseState(MOUSE_STATE::ENUM mouseState);
+    
+    void mouseMoved(ofMouseEventArgs& args);
+    void mousePressed(ofMouseEventArgs& args);
+    void mouseReleased(ofMouseEventArgs& args);
+    
+    // Display methods
+    void show();
+    void hide();
+    
+    bool visible();
 
 protected:
     ofxLayout* layout;
-    void drawStyles();
     virtual void drawTag(){};
     
     ofRectangle boundary;
@@ -98,9 +117,9 @@ protected:
     
     string inlineStyle;
     
-    map<string,string>* dataPtr;
-    ofxLoaderSpool* assetsPtr;
-    map<string, ofxFontStash>* fontsPtr;
+    MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
+    ofPath shape;
+    
 };

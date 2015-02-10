@@ -32,6 +32,22 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::COLOR, ofColor::black);
 }
 
+void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
+    generateRule(key, value);
+}
+
+void ofxOSS::setStyle(OSS_KEY::ENUM key, string value){
+    generateRule(key, value);
+}
+
+void ofxOSS::setStyle(OSS_KEY::ENUM key, float value){
+    generateRule(key, value);
+}
+
+void ofxOSS::setStyle(OSS_KEY::ENUM key, ofColor value){
+    generateRule(key, value);
+}
+
 ofxOSS::~ofxOSS(){
     rules.clear();
     idMap.clear();
@@ -147,6 +163,15 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "blur"){
         return OSS_KEY::BLUR;
     }
+    else if(key == "fill"){
+        return OSS_KEY::FILL;
+    }
+    else if(key == "stroke"){
+        return OSS_KEY::STROKE;
+    }
+    else if(key == "stroke-miterlimit"){
+        return OSS_KEY::STROKE_MITERLIMIT;
+    }
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -243,6 +268,15 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::BLUR:
             keyString = "blur";
             break;
+        case OSS_KEY::FILL:
+            keyString = "fill";
+            break;
+        case OSS_KEY::STROKE:
+            keyString = "stroke";
+            break;
+        case OSS_KEY::STROKE_MITERLIMIT:
+            keyString = "stroke-miterlimit";
+            break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
     }
@@ -258,6 +292,11 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             break;
         case OSS_VALUE::AUTO:
             valueStr = "auto";
+            break;
+            
+        // DISPLAY
+        case OSS_VALUE::BLOCK:
+            valueStr = "block";
             break;
             
             // POSITION / TEXT ALIGN
@@ -341,6 +380,11 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     else if(value == "auto"){
         return OSS_VALUE::AUTO;
+    }
+    
+    // DISPLAY
+    else if(value == "block"){
+        return OSS_VALUE::BLOCK;
     }
     
     // POSITION / TEXT ALIGN
@@ -466,6 +510,16 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::TEXT_TRANSFORM:
             type = OSS_TYPE::OSS_VALUE;
+            break;
+        case OSS_KEY::FILL:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::STROKE:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::STROKE_MITERLIMIT:
+            type = OSS_TYPE::NUMBER;
+            break;
         default:
             type = OSS_TYPE::NONE;
             break;
@@ -668,7 +722,7 @@ float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle
     else{
         x = ofToFloat(xStr);
     }
-    return x;
+    return x+parentBoundary.x;
 }
 
 float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary){
@@ -688,7 +742,7 @@ float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle 
         y = ofToFloat(yStr);
     }
     
-    return y;
+    return y+parentBoundary.y;
 }
 
 void ofxOSS::generateRule(string key, string value){

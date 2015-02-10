@@ -4,8 +4,7 @@
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
-
-
+#include "ofxShivaVGRenderer.h"
 
 class ofxLayout{
     
@@ -20,8 +19,10 @@ public:
     /// |   Cycle Functions  | ///
     /// | ------------------ | ///
     
-    void update();
+    void update(ofEventArgs& args);
     void draw();
+    map<string, ofxFontStash>* getFonts();
+    ofxLoaderSpool* getAssets();
     
     /// |   Utilities   | ///
     /// | ------------- | ///
@@ -55,8 +56,15 @@ public:
     string populateExpressions(string value);
 
     ofxAnimatableManager animatableManager;
+    
+    ofxLayoutElement* hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements = NULL, ofxLayoutElement* startElement = NULL);
+    
+    void mouseMoved(ofMouseEventArgs& args);
+    void mousePressed(ofMouseEventArgs& args);
+    void mouseReleased(ofMouseEventArgs& args);
 protected:
-
+    ofPtr<ofBaseRenderer> _defaultRenderer;
+    ofPtr<ofxShivaVGRenderer> _shivaVGRenderer;
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
     

@@ -8,18 +8,47 @@ ofxLayoutElement::ofxLayoutElement(){
     video = NULL;
     boundary = ofRectangle();
     styles.setDefaults();
+    mouseState = MOUSE_STATE::NONE;
+    
+    ofAddListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
+    ofAddListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
+    ofAddListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
 }
 
-void ofxLayoutElement::setAssets(ofxLoaderSpool* assetsPtr){
-    this->assetsPtr = assetsPtr;
+void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
+    if(boundary.inside(args.x, args.y)){
+        
+    }
 }
 
-void ofxLayoutElement::setFonts(map<string, ofxFontStash>* fontsPtr){
-    this->fontsPtr = fontsPtr;
+void ofxLayoutElement::mouseReleased(ofMouseEventArgs &args){
 }
 
+void ofxLayoutElement::mousePressed(ofMouseEventArgs &args){
+}
+
+void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
+    this->mouseState = mouseState;
+}
+
+void ofxLayoutElement::setParent(ofxLayoutElement *parent){
+    this->parent = parent;
+    this->layout = parent->layout;
+}
+
+ofxLayoutElement* ofxLayoutElement::getParent(){
+    return this->parent;
+}
+
+MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
+    return this->mouseState;
+}
 
 ofxLayoutElement::~ofxLayoutElement(){
+    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
+    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
+    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
+    
     if(video != NULL){
         video->closeMovie();
         video = NULL;
@@ -29,52 +58,61 @@ ofxLayoutElement::~ofxLayoutElement(){
     }
 }
 
+void ofxLayoutElement::show(){
+    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+}
+
+void ofxLayoutElement::hide(){
+    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+}
+
+bool ofxLayoutElement::visible(){
+    bool displayNone = hasStyle(OSS_KEY::DISPLAY) && getOssValueStyle(OSS_KEY::DISPLAY) == OSS_VALUE::NONE;
+    bool opacityZero = hasStyle(OSS_KEY::OPACITY) && getFloatStyle(OSS_KEY::OPACITY) == 0.0f;
+    return !displayNone && !opacityZero;
+}
+
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
     if(parent == NULL){
-        boundary.x = 0;
-        boundary.y = 0;
-        boundary.width = ofGetViewportWidth();
-        boundary.height = ofGetViewportHeight();
+        setBoundary(ofGetCurrentViewport());
     }
     else{
-        boundary = styles.computeElementTransform(parent->boundary);
+        setBoundary(styles.computeElementTransform(parent->getBoundary()));
     }
 
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
-    ofPopMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
-    child->parent = this;
-    child->setLayout(this->layout);
-    child->setAssets(this->assetsPtr);
-    child->setFonts(this->fontsPtr);
+    child->setParent(this);
     children.push_back(child);
 }
 
 void ofxLayoutElement::draw(){
-    if(hasStyle(OSS_KEY::DISPLAY) && ofxOSS::getOssValueFromString(getStyle(OSS_KEY::DISPLAY)) == OSS_VALUE::NONE){
-        return;
+    if(visible()){
+        ofPushMatrix();
+        
+        ofTranslate(getBoundary().getPosition());
+        ofRotate(0,0,0,0);
+        if(hasStyle(OSS_KEY::SCALE)){
+            ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
+        }
+        
+        drawBackground();
+        drawShape();
+        drawText();
+        
+        ofPopMatrix();
+        
+        for(int i = 0 ; i < children.size(); i++){
+            children[i]->draw();
+        }
     }
-    ofPushMatrix();
-    ofTranslate(boundary.x, boundary.y, 0);
-//    ofRotate(ofGetFrameNum() * .01, 0, 0, 1);
-    if(hasStyle(OSS_KEY::SCALE)){
-        ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
-    }
-    ofEnableAlphaBlending();
-    drawStyles();
-    ofDisableAlphaBlending();
-    for(int i = 0 ; i < children.size(); i++){
-        children[i]->draw();
-    }
-    ofSetColor(255);
-    ofPopMatrix();
 }
 
 /// |   Setters/Getters   | ///
@@ -110,6 +148,15 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::ELEMENT:
             tag = "element";
             break;
+        case TAG::SVG:
+            tag = "svg";
+            break;
+        case TAG::G:
+            tag = "g";
+            break;
+        case TAG::POLYGON:
+            tag = "polygon";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -124,6 +171,15 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "element") {
         return TAG::ELEMENT;
+    }
+    else if(tagString == "svg") {
+        return TAG::SVG;
+    }
+    else if(tagString == "g") {
+        return TAG::G;
+    }
+    else if(tagString == "polygon") {
+        return TAG::POLYGON;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
@@ -171,10 +227,19 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
+void ofxLayoutElement::drawShape(){
+    if(hasStyle(OSS_KEY::FILL)){
+        shape.setFillColor(getColorStyle(OSS_KEY::FILL));
+    }
 
-void ofxLayoutElement::drawStyles(){
-    drawBackground();
-    drawText();
+    if(hasStyle(OSS_KEY::STROKE)){
+        shape.setStrokeColor(getColorStyle(OSS_KEY::STROKE));
+    }
+    
+    if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
+        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/4);
+    }
+    shape.draw();
 }
 
 void ofxLayoutElement::drawBackground(){
@@ -201,7 +266,7 @@ void ofxLayoutElement::drawText(){
         ofRectangle drawBox;
         
         string fontFilename = getStyle(OSS_KEY::FONT_FAMILY);
-        if(fontsPtr->count(fontFilename) > 0){
+        if(layout->getFonts()->count(fontFilename) > 0){
             string text = getValue();
             if(hasStyle(OSS_KEY::TEXT_TRANSFORM)){
                 vector<string> words = ofSplitString(text, " ",true,true);
@@ -241,7 +306,7 @@ void ofxLayoutElement::drawText(){
                 lineHeight = 1.0f;
             }
             
-            fontsPtr->at(fontFilename).setLineHeight(lineHeight);
+            layout->getFonts()->at(fontFilename).setLineHeight(lineHeight);
             
             float textMaxWidth = boundary.width;
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
@@ -252,13 +317,13 @@ void ofxLayoutElement::drawText(){
             
             
             int numLines;
-            ofRectangle fontBBox = fontsPtr->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
+            ofRectangle fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
             drawBox.width = fontBBox.width;
             drawBox.height = fontBBox.height;
             
             
             float x;
-            float y = fontSize*fontsPtr->at(fontFilename).getLineHeight();
+            float y = fontSize*layout->getFonts()->at(fontFilename).getLineHeight();
             
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
                 string textAlign = getStyle(OSS_KEY::TEXT_ALIGN);
@@ -321,7 +386,7 @@ void ofxLayoutElement::drawText(){
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
                 ofSetColor(fontColor);
             }
-            fontsPtr->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
+            layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
         }
     }
     ofDisableAlphaBlending();
@@ -435,7 +500,7 @@ void ofxLayoutElement::endBackgroundBlendMode(){
 void ofxLayoutElement::drawBackgroundImage(){
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
-        ofxLoaderBatch* imagesBatch = assetsPtr->getBatch("images");
+        ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch("images");
         string imageID = getStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureDrawable(imageID)){
             drawBackgroundTexture(imagesBatch->getTexture(imageID));
@@ -534,6 +599,18 @@ void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     }
 }
 
+
+void ofxLayoutElement::copyStyles(ofxOSS *styleObject){
+    for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
+        if(this->styles.rules.count(iterator->first) == 0){
+            this->styles.rules[iterator->first] = iterator->second;
+        }
+        else{
+            this->styles.rules[iterator->first]->setValue(iterator->second->getString());
+        }
+    }
+}
+
 string ofxLayoutElement::getInlineStyle(){
     return this->inlineStyle;
 }
@@ -556,10 +633,26 @@ void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
 }
 
+void ofxLayoutElement::appendInlineStyle(string style){
+    this->inlineStyle += (" "+style);
+}
+
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
 }
 
+void ofxLayoutElement::setBoundary(ofRectangle boundary){
+    this->boundary = boundary;
+}
+
 void ofxLayoutElement::setLayout(ofxLayout *layout){
     this->layout = layout;
+}
+
+void ofxLayoutElement::setShape(ofPath shape){
+    this->shape = shape;
+}
+
+ofPath* ofxLayoutElement::getShape(){
+    return &this->shape;
 }
