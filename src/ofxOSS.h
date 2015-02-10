@@ -32,6 +32,9 @@ namespace OSS_KEY{
         
         BLUR,
         
+        // SHAPE
+        FILL, STROKE, STROKE_MITERLIMIT,
+        
         // Invalid is last in case we want to extend the enum
         INVALID
     };

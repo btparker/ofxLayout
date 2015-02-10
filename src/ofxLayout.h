@@ -4,8 +4,7 @@
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
-
-
+#include "ofxShivaVGRenderer.h"
 
 class ofxLayout{
     
@@ -64,7 +63,8 @@ public:
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
 protected:
-
+    ofPtr<ofBaseRenderer> _defaultRenderer;
+    ofPtr<ofxShivaVGRenderer> _shivaVGRenderer;
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
     

@@ -7,7 +7,7 @@
 #include "ofxMask.h"
 
 namespace TAG {
-    enum ENUM{BODY, ELEMENT, INVALID};
+    enum ENUM{BODY, ELEMENT, SVG, G, POLYGON, INVALID};
 };
 
 class ofxLayout;
@@ -36,6 +36,9 @@ public:
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
     
+    void setShape(ofPath shape);
+    ofPath* getShape();
+    
     static string getTagString(TAG::ENUM tagEnum);
     static TAG::ENUM getTagEnum(string tagString);
 
@@ -60,8 +63,11 @@ public:
     string getInlineStyle();
     ofxOSS getInlineStyles();
     void setInlineStyle(string style);
+    void appendInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
+    void copyStyles(ofxOSS* styleObject);
+    
     void addChild(ofxLayoutElement* child);
     
     ofxOSS styles;
@@ -76,6 +82,7 @@ public:
     void drawBackgroundGradient();
     void drawBackgroundTexture(ofTexture* texture);
     void drawText();
+    void drawShape();
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();
@@ -113,4 +120,6 @@ protected:
     MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
+    ofPath shape;
+    
 };

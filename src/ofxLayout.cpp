@@ -4,6 +4,9 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
+    _shivaVGRenderer = ofPtr<ofxShivaVGRenderer>(new ofxShivaVGRenderer);
+    ofSetCurrentRenderer(_shivaVGRenderer);
+    
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
@@ -40,6 +43,8 @@ ofxLayout::~ofxLayout(){
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
     
     unload();
+    
+    _shivaVGRenderer->ofGLRenderer::clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -157,10 +162,39 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string value = xmlLayout->getValue(tag,"", which);
     value = populateExpressions(value);
     element->setValue(value);
-    // Push into current element, and load all children of different valid tag types
-    xmlLayout->pushTag(tag, which);
-    loadTags(xmlLayout, element);
-    xmlLayout->popTag();
+    
+    
+    vector<string> attributes;
+    
+    xmlLayout->getAttributeNames(tag, attributes, which);
+    
+    for(int i = 0; i < attributes.size(); i++){
+        string attribute = attributes[i];
+        if(ofxOSS::validKey(attribute)){
+            element->appendInlineStyle(" "+attribute+" : "+xmlLayout->getAttribute(tag, attribute, "", which)+";");
+        }
+    }
+    
+    string file = xmlLayout->getAttribute(tag,"file", "", which);
+    file = populateExpressions(file);
+    
+    if(file != ""){
+        ofxXmlSettings fileLayout;
+        bool fileParsingSuccessful = fileLayout.loadFile(file);
+        if(fileParsingSuccessful){
+            loadFromXmlLayout(&fileLayout, element, tagEnum, which);
+        }
+        else{
+            ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+file+".");
+        }
+
+    }
+    else{
+        // Push into current element, and load all children of different valid tag types
+        xmlLayout->pushTag(tag, which);
+        loadTags(xmlLayout, element);
+        xmlLayout->popTag();
+    }
 }
 
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
@@ -170,7 +204,57 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         element->addChild(child);
         loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
     }
+    
+    int numSvg = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::SVG));
+    for(int i = 0; i < numSvg; i++){
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        loadFromXmlLayout(xmlLayout, child, TAG::SVG, i);
+    }
+    
+    int numG = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::G));
+    for(int i = 0; i < numG; i++){
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        loadFromXmlLayout(xmlLayout, child, TAG::G, i);
+    }
+    
+    int numPolygons = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::POLYGON));
+    for(int i = 0; i < numPolygons; i++){
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        ofPath shape;
+        string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
+        vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
+        for(int j = 0; j < ptsStr.size(); j++){
+            vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
+            ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
+            if(j==0){
+                shape.moveTo(pt);
+            }
+            else{
+                shape.lineTo(pt);
+            }
+        }
+        shape.close();
+        child->setShape(shape);
+        loadFromXmlLayout(xmlLayout, child, TAG::POLYGON, i);
+    }
+    
+    // SVG Path Commands
+    //    M = moveto
+    //    L = lineto
+    //    H = horizontal lineto
+    //    V = vertical lineto
+    //    C = curveto
+    //    S = smooth curveto
+    //    Q = quadratic Bézier curve
+    //    T = smooth quadratic Bézier curveto
+    //    A = elliptical Arc
+    //    Z = closepath
 }
+
+
 void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     vector<string> keys = jsonElement->getMemberNames();
     for(int i = 0; i < keys.size(); i++){
@@ -228,9 +312,9 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
-//        else if(key == "animation" || ofStringTimesInString(key, "@keyframes") > 0){
-//            return;
-//        }
+        else if(key == "animation" || ofStringTimesInString(key, "@keyframes") > 0){
+            continue;
+        }
         // Style Key
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
@@ -314,7 +398,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     ofxOSS inlineStyles = element->getInlineStyles();
-    element->overrideStyles(&inlineStyles);
+    element->copyStyles(&inlineStyles);
     
     // Get assets
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
@@ -350,15 +434,12 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
 }
 
 ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements, ofxLayoutElement* startElement){
-    cout << "PT " << pt << endl;
     if(returnedElements == NULL){
         returnedElements = new vector<ofxLayoutElement*>();
     }
     if(startElement == NULL){
         startElement = &contextTreeRoot;
     }
-    
-    cout << "Boundary " << startElement->getBoundary() << endl;
     // If intersects
     if(startElement->getBoundary().inside(pt)){
         returnedElements->push_back(startElement);

@@ -104,6 +104,7 @@ void ofxLayoutElement::draw(){
         }
         
         drawBackground();
+        drawShape();
         drawText();
         
         ofPopMatrix();
@@ -147,6 +148,15 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::ELEMENT:
             tag = "element";
             break;
+        case TAG::SVG:
+            tag = "svg";
+            break;
+        case TAG::G:
+            tag = "g";
+            break;
+        case TAG::POLYGON:
+            tag = "polygon";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -161,6 +171,15 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "element") {
         return TAG::ELEMENT;
+    }
+    else if(tagString == "svg") {
+        return TAG::SVG;
+    }
+    else if(tagString == "g") {
+        return TAG::G;
+    }
+    else if(tagString == "polygon") {
+        return TAG::POLYGON;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
@@ -208,6 +227,21 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
+void ofxLayoutElement::drawShape(){
+    if(hasStyle(OSS_KEY::FILL)){
+        shape.setFillColor(getColorStyle(OSS_KEY::FILL));
+    }
+
+    if(hasStyle(OSS_KEY::STROKE)){
+        shape.setStrokeColor(getColorStyle(OSS_KEY::STROKE));
+    }
+    
+    if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
+        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/4);
+    }
+    shape.draw();
+}
+
 void ofxLayoutElement::drawBackground(){
     bool blendModeActive = beginBackgroundBlendMode();
     // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
@@ -565,6 +599,18 @@ void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     }
 }
 
+
+void ofxLayoutElement::copyStyles(ofxOSS *styleObject){
+    for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
+        if(this->styles.rules.count(iterator->first) == 0){
+            this->styles.rules[iterator->first] = iterator->second;
+        }
+        else{
+            this->styles.rules[iterator->first]->setValue(iterator->second->getString());
+        }
+    }
+}
+
 string ofxLayoutElement::getInlineStyle(){
     return this->inlineStyle;
 }
@@ -587,6 +633,10 @@ void ofxLayoutElement::setInlineStyle(string style){
     this->inlineStyle = style;
 }
 
+void ofxLayoutElement::appendInlineStyle(string style){
+    this->inlineStyle += (" "+style);
+}
+
 ofRectangle ofxLayoutElement::getBoundary(){
     return boundary;
 }
@@ -597,4 +647,12 @@ void ofxLayoutElement::setBoundary(ofRectangle boundary){
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){
     this->layout = layout;
+}
+
+void ofxLayoutElement::setShape(ofPath shape){
+    this->shape = shape;
+}
+
+ofPath* ofxLayoutElement::getShape(){
+    return &this->shape;
 }
