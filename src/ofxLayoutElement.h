@@ -66,6 +66,8 @@ public:
     void appendInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
+    void copyStyles(ofxOSS* styleObject);
+    
     void addChild(ofxLayoutElement* child);
     
     ofxOSS styles;

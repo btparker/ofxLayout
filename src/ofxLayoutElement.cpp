@@ -237,7 +237,7 @@ void ofxLayoutElement::drawShape(){
     }
     
     if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
-        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
+        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/4);
     }
     shape.draw();
 }
@@ -596,6 +596,18 @@ void ofxLayoutElement::drawBackgroundColor(){
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
         this->styles.rules[iterator->first] = iterator->second;
+    }
+}
+
+
+void ofxLayoutElement::copyStyles(ofxOSS *styleObject){
+    for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
+        if(this->styles.rules.count(iterator->first) == 0){
+            this->styles.rules[iterator->first] = iterator->second;
+        }
+        else{
+            this->styles.rules[iterator->first]->setValue(iterator->second->getString());
+        }
     }
 }
 

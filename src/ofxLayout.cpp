@@ -4,6 +4,9 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
+    _shivaVGRenderer = ofPtr<ofxShivaVGRenderer>(new ofxShivaVGRenderer);
+    ofSetCurrentRenderer(_shivaVGRenderer);
+    
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
@@ -40,6 +43,8 @@ ofxLayout::~ofxLayout(){
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
     
     unload();
+    
+    _shivaVGRenderer->ofGLRenderer::clear();
 }
 
 /// |   Cycle Functions  | ///
@@ -235,6 +240,18 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         child->setShape(shape);
         loadFromXmlLayout(xmlLayout, child, TAG::POLYGON, i);
     }
+    
+    // SVG Path Commands
+    //    M = moveto
+    //    L = lineto
+    //    H = horizontal lineto
+    //    V = vertical lineto
+    //    C = curveto
+    //    S = smooth curveto
+    //    Q = quadratic Bézier curve
+    //    T = smooth quadratic Bézier curveto
+    //    A = elliptical Arc
+    //    Z = closepath
 }
 
 
@@ -381,7 +398,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     ofxOSS inlineStyles = element->getInlineStyles();
-    element->overrideStyles(&inlineStyles);
+    element->copyStyles(&inlineStyles);
     
     // Get assets
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
@@ -423,7 +440,6 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* retu
     if(startElement == NULL){
         startElement = &contextTreeRoot;
     }
-    
     // If intersects
     if(startElement->getBoundary().inside(pt)){
         returnedElements->push_back(startElement);
