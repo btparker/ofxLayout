@@ -4,20 +4,15 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    _shivaVGRenderer = ofPtr<ofxShivaVGRenderer>(new ofxShivaVGRenderer);
-    ofSetCurrentRenderer(_shivaVGRenderer);
-    
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
-    // This is so that the functionality can be overwritten in the case of adding new tag types
-    init();
-    
-    
-    ofAddListener(ofEvents().update, this, &ofxLayout::update);
     ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
     ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    
+    // This is so that the functionality can be overwritten in the case of adding new tag types
+    init();
 }
 
 map<string, ofxFontStash>* ofxLayout::getFonts(){
@@ -37,20 +32,17 @@ void ofxLayout::mousePressed(ofMouseEventArgs &args){
 }
 
 ofxLayout::~ofxLayout(){
-    ofRemoveListener(ofEvents().update, this, &ofxLayout::update);
     ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
     ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
     
     unload();
-    
-    _shivaVGRenderer->ofGLRenderer::clear();
 }
 
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
-void ofxLayout::update(ofEventArgs &args){
+void ofxLayout::update(){
     assets.update();
     animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
@@ -64,7 +56,6 @@ void ofxLayout::draw(){
 
 void ofxLayout::unload(){
     assets.getBatch("images")->clear();
-    idElementMap.clear();
 }
 
 /// |   Utilities   | ///
@@ -101,12 +92,20 @@ void ofxLayout::loadDataFromFile(string dataFilename){
         for(int i = 0; i < keys.size(); i++){
             string key = keys[i];
             ofxJSONElement value = jsonData[key];
-            data[key] = value.asString();
+            setData(key, value.asString());
         }
     }
     else{
         ofLogError("ofxLayout::loadData","Unable to parse data json "+dataFilename+".");
     }
+}
+
+void ofxLayout::setData(string key, string value){
+    data[key] = value;
+}
+
+string ofxLayout::getData(string key){
+    return data[key];
 }
 
 void ofxLayout::loadOfmlFromFile(string ofmlFilename){
@@ -170,7 +169,7 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     
     for(int i = 0; i < attributes.size(); i++){
         string attribute = attributes[i];
-        if(ofxOSS::validKey(attribute)){
+        if(attribute != "id" && attribute != "class" && ofxOSS::validKey(attribute)){
             element->appendInlineStyle(" "+attribute+" : "+xmlLayout->getAttribute(tag, attribute, "", which)+";");
         }
     }
@@ -187,7 +186,6 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
         else{
             ofLogError("ofxLayout::loadFromFile","Unable to parse OFML file "+file+".");
         }
-
     }
     else{
         // Push into current element, and load all children of different valid tag types
@@ -345,7 +343,9 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
             loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]));
         }
         else if(key == "animation"){
-            vector<string> animationParams = ofSplitString((*jsonElement)[key].asString(), " ");
+            string animation = (*jsonElement)[key].asString();
+            animation = populateExpressions(animation);
+            vector<string> animationParams = ofSplitString(animation, " ");
             string animationName = animationParams[0];
             string animationID = animationParams[1];
             float duration = ofToFloat(animationParams[2]);
@@ -478,4 +478,8 @@ string ofxLayout::populateExpressions(string input){
         }
     }
     return value;
+}
+
+ofxLayoutElement* ofxLayout::getBody(){
+    return &contextTreeRoot;
 }
