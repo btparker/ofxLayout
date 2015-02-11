@@ -4,7 +4,6 @@
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
-#include "ofxShivaVGRenderer.h"
 
 class ofxLayout{
     
@@ -68,8 +67,6 @@ public:
     
     ofxLayoutElement* getBody();
 protected:
-    ofPtr<ofBaseRenderer> _defaultRenderer;
-    ofPtr<ofxShivaVGRenderer> _shivaVGRenderer;
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
     
