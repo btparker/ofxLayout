@@ -6,7 +6,7 @@
 ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
-    boundary = ofRectangle();
+    boundary = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
     
@@ -530,10 +530,11 @@ void ofxLayoutElement::drawBackgroundVideo(){
 
 
 void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
+    texture->setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); 
     ofRectangle bgTextureTransform = ofRectangle();
     bgTextureTransform.setWidth(texture->getWidth());
     bgTextureTransform.setHeight(texture->getHeight());
-    bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, boundary);
+    bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, getBoundary());
     if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
         bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, boundary));
     }

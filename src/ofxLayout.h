@@ -19,7 +19,7 @@ public:
     /// |   Cycle Functions  | ///
     /// | ------------------ | ///
     
-    void update(ofEventArgs& args);
+    void update();
     void draw();
     map<string, ofxFontStash>* getFonts();
     ofxLoaderSpool* getAssets();
@@ -30,6 +30,9 @@ public:
     bool drawable();
     void init();
     void applyChanges();
+    
+    string getData(string key);
+    void setData(string key, string value);
     
     void loadFromFile(string filename);
     
@@ -62,6 +65,8 @@ public:
     void mouseMoved(ofMouseEventArgs& args);
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
+    
+    ofxLayoutElement* getBody();
 protected:
     ofPtr<ofBaseRenderer> _defaultRenderer;
     ofPtr<ofxShivaVGRenderer> _shivaVGRenderer;

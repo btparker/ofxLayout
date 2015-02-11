@@ -121,5 +121,4 @@ protected:
     
     ofVideoPlayer* video;
     ofPath shape;
-    
 };

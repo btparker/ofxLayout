@@ -9,6 +9,7 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
     
     generateRule(OSS_KEY::TOP, "0px");
+    
     generateRule(OSS_KEY::LEFT, "0px");
     
     generateRule(OSS_KEY::BACKGROUND_POSITION, OSS_VALUE::AUTO);
