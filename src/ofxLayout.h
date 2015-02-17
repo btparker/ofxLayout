@@ -91,5 +91,6 @@ protected:
     void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
     
     int pixelWidth, pixelHeight;
-
+    
+    ofFbo fbo;
 };

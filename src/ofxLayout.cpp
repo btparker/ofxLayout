@@ -46,6 +46,12 @@ void ofxLayout::update(){
     assets.update();
     animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
+    if(
+       fbo.getWidth() != contextTreeRoot.getFbo()->getWidth() ||
+       fbo.getHeight() != contextTreeRoot.getFbo()->getHeight()
+    ){
+        fbo.allocate(contextTreeRoot.getFbo()->getWidth(), contextTreeRoot.getFbo()->getHeight(), GL_RGBA);
+    }
 }
 
 void ofxLayout::draw(){
@@ -415,7 +421,13 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         
         if(fonts.count(fontFilename) == 0){
             fonts[fontFilename] = ofxFontStash();
-            fonts[fontFilename].setup(fontFilename);
+            fonts[fontFilename].setup(fontFilename,
+                                      1.0,
+                                      1024,
+                                      true,
+                                      8,
+                                      2.0f
+                                      );
         }
     }
     

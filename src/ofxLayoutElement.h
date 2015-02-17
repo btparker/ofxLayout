@@ -101,8 +101,11 @@ public:
     void hide();
     
     bool visible();
+    
+    ofFbo* getFbo();
 
 protected:
+    ofFbo fbo;
     ofxLayout* layout;
     virtual void drawTag(){};
     
@@ -112,8 +115,6 @@ protected:
     TAG::ENUM tag;
     string classes;
     string elementValue;
-    
-    ofxMask elementMask;
     
     string inlineStyle;
     
