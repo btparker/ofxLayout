@@ -7,6 +7,11 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
     boundary = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
+    fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
+    fbo.begin();
+    ofClear(0,0,0,255);
+    fbo.end();
+    
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
     
@@ -82,7 +87,12 @@ void ofxLayoutElement::update(){
     else{
         setBoundary(styles.computeElementTransform(parent->getBoundary()));
     }
-
+    if(fbo.getWidth() != boundary.getWidth() || fbo.getHeight() != boundary.getHeight()){
+        fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
+        fbo.begin();
+        ofClear(0,0,0,255);
+        fbo.end();
+    }
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -94,24 +104,39 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(){
+    
     if(visible()){
-        ofPushMatrix();
         
+        
+        ofPushMatrix();
         ofTranslate(getBoundary().getPosition());
         ofRotate(0,0,0,0);
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
         
+        fbo.begin();
+        ofClear(0,0,0,0);
+        ofSetColor(255);
+        
+        ofEnableAlphaBlending();
         drawBackground();
         drawShape();
         drawText();
         
+        ofDisableAlphaBlending();
+        fbo.end();
         ofPopMatrix();
+        
+        
+        ofEnableAlphaBlending();
+        fbo.draw(getBoundary().getPosition());
+        ofDisableAlphaBlending();
         
         for(int i = 0 ; i < children.size(); i++){
             children[i]->draw();
         }
+        
     }
 }
 
@@ -656,4 +681,8 @@ void ofxLayoutElement::setShape(ofPath shape){
 
 ofPath* ofxLayoutElement::getShape(){
     return &this->shape;
+}
+
+ofFbo* ofxLayoutElement::getFbo(){
+    return &fbo;
 }

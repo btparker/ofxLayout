@@ -46,6 +46,12 @@ void ofxLayout::update(){
     assets.update();
     animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
+    if(
+       fbo.getWidth() != contextTreeRoot.getFbo()->getWidth() ||
+       fbo.getHeight() != contextTreeRoot.getFbo()->getHeight()
+    ){
+        fbo.allocate(contextTreeRoot.getFbo()->getWidth(), contextTreeRoot.getFbo()->getHeight(), GL_RGBA);
+    }
 }
 
 void ofxLayout::draw(){
