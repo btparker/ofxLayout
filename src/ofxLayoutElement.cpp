@@ -234,7 +234,7 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules.count(styleKey) > 0;
 }
 
-string ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
+string ofxLayoutElement::getStringStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules[styleKey]->getString();
 }
 
@@ -291,12 +291,12 @@ void ofxLayoutElement::drawText(){
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
         ofRectangle drawBox;
         
-        string fontFilename = getStyle(OSS_KEY::FONT_FAMILY);
+        string fontFilename = getStringStyle(OSS_KEY::FONT_FAMILY);
         if(layout->getFonts()->count(fontFilename) > 0){
             string text = getValue();
             if(hasStyle(OSS_KEY::TEXT_TRANSFORM)){
                 vector<string> words = ofSplitString(text, " ",true,true);
-                OSS_VALUE::ENUM textTransform = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::TEXT_TRANSFORM));
+                OSS_VALUE::ENUM textTransform = getOssValueStyle(OSS_KEY::TEXT_TRANSFORM);
                 switch(textTransform){
                     case OSS_VALUE::NONE:
                         //do nothing
@@ -321,12 +321,12 @@ void ofxLayoutElement::drawText(){
             
             float fontSize;
             if(hasStyle(OSS_KEY::FONT_SIZE)){
-                fontSize = ofToFloat(getStyle(OSS_KEY::FONT_SIZE));
+                fontSize = getFloatStyle(OSS_KEY::FONT_SIZE);
             }
             
             float lineHeight;
             if(hasStyle(OSS_KEY::LINE_HEIGHT)){
-                lineHeight = ofToFloat(getStyle(OSS_KEY::LINE_HEIGHT))/100.0f;
+                lineHeight = getFloatStyle(OSS_KEY::LINE_HEIGHT)/100.0f;
             }
             else{
                 lineHeight = 1.0f;
@@ -336,7 +336,7 @@ void ofxLayoutElement::drawText(){
             
             float textMaxWidth = boundary.width;
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
-                textMaxWidth = ofToFloat(getStyle(OSS_KEY::TEXT_MAX_WIDTH));
+                textMaxWidth = getFloatStyle(OSS_KEY::TEXT_MAX_WIDTH);
             }
             
             
@@ -352,7 +352,7 @@ void ofxLayoutElement::drawText(){
             float y = fontSize*layout->getFonts()->at(fontFilename).getLineHeight();
             
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
-                string textAlign = getStyle(OSS_KEY::TEXT_ALIGN);
+                string textAlign = getStringStyle(OSS_KEY::TEXT_ALIGN);
                 if(textAlign == "left"){
                     x = 0.0f;
                 }
@@ -369,7 +369,7 @@ void ofxLayoutElement::drawText(){
             
             if(hasStyle(OSS_KEY::TEXT_PADDING)){
                 float paddingTop, paddingRight, paddingBottom, paddingLeft = 0.0f;
-                vector<string> paddings = ofSplitString(getStyle(OSS_KEY::TEXT_PADDING), " ");
+                vector<string> paddings = ofSplitString(getStringStyle(OSS_KEY::TEXT_PADDING), " ");
                 if(paddings.size() == 1){
                     float padding = ofToFloat(paddings[0]);
                     paddingTop = padding;
@@ -408,7 +408,7 @@ void ofxLayoutElement::drawText(){
             
             ofFill();
             if(hasStyle(OSS_KEY::COLOR)){
-                string colorStr = getStyle(OSS_KEY::COLOR);
+                string colorStr = getStringStyle(OSS_KEY::COLOR);
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
                 ofSetColor(fontColor);
             }
@@ -430,7 +430,7 @@ void ofxLayoutElement::drawBackgroundGradient(){
         bool vertical;// = true;
         ofColor firstColor;//(1.0f, 0.0f, 0.0f, 0.0f);
         ofColor secondColor;//(0.0f, 0.0f, 1.0f, 1.0f  );
-        ofxOSS::parseBackgroundGradient(getStyle(OSS_KEY::BACKGROUND_GRADIENT), &firstColor, &secondColor, &vertical);
+        ofxOSS::parseBackgroundGradient(getStringStyle(OSS_KEY::BACKGROUND_GRADIENT), &firstColor, &secondColor, &vertical);
         
         ofFloatColor firstColorF = firstColor;
         if(firstColor.limit() == 255){
@@ -534,7 +534,7 @@ void ofxLayoutElement::drawBackgroundImage(){
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
         ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch("images");
-        string imageID = getStyle(OSS_KEY::BACKGROUND_IMAGE);
+        string imageID = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureDrawable(imageID)){
             drawBackgroundTexture(imagesBatch->getTexture(imageID));
         }
@@ -544,7 +544,7 @@ void ofxLayoutElement::drawBackgroundImage(){
 void ofxLayoutElement::drawBackgroundVideo(){
     if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
         ofSetColor(255);
-        string videoPath = getStyle(OSS_KEY::BACKGROUND_VIDEO);
+        string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
         
         if(video == NULL){
             video = new ofVideoPlayer();
@@ -578,7 +578,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     int numRepeatY = 0;
     
     if(hasStyle(OSS_KEY::BACKGROUND_REPEAT)){
-        OSS_VALUE::ENUM repeatValue = ofxOSS::getOssValueFromString(getStyle(OSS_KEY::BACKGROUND_REPEAT));
+        OSS_VALUE::ENUM repeatValue = getOssValueStyle(OSS_KEY::BACKGROUND_REPEAT);
         bool repeatX, repeatY;
         switch(repeatValue){
             case OSS_VALUE::REPEAT:

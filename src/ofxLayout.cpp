@@ -408,7 +408,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     
     // Get assets
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
-        string imageFilename = element->getStyle(OSS_KEY::BACKGROUND_IMAGE);
+        string imageFilename = element->getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         ofxLoaderBatch* imagesBatch = assets.getBatch("images");
         if(!imagesBatch->hasTexture(imageFilename)){
             imagesBatch->addTexture(imageFilename, imageFilename);
@@ -417,7 +417,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     
     // Get fonts
     if(element->hasStyle(OSS_KEY::FONT_FAMILY)){
-        string fontFilename = element->getStyle(OSS_KEY::FONT_FAMILY);
+        string fontFilename = element->getStringStyle(OSS_KEY::FONT_FAMILY);
         
         if(fonts.count(fontFilename) == 0){
             fonts[fontFilename] = ofxFontStash();
