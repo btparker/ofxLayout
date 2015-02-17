@@ -55,6 +55,7 @@ public:
     ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);
+    ofxOssRule* getStyle(OSS_KEY::ENUM styleKey);
     string getStringStyle(OSS_KEY::ENUM styleKey);
     float getFloatStyle(OSS_KEY::ENUM styleKey);
     ofColor getColorStyle(OSS_KEY::ENUM styleKey);

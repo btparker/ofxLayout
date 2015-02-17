@@ -234,20 +234,24 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
     return this->styles.rules.count(styleKey) > 0;
 }
 
+ofxOssRule* ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
+    return this->styles.rules[styleKey];
+}
+
 string ofxLayoutElement::getStringStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey]->getString();
+    return getStyle(styleKey)->asString();
 }
 
 float ofxLayoutElement::getFloatStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey]->getFloat();
+    return getStyle(styleKey)->asFloat();
 }
 
 ofColor ofxLayoutElement::getColorStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey]->getColor();
+    return getStyle(styleKey)->asColor();
 }
 
 OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey]->getOssValue();
+    return getStyle(styleKey)->asOssValue();
 }
 
 /// |   Utilities   | ///
@@ -640,7 +644,7 @@ void ofxLayoutElement::copyStyles(ofxOSS *styleObject){
             this->styles.rules[iterator->first] = iterator->second;
         }
         else{
-            this->styles.rules[iterator->first]->setValue(iterator->second->getString());
+            this->styles.rules[iterator->first]->setValue(iterator->second->asString());
         }
     }
 }

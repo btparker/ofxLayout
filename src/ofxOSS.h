@@ -239,13 +239,13 @@ public:
         setFloat(number);
     }
     
-    string getString(){
+    string asString(){
         switch(getType()){
             case OSS_TYPE::COLOR:
-                this->stringValue = ofxOSS::stringifyColor(getColor());
+                this->stringValue = ofxOSS::stringifyColor(this->asColor());
                 break;
             case OSS_TYPE::OSS_VALUE:
-                this->stringValue = ofxOSS::getStringFromOssValue(getOssValue());
+                this->stringValue = ofxOSS::getStringFromOssValue(asOssValue());
                 break;
             case OSS_TYPE::NUMBER:
                 this->stringValue = ofToString(numberValue.getCurrentValue());
@@ -282,7 +282,7 @@ public:
         this->colorValue.setColor(color);
     }
     
-    ofColor getColor(){
+    ofColor asColor(){
         return colorValue.getCurrentColor();
     }
     
@@ -290,7 +290,7 @@ public:
         this->numberValue.reset(number);
     }
     
-    float getFloat(){
+    float asFloat(){
         return numberValue.getCurrentValue();
     }
     
@@ -298,7 +298,7 @@ public:
         this->ossValue = ossValue;
     }
     
-    OSS_VALUE::ENUM getOssValue(){
+    OSS_VALUE::ENUM asOssValue(){
         return this->ossValue;
     }
     
