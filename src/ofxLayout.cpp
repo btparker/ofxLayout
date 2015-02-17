@@ -421,7 +421,13 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         
         if(fonts.count(fontFilename) == 0){
             fonts[fontFilename] = ofxFontStash();
-            fonts[fontFilename].setup(fontFilename);
+            fonts[fontFilename].setup(fontFilename,
+                                      1.0,
+                                      1024,
+                                      true,
+                                      8,
+                                      2.0f
+                                      );
         }
     }
     

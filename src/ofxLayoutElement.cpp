@@ -287,6 +287,7 @@ void ofxLayoutElement::drawBackground(){
 
 void ofxLayoutElement::drawText(){
     ofEnableAlphaBlending();
+    ofEnableSmoothing();
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
         ofRectangle drawBox;
         
@@ -411,7 +412,14 @@ void ofxLayoutElement::drawText(){
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
                 ofSetColor(fontColor);
             }
+            glPushAttrib(GL_ALL_ATTRIB_BITS);
+            
+            glEnable(GL_BLEND);
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+
             layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
+            glDisable(GL_BLEND);
+            glPopAttrib();
         }
     }
     ofDisableAlphaBlending();
