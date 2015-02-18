@@ -9,7 +9,7 @@ ofxLayoutElement::ofxLayoutElement(){
     boundary = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
     fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
     fbo.begin();
-    ofClear(0,0,0,255);
+    ofClear(0,0,0,0);
     fbo.end();
     
     styles.setDefaults();
@@ -88,7 +88,7 @@ void ofxLayoutElement::update(){
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
         // Percent width
-        if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT && hasParent()){
+        if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
             float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
             boundary.width = percentWidth * parent->getBoundary().getWidth();
         }
@@ -103,29 +103,52 @@ void ofxLayoutElement::update(){
         float minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
         boundary.width = boundary.width < minWidth ? minWidth : boundary.width;
     }
+    
     if(hasStyle(OSS_KEY::MAX_WIDTH)){
         float maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
         boundary.width = boundary.width > maxWidth ? maxWidth : boundary.width;
     }
     
-    // *** COMPUTE HEIGHT *** //
-    if(hasParent() && hasStyle(OSS_KEY::HEIGHT)){
+    float relX = 0;
+    float relY = 0;
+    float childRowHeight = 0;
     
+    for(int i = 0 ; i < children.size(); i++){
+        children[i]->update();
+        
+        float cW = children[i]->getBoundary().getWidth();
+        float cH = children[i]->getBoundary().getHeight();
+        if(relX+boundary.x >= boundary.width){
+            relX = 0;
+            relY += childRowHeight;
+            childRowHeight = 0;
+        }
+        children[i]->setBoundary(ofRectangle(boundary.x+relX,boundary.x+relY,cW,cH));
+        relX += cW;
+        childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
+        
     }
     
-    
-        
-    
+    // *** COMPUTE HEIGHT *** //
+    if(hasStyle(OSS_KEY::HEIGHT)){
+        if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
+            float percentHeight = getStyle(OSS_KEY::HEIGHT)->asFloat()/100.0f;
+            boundary.height = percentHeight * parent->getBoundary().getHeight();
+        }
+        // Fixed size (px)
+        else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
+            boundary.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
+        }
+        else if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO){
+            boundary.height = relY+childRowHeight;
+        }
+    }
     
     if(fbo.getWidth() != boundary.getWidth() || fbo.getHeight() != boundary.getHeight()){
         fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
         fbo.begin();
-        ofClear(0,0,0,255);
+        ofClear(0,0,0,0);
         fbo.end();
-    }
-
-    for(int i = 0 ; i < children.size(); i++){
-        children[i]->update();
     }
 }
 
@@ -146,28 +169,32 @@ void ofxLayoutElement::draw(){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
         
-        fbo.begin();
-        ofClear(0,0,0,0);
-        ofSetColor(255);
         
-        ofEnableAlphaBlending();
+        glEnable(GL_BLEND);
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        
+        fbo.begin();
+        ofClear(0.0f, 0.0f, 0.0f, 0.0f);
+        
+        ofSetColor(255);
         drawBackground();
         drawShape();
         drawText();
         
-        ofDisableAlphaBlending();
+        
         fbo.end();
+        
+        glDisable(GL_BLEND);
         ofPopMatrix();
         
-        
-        ofEnableAlphaBlending();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         fbo.draw(getBoundary().getPosition());
-        ofDisableAlphaBlending();
+        glDisable(GL_BLEND);
         
         for(int i = 0 ; i < children.size(); i++){
             children[i]->draw();
         }
-        
     }
 }
 
@@ -447,14 +474,8 @@ void ofxLayoutElement::drawText(){
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
                 ofSetColor(fontColor);
             }
-            glPushAttrib(GL_ALL_ATTRIB_BITS);
-            
-            glEnable(GL_BLEND);
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
 
             layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
-            glDisable(GL_BLEND);
-            glPopAttrib();
         }
     }
     ofDisableAlphaBlending();
