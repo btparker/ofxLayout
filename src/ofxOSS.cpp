@@ -104,6 +104,18 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "max-width"){
         return OSS_KEY::MAX_WIDTH;
     }
+    else if(key == "margin-top"){
+        return OSS_KEY::MARGIN_TOP;
+    }
+    else if(key == "margin-right"){
+        return OSS_KEY::MARGIN_RIGHT;
+    }
+    else if(key == "margin-bottom"){
+        return OSS_KEY::MARGIN_BOTTOM;
+    }
+    else if(key == "margin-left"){
+        return OSS_KEY::MARGIN_LEFT;
+    }
     else if(key == "height"){
         return OSS_KEY::HEIGHT;
     }
@@ -211,6 +223,18 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::MIN_WIDTH:
             keyString = "min-width";
+            break;
+        case OSS_KEY::MARGIN_TOP:
+            keyString = "margin-top";
+            break;
+        case OSS_KEY::MARGIN_RIGHT:
+            keyString = "margin-right";
+            break;
+        case OSS_KEY::MARGIN_BOTTOM:
+            keyString = "margin-bottom";
+            break;
+        case OSS_KEY::MARGIN_LEFT:
+            keyString = "margin-left";
             break;
         case OSS_KEY::MAX_WIDTH:
             keyString = "max-width";
@@ -513,6 +537,18 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::LEFT:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::MARGIN_TOP:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::MARGIN_RIGHT:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::MARGIN_BOTTOM:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::MARGIN_LEFT:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::FONT_SIZE:

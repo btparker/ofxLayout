@@ -114,6 +114,8 @@ protected:
     
     ofRectangle boundary;
     
+    ofVec4f margins;
+    
     string ID;
     TAG::ENUM tag;
     string classes;
