@@ -114,19 +114,22 @@ void ofxLayoutElement::update(){
         float relY = 0;
         float childRowHeight = 0;
         
-        bool expandingWidth = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
+        bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
 
         float minWidth = 0;
         if(hasStyle(OSS_KEY::MIN_WIDTH)){
             minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
-            boundary.width = boundary.width < minWidth ? minWidth : boundary.width;
+            boundary.width = max(boundary.width, minWidth);
         }
         
-        float maxWidth = expandingWidth && hasParent() ? parent->getBoundary().getWidth() : boundary.width;
+        float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
         if(hasStyle(OSS_KEY::MAX_WIDTH)){
             maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
-            boundary.width = boundary.width > maxWidth ? maxWidth : boundary.width;
+            boundary.width = max(boundary.width, maxWidth);
         }
+        
+        float expandingWidth = minWidth;
+        float maxExpandedWidth = expandingWidth;
         
         for(int i = 0 ; i < children.size(); i++){
             children[i]->update();
@@ -135,30 +138,35 @@ void ofxLayoutElement::update(){
             float cH = children[i]->getBoundary().getHeight();
             
             // Expanding div to contain children
-            if((expandingWidth && (relX+boundary.x+cW) <= maxWidth) || boundary.width == 0){
-                boundary.width += cW;
+            if((isWidthAuto && (relX+boundary.x+cW) <= maxWidth)){
+                expandingWidth += cW;
             }
-            // Not auto width
-            else if((expandingWidth && (relX+boundary.x+cW) > maxWidth) || relX+boundary.x+cW > boundary.width){
+            else if(relX+boundary.x+cW > maxWidth){
                 relX = 0;
                 relY += childRowHeight;
                 childRowHeight = 0;
+                if(isWidthAuto){
+                    expandingWidth = 0;
+                }
             }
-            
+            maxExpandedWidth = max(maxExpandedWidth, cW);
+            maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
+     
             // Setting child position
             ofPoint childPos = ofPoint(boundary.x+relX,boundary.y+relY);
             
             children[i]->setBoundary(ofRectangle(childPos.x, childPos.y, cW, cH));
-            
-            
             relX += cW;
             childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
+        }
+        
+        if(isWidthAuto){
+            boundary.width = maxExpandedWidth;
         }
         
         // Only variable to escape this scope
         childrenHeight = relY+childRowHeight;
     }
-    
     
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
