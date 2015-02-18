@@ -587,9 +587,9 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
 /// | ------------------------- | ///
 ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
     ofRectangle transform = ofRectangle();
-    float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH)->getString(), parentBoundary.width);
+    float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH)->asString(), parentBoundary.width);
     transform.width = width;
-    float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT)->getString(), parentBoundary.height);
+    float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT)->asString(), parentBoundary.height);
     transform.height = height;
     ofPoint pos = getPosition(transform, parentBoundary);
     transform.setPosition(pos);
@@ -597,7 +597,7 @@ ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
 }
 
 float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension){
-    string dimensionValue = getStyle(dimensionKey)->getString();
+    string dimensionValue = getStyle(dimensionKey)->asString();
     return getDimensionStyleValue(dimensionValue, parentDimension);
 }
 
@@ -621,11 +621,11 @@ float ofxOSS::getDimensionStyleValue(string dimensionValue, float parentDimensio
 
 ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
     string posString;
-    if(getStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->getString() != ""){
-        posString = getStyle(OSS_KEY::POSITION)->getString();
+    if(getStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->asString() != ""){
+        posString = getStyle(OSS_KEY::POSITION)->asString();
     }
     else{
-        posString = getStyle(OSS_KEY::LEFT)->getString()+" "+getStyle(OSS_KEY::TOP)->getString();
+        posString = getStyle(OSS_KEY::LEFT)->asString()+" "+getStyle(OSS_KEY::TOP)->asString();
     }
     
     return computePosition(posString,boundary, parentBoundary);
@@ -633,7 +633,7 @@ ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
 
 
 ofPoint ofxOSS::getBackgroundPosition(ofRectangle boundary, ofRectangle parentBoundary){
-    string posString = getStyle(OSS_KEY::BACKGROUND_POSITION)->getString();
+    string posString = getStyle(OSS_KEY::BACKGROUND_POSITION)->asString();
     return computePosition(posString,boundary, parentBoundary);
 }
 
@@ -664,7 +664,7 @@ ofPoint ofxOSS::computePosition(string posString, ofRectangle boundary, ofRectan
 ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectangle boundary){
     ofRectangle result = ofRectangle(dimensions);
     
-    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE)->getString();
+    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE)->asString();
     
     
     vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
