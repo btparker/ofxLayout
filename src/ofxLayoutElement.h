@@ -111,8 +111,9 @@ protected:
     ofFbo fbo;
     ofxLayout* layout;
     virtual void drawTag(){};
+    ofPoint position;
     
-    ofRectangle boundary;
+    ofRectangle dimensions;
     
     ofVec4f margins;
     
