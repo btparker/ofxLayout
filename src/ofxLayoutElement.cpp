@@ -81,6 +81,7 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
+    // If root element, boundary is initially set to the current viewport dimensions
     if(!hasParent()){
         setBoundary(ofGetCurrentViewport());
     }
@@ -109,38 +110,55 @@ void ofxLayoutElement::update(){
         boundary.width = boundary.width > maxWidth ? maxWidth : boundary.width;
     }
     
-    float relX = 0;
-    float relY = 0;
-    float childRowHeight = 0;
     
-    for(int i = 0 ; i < children.size(); i++){
-        children[i]->update();
+    // *** COMPUTING CHILDREN *** //
+
+    float childrenHeight;
+    
+    // Scoping all these offset variables and whatnot
+    {
+        float relX = 0;
+        float relY = 0;
+        float childRowHeight = 0;
         
-        float cW = children[i]->getBoundary().getWidth();
-        float cH = children[i]->getBoundary().getHeight();
-        if(relX+boundary.x >= boundary.width){
-            relX = 0;
-            relY += childRowHeight;
-            childRowHeight = 0;
+        for(int i = 0 ; i < children.size(); i++){
+            children[i]->update();
+            
+            float cW = children[i]->getBoundary().getWidth();
+            float cH = children[i]->getBoundary().getHeight();
+            if(relX+boundary.x+cW >= boundary.width){
+                relX = 0;
+                relY += childRowHeight;
+                childRowHeight = 0;
+            }
+            
+            // Setting child position
+            ofPoint childPos = ofPoint(boundary.x+relX,boundary.y+relY);
+            
+            children[i]->setBoundary(ofRectangle(childPos.x, childPos.y, cW, cH));
+            
+            
+            relX += cW;
+            childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
         }
-        children[i]->setBoundary(ofRectangle(boundary.x+relX,boundary.x+relY,cW,cH));
-        relX += cW;
-        childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
         
+        // Only variable to escape this scope
+        childrenHeight = relY+childRowHeight;
     }
+    
     
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
-        if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
+        if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO || getStyle(OSS_KEY::HEIGHT)->asFloat() == 0){
+            boundary.height = childrenHeight;
+        }
+        else if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
             float percentHeight = getStyle(OSS_KEY::HEIGHT)->asFloat()/100.0f;
             boundary.height = percentHeight * parent->getBoundary().getHeight();
         }
         // Fixed size (px)
         else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
             boundary.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
-        }
-        else if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO){
-            boundary.height = relY+childRowHeight;
         }
     }
     
