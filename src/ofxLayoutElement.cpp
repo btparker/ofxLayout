@@ -88,8 +88,13 @@ void ofxLayoutElement::update(){
 
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
+        // If width is zero, sets to auto (expands to fit children)
+        if(getStyle(OSS_KEY::WIDTH)->asFloat() == 0){
+            boundary.width = 0;
+            getStyle(OSS_KEY::WIDTH)->setOssValue(OSS_VALUE::AUTO);
+        }
         // Percent width
-        if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
+        else if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
             float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
             boundary.width = percentWidth * parent->getBoundary().getWidth();
         }
@@ -98,18 +103,6 @@ void ofxLayoutElement::update(){
             boundary.width = getStyle(OSS_KEY::WIDTH)->asFloat();
         }
     }
-    
-    // min/max overrides
-    if(hasStyle(OSS_KEY::MIN_WIDTH)){
-        float minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
-        boundary.width = boundary.width < minWidth ? minWidth : boundary.width;
-    }
-    
-    if(hasStyle(OSS_KEY::MAX_WIDTH)){
-        float maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
-        boundary.width = boundary.width > maxWidth ? maxWidth : boundary.width;
-    }
-    
     
     // *** COMPUTING CHILDREN *** //
 
@@ -121,12 +114,32 @@ void ofxLayoutElement::update(){
         float relY = 0;
         float childRowHeight = 0;
         
+        bool expandingWidth = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
+
+        float minWidth = 0;
+        if(hasStyle(OSS_KEY::MIN_WIDTH)){
+            minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
+            boundary.width = boundary.width < minWidth ? minWidth : boundary.width;
+        }
+        
+        float maxWidth = expandingWidth && hasParent() ? parent->getBoundary().getWidth() : boundary.width;
+        if(hasStyle(OSS_KEY::MAX_WIDTH)){
+            maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
+            boundary.width = boundary.width > maxWidth ? maxWidth : boundary.width;
+        }
+        
         for(int i = 0 ; i < children.size(); i++){
             children[i]->update();
             
             float cW = children[i]->getBoundary().getWidth();
             float cH = children[i]->getBoundary().getHeight();
-            if(relX+boundary.x+cW >= boundary.width){
+            
+            // Expanding div to contain children
+            if((expandingWidth && (relX+boundary.x+cW) <= maxWidth) || boundary.width == 0){
+                boundary.width += cW;
+            }
+            // Not auto width
+            else if((expandingWidth && (relX+boundary.x+cW) > maxWidth) || relX+boundary.x+cW > boundary.width){
                 relX = 0;
                 relY += childRowHeight;
                 childRowHeight = 0;
