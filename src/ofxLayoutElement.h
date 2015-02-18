@@ -104,6 +104,8 @@ public:
     bool visible();
     
     ofFbo* getFbo();
+    
+    bool hasParent();
 
 protected:
     ofFbo fbo;
@@ -111,6 +113,8 @@ protected:
     virtual void drawTag(){};
     
     ofRectangle boundary;
+    
+    ofVec4f margins;
     
     string ID;
     TAG::ENUM tag;
