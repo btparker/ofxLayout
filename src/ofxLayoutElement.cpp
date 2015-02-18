@@ -81,18 +81,49 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
-    if(parent == NULL){
+    if(!hasParent()){
         setBoundary(ofGetCurrentViewport());
     }
-    else{
-        setBoundary(styles.computeElementTransform(parent->getBoundary()));
+
+    // *** COMPUTE WIDTH *** //
+    if(hasStyle(OSS_KEY::WIDTH)){
+        // Percent width
+        if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT && hasParent()){
+            float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
+            boundary.width = percentWidth * parent->getBoundary().getWidth();
+        }
+        // Fixed size (px)
+        else if (getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::NUMBER){
+            boundary.width = getStyle(OSS_KEY::WIDTH)->asFloat();
+        }
     }
+    
+    // min/max overrides
+    if(hasStyle(OSS_KEY::MIN_WIDTH)){
+        float minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
+        boundary.width = boundary.width < minWidth ? minWidth : boundary.width;
+    }
+    if(hasStyle(OSS_KEY::MAX_WIDTH)){
+        float maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
+        boundary.width = boundary.width > maxWidth ? maxWidth : boundary.width;
+    }
+    
+    // *** COMPUTE HEIGHT *** //
+    if(hasParent() && hasStyle(OSS_KEY::HEIGHT)){
+    
+    }
+    
+    
+        
+    
+    
     if(fbo.getWidth() != boundary.getWidth() || fbo.getHeight() != boundary.getHeight()){
         fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
         fbo.begin();
         ofClear(0,0,0,255);
         fbo.end();
     }
+
     for(int i = 0 ; i < children.size(); i++){
         children[i]->update();
     }
@@ -697,4 +728,8 @@ ofPath* ofxLayoutElement::getShape(){
 
 ofFbo* ofxLayoutElement::getFbo(){
     return &fbo;
+}
+
+bool ofxLayoutElement::hasParent(){
+    return parent != NULL;
 }

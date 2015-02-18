@@ -104,6 +104,8 @@ public:
     bool visible();
     
     ofFbo* getFbo();
+    
+    bool hasParent();
 
 protected:
     ofFbo fbo;
