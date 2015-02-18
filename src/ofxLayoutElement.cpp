@@ -84,7 +84,7 @@ bool ofxLayoutElement::visible(){
 void ofxLayoutElement::update(){
     // If root element, boundary is initially set to the current viewport dimensions
     if(!hasParent()){
-        setBoundary(ofGetCurrentViewport());
+        setDimensions(ofGetViewportWidth(), ofGetViewportHeight());
     }
 
     // *** COMPUTE WIDTH *** //
@@ -106,68 +106,68 @@ void ofxLayoutElement::update(){
     }
     
     // *** COMPUTING CHILDREN *** //
-
+    
     float childrenHeight;
     
-    // Scoping all these offset variables and whatnot
-    {
-        float relX = 0;
-        float relY = 0;
-        float childRowHeight = 0;
-        
-        bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
+    
+    float relX = 0;
+    float relY = 0;
+    float childRowHeight = 0;
+    
+    bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
 
-        float minWidth = 0;
-        if(hasStyle(OSS_KEY::MIN_WIDTH)){
-            minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
-            dimensions.width = max(dimensions.width, minWidth);
-        }
-        
-        float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
-        if(hasStyle(OSS_KEY::MAX_WIDTH)){
-            maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
-            dimensions.width = max(dimensions.width, maxWidth);
-        }
-        
-        float expandingWidth = minWidth;
-        float maxExpandedWidth = expandingWidth;
-        
-        for(int i = 0 ; i < children.size(); i++){
-            children[i]->update();
-            
-            float cW = children[i]->getBoundary().getWidth();
-            float cH = children[i]->getBoundary().getHeight();
-            
-            // Expanding div to contain children
-            if((isWidthAuto && (relX+dimensions.x+cW) <= maxWidth)){
-                expandingWidth += cW;
-            }
-            else if(relX+dimensions.x+cW > maxWidth){
-                relX = 0;
-                relY += childRowHeight;
-                childRowHeight = 0;
-                if(isWidthAuto){
-                    expandingWidth = 0;
-                }
-            }
-            maxExpandedWidth = max(maxExpandedWidth, cW);
-            maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
-     
-            // Setting child position
-            ofPoint childPos = ofPoint(dimensions.x+relX,dimensions.y+relY);
-            
-            children[i]->setBoundary(ofRectangle(childPos.x, childPos.y, cW, cH));
-            relX += cW;
-            childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
-        }
-        
-        if(isWidthAuto){
-            dimensions.width = maxExpandedWidth;
-        }
-        
-        // Only variable to escape this scope
-        childrenHeight = relY+childRowHeight;
+    float minWidth = 0;
+    if(hasStyle(OSS_KEY::MIN_WIDTH)){
+        minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
+        dimensions.width = max(dimensions.width, minWidth);
     }
+    
+    float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
+    if(hasStyle(OSS_KEY::MAX_WIDTH)){
+        maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
+        dimensions.width = max(dimensions.width, maxWidth);
+    }
+    
+    float expandingWidth = minWidth;
+    float maxExpandedWidth = expandingWidth;
+    
+    for(int i = 0 ; i < children.size(); i++){
+        children[i]->update();
+        
+        float cW = children[i]->getDimensions().getWidth();
+        float cH = children[i]->getDimensions().getHeight();
+        
+        // Expanding div to contain children
+        if((isWidthAuto && (relX+cW) <= maxWidth)){
+            expandingWidth += cW;
+        }
+        else if(relX+cW > maxWidth){
+            relX = 0;
+            relY += childRowHeight;
+            childRowHeight = 0;
+            if(isWidthAuto){
+                expandingWidth = 0;
+            }
+        }
+        maxExpandedWidth = max(maxExpandedWidth, cW);
+        maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
+ 
+        // Setting child position
+        ofPoint childPos = ofPoint(relX,relY);
+        children[i]->setPosition(childPos);
+        children[i]->setDimensions(cW, cH);
+        
+        relX += cW;
+        childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
+    }
+    
+    if(isWidthAuto){
+        dimensions.width = maxExpandedWidth;
+    }
+    
+    // Only variable to escape this scope
+    childrenHeight = relY+childRowHeight;
+    
     
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
@@ -183,6 +183,9 @@ void ofxLayoutElement::update(){
             dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
         }
     }
+    
+    
+    // Setting child position
     
     if(fbo.getWidth() != dimensions.getWidth() || fbo.getHeight() != dimensions.getHeight()){
         fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
@@ -200,10 +203,8 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 void ofxLayoutElement::draw(){
     
     if(visible()){
-        
-        
         ofPushMatrix();
-        ofTranslate(getBoundary().getPosition());
+        ofTranslate(getPosition());
         ofRotate(0,0,0,0);
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
@@ -221,20 +222,20 @@ void ofxLayoutElement::draw(){
         drawShape();
         drawText();
         
-        
         fbo.end();
         
         glDisable(GL_BLEND);
-        ofPopMatrix();
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        fbo.draw(getBoundary().getPosition());
+        fbo.draw(0,0);
         glDisable(GL_BLEND);
         
         for(int i = 0 ; i < children.size(); i++){
             children[i]->draw();
         }
+        
+        ofPopMatrix();
     }
 }
 
@@ -768,11 +769,25 @@ void ofxLayoutElement::appendInlineStyle(string style){
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){
-    return dimensions;
+    ofPoint absPos = getGlobalPosition();
+    return ofRectangle(absPos.x,absPos.y,dimensions.width, dimensions.height);
 }
 
-void ofxLayoutElement::setBoundary(ofRectangle boundary){
-    this->dimensions = boundary;
+ofPoint ofxLayoutElement::getGlobalPosition(){
+    ofPoint pos(0,0);
+    if(hasParent()){
+        pos.set(parent->getGlobalPosition());
+    }
+    pos.set(pos.x+getPosition().x, pos.y+getPosition().y);
+    return pos;
+}
+
+ofPoint ofxLayoutElement::getPosition(){
+    return position;
+}
+
+void ofxLayoutElement::setDimensions(float width, float height){
+    this->dimensions.set(0, 0, width, height);
 }
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){
@@ -793,4 +808,12 @@ ofFbo* ofxLayoutElement::getFbo(){
 
 bool ofxLayoutElement::hasParent(){
     return parent != NULL;
+}
+
+void ofxLayoutElement::setPosition(ofPoint pos){
+    this->position.set(pos);
+}
+
+ofRectangle ofxLayoutElement::getDimensions(){
+    return this->dimensions;
 }
