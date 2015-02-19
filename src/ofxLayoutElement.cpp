@@ -8,10 +8,10 @@ ofxLayoutElement::ofxLayoutElement(){
     video = NULL;
     position = ofPoint(0,0);
     dimensions = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
-    fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
-    fbo.begin();
-    ofClear(0,0,0,0);
-    fbo.end();
+//    fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
+//    fbo.begin();
+//    ofClear(0,0,0,0);
+//    fbo.end();
     
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
@@ -271,12 +271,13 @@ void ofxLayoutElement::update(){
     
     // Setting child position
     
-    if(fbo.getWidth() != dimensions.getWidth() || fbo.getHeight() != dimensions.getHeight()){
-        fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
-        fbo.begin();
-        ofClear(0,0,0,0);
-        fbo.end();
-    }
+//    if((int)fbo.getWidth() != (int)dimensions.getWidth() || (int)fbo.getHeight() != (int)dimensions.getHeight()){
+//        cout << "CHANGES" << endl;
+//        fbo.allocate((int)dimensions.getWidth(),(int)dimensions.getHeight(), GL_RGBA);
+//        fbo.begin();
+//        ofClear(0,0,0,0);
+//        fbo.end();
+//    }
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
@@ -285,7 +286,7 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(){
-    update();
+//    update();
     if(visible()){
         ofPushMatrix();
         ofTranslate(getPosition());
@@ -298,22 +299,22 @@ void ofxLayoutElement::draw(){
         glEnable(GL_BLEND);
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         
-        fbo.begin();
-        ofClear(0.0f, 0.0f, 0.0f, 0.0f);
+//        fbo.begin();
+//        ofClear(0.0f, 0.0f, 0.0f, 0.0f);
         
         ofSetColor(255);
         drawBackground();
         drawShape();
         drawText();
         
-        fbo.end();
+//        fbo.end();
         
         glDisable(GL_BLEND);
         
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        fbo.draw(0,0);
-        glDisable(GL_BLEND);
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+//        fbo.draw(0,0);
+//        glDisable(GL_BLEND);
         
         for(int i = 0 ; i < children.size(); i++){
             children[i]->draw();

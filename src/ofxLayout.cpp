@@ -43,14 +43,15 @@ ofxLayout::~ofxLayout(){
 /// | ------------------ | ///
 
 void ofxLayout::update(){
+    cout << ofGetFrameRate() << endl;
     assets.update();
     animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
     if(
-       fbo.getWidth() != contextTreeRoot.getFbo()->getWidth() ||
-       fbo.getHeight() != contextTreeRoot.getFbo()->getHeight()
+       fbo.getWidth() != contextTreeRoot.getWidth() ||
+       fbo.getHeight() != contextTreeRoot.getHeight()
     ){
-        fbo.allocate(contextTreeRoot.getFbo()->getWidth(), contextTreeRoot.getFbo()->getHeight(), GL_RGBA);
+        fbo.allocate(contextTreeRoot.getWidth(), contextTreeRoot.getHeight(), GL_RGBA);
     }
 }
 

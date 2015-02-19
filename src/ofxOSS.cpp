@@ -6,8 +6,6 @@ ofxOSS::ofxOSS(){
 
 void ofxOSS::setDefaults(){
     // Create defaults
-    generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
-    
     generateRule(OSS_KEY::TOP, "0px");
     
     generateRule(OSS_KEY::LEFT, "0px");
