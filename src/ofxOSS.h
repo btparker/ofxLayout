@@ -53,6 +53,9 @@ namespace OSS_VALUE{
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
         
+        // POSITIONING TYPES
+        STATIC, RELATIVE, ABSOLUTE, FIXED,
+        
         // SIZE
         COVER, CONTAIN,
         

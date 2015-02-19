@@ -231,6 +231,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
         vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
         for(int j = 0; j < ptsStr.size(); j++){
+            cout << ptsStr[j] << endl;
             vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
             ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
             if(j==0){

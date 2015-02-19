@@ -188,51 +188,83 @@ void ofxLayoutElement::update(){
     
     // Positioning
     for(int i = 0 ; i < children.size(); i++){
-        ofPoint childPos = children[i]->getPosition();
+        ofPoint relativePos = children[i]->getPosition();
+        
+        ofPoint offset = ofPoint(0,0);
+        
+        
+        // If positioning type is fixed, need to compute offset to the viewport, not parent element
+        ofRectangle containingDimensions;
+        if(hasStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->asOssValue() == OSS_VALUE::FIXED){
+            containingDimensions = ofGetCurrentViewport();
+        }
+        else{
+            containingDimensions = getDimensions();
+        }
+        
+        
         if(children[i]->hasStyle(OSS_KEY::TOP)){
             if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
                 float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
-                childPos.y += percentTop * getHeight();
+                offset.y = percentTop * containingDimensions.getHeight();
             }
             // Fixed size (px)
             else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
-                childPos.y += children[i]->getStyle(OSS_KEY::TOP)->asFloat();
+                offset.y = children[i]->getStyle(OSS_KEY::TOP)->asFloat();
             }
         }
         if(children[i]->hasStyle(OSS_KEY::BOTTOM)){
             if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
                 // Inverse
                 float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
-                childPos.y += percentTop * getHeight();
+                offset.y = percentTop * containingDimensions.getHeight();
             }
             // Fixed size (px)
             else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
-                childPos.y += getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
+                offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
             }
         }
-        
+
         if(children[i]->hasStyle(OSS_KEY::LEFT)){
             if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
                 float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
-                childPos.x += percentLeft * getWidth();
+                offset.x = percentLeft * containingDimensions.getWidth();
             }
             // Fixed size (px)
             else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
-                childPos.x += children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
+                offset.x = children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
             }
         }
         if(children[i]->hasStyle(OSS_KEY::RIGHT)){
             if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
                 // Inverse
                 float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
-                childPos.x += percentTop * getWidth();
+                offset.x = percentTop * containingDimensions.getWidth();
             }
             // Fixed size (px)
             else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
-                childPos.x += getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
+                offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
             }
         }
+        ofPoint childPos = ofPoint(0,0);
         
+        if(hasStyle(OSS_KEY::POSITION)){
+            switch(children[i]->getStyle(OSS_KEY::POSITION)->asOssValue()){
+                case OSS_VALUE::RELATIVE:
+                    childPos = relativePos+offset;
+                    break;
+                case OSS_VALUE::ABSOLUTE:
+                    childPos = offset;
+                    break;
+                case OSS_VALUE::FIXED:
+                    // Note that offset is computed differently for fixed
+                    childPos = offset - getGlobalPosition();
+                    break;
+                case OSS_VALUE::STATIC:
+                default:
+                    childPos = relativePos;
+            }
+        }
         children[i]->setPosition(childPos);
     }
     

@@ -16,7 +16,7 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::WIDTH, "100%");
     
-    generateRule(OSS_KEY::HEIGHT, OSS_VALUE::AUTO);
+    generateRule(OSS_KEY::HEIGHT, "100%");
     
     generateRule(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
     
@@ -27,6 +27,8 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
     
     generateRule(OSS_KEY::OPACITY, "1.0f");
+    
+    generateRule(OSS_KEY::POSITION, OSS_VALUE::STATIC);
     
     generateRule(OSS_KEY::TEXT_TRANSFORM, OSS_VALUE::NONE);
     
@@ -353,6 +355,19 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             valueStr = "bottom";
             break;
             
+        case OSS_VALUE::STATIC:
+            valueStr = "static";
+            break;
+        case OSS_VALUE::ABSOLUTE:
+            valueStr = "absolute";
+            break;
+        case OSS_VALUE::RELATIVE:
+            valueStr = "relative";
+            break;
+        case OSS_VALUE::FIXED:
+            valueStr = "fixed";
+            break;
+            
             // SIZE
         case OSS_VALUE::COVER:
             valueStr = "cover";
@@ -441,6 +456,20 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
         return OSS_VALUE::BOTTOM;
     }
     
+    // POSITION TYPES
+    else if(value == "static"){
+        return OSS_VALUE::STATIC;
+    }
+    else if(value == "relative"){
+        return OSS_VALUE::RELATIVE;
+    }
+    else if(value == "absolute"){
+        return OSS_VALUE::ABSOLUTE;
+    }
+    else if(value == "fixed"){
+        return OSS_VALUE::FIXED;
+    }
+
     // SIZE
     else if(value == "cover"){
         return OSS_VALUE::COVER;
@@ -574,6 +603,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::STROKE_MITERLIMIT:
             type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::POSITION:
+            type = OSS_TYPE::OSS_VALUE;
             break;
         default:
             type = OSS_TYPE::NONE;
