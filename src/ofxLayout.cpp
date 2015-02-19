@@ -150,6 +150,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
 }
 
 void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* element, TAG::ENUM tagEnum, int which){
+    element->setTag(tagEnum);
     string tag = ofxLayoutElement::getTagString(tagEnum);
     
     string id = xmlLayout->getAttribute(tag,"id", "", which);
@@ -231,7 +232,6 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
         vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
         for(int j = 0; j < ptsStr.size(); j++){
-            cout << ptsStr[j] << endl;
             vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
             ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
             if(j==0){
@@ -432,6 +432,9 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         }
     }
     
+    if(element->getTag() == TAG::POLYGON || element->getTag() == TAG::G){
+        element->getStyle(OSS_KEY::POSITION)->setOssValue(OSS_VALUE::ABSOLUTE);
+    }
     for(int i = 0; i < element->children.size(); i++){
         applyStyles(element->children[i], &styleRulesRoot);
     }
