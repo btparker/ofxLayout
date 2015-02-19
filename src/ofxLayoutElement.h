@@ -54,6 +54,8 @@ public:
     void setDimensions(float width, float height);
     void setPosition(ofPoint pos);
     ofRectangle getDimensions();
+    float getHeight();
+    float getWidth();
     ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);

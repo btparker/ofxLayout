@@ -169,6 +169,8 @@ void ofxLayoutElement::update(){
     childrenHeight = relY+childRowHeight;
     
     
+    
+    
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
         if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO || getStyle(OSS_KEY::HEIGHT)->asFloat() == 0){
@@ -182,6 +184,56 @@ void ofxLayoutElement::update(){
         else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
             dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
         }
+    }
+    
+    // Positioning
+    for(int i = 0 ; i < children.size(); i++){
+        ofPoint childPos = children[i]->getPosition();
+        if(children[i]->hasStyle(OSS_KEY::TOP)){
+            if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
+                float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
+                childPos.y += percentTop * getHeight();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
+                childPos.y += children[i]->getStyle(OSS_KEY::TOP)->asFloat();
+            }
+        }
+        if(children[i]->hasStyle(OSS_KEY::BOTTOM)){
+            if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
+                // Inverse
+                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
+                childPos.y += percentTop * getHeight();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
+                childPos.y += getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
+            }
+        }
+        
+        if(children[i]->hasStyle(OSS_KEY::LEFT)){
+            if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
+                float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
+                childPos.x += percentLeft * getWidth();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
+                childPos.x += children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
+            }
+        }
+        if(children[i]->hasStyle(OSS_KEY::RIGHT)){
+            if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
+                // Inverse
+                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
+                childPos.x += percentTop * getWidth();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
+                childPos.x += getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
+            }
+        }
+        
+        children[i]->setPosition(childPos);
     }
     
     
@@ -816,4 +868,12 @@ void ofxLayoutElement::setPosition(ofPoint pos){
 
 ofRectangle ofxLayoutElement::getDimensions(){
     return this->dimensions;
+}
+
+float ofxLayoutElement::getWidth(){
+    return this->dimensions.getWidth();
+}
+
+float ofxLayoutElement::getHeight(){
+    return this->dimensions.getHeight();
 }
