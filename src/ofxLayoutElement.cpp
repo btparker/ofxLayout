@@ -6,8 +6,9 @@
 ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
-    boundary = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
-    fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
+    position = ofPoint(0,0);
+    dimensions = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
+    fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
     fbo.begin();
     ofClear(0,0,0,0);
     fbo.end();
@@ -21,7 +22,7 @@ ofxLayoutElement::ofxLayoutElement(){
 }
 
 void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
-    if(boundary.inside(args.x, args.y)){
+    if(dimensions.inside(args.x, args.y)){
         
     }
 }
@@ -83,108 +84,163 @@ bool ofxLayoutElement::visible(){
 void ofxLayoutElement::update(){
     // If root element, boundary is initially set to the current viewport dimensions
     if(!hasParent()){
-        setBoundary(ofGetCurrentViewport());
+        setDimensions(ofGetViewportWidth(), ofGetViewportHeight());
     }
 
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
         // If width is zero, sets to auto (expands to fit children)
         if(getStyle(OSS_KEY::WIDTH)->asFloat() == 0){
-            boundary.width = 0;
+            dimensions.width = 0;
             getStyle(OSS_KEY::WIDTH)->setOssValue(OSS_VALUE::AUTO);
         }
         // Percent width
         else if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
             float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
-            boundary.width = percentWidth * parent->getBoundary().getWidth();
+            dimensions.width = percentWidth * parent->getBoundary().getWidth();
         }
         // Fixed size (px)
         else if (getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::NUMBER){
-            boundary.width = getStyle(OSS_KEY::WIDTH)->asFloat();
+            dimensions.width = getStyle(OSS_KEY::WIDTH)->asFloat();
         }
     }
     
     // *** COMPUTING CHILDREN *** //
-
+    
     float childrenHeight;
     
-    // Scoping all these offset variables and whatnot
-    {
-        float relX = 0;
-        float relY = 0;
-        float childRowHeight = 0;
-        
-        bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
+    
+    float relX = 0;
+    float relY = 0;
+    float childRowHeight = 0;
+    
+    bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
 
-        float minWidth = 0;
-        if(hasStyle(OSS_KEY::MIN_WIDTH)){
-            minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
-            boundary.width = max(boundary.width, minWidth);
-        }
-        
-        float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
-        if(hasStyle(OSS_KEY::MAX_WIDTH)){
-            maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
-            boundary.width = max(boundary.width, maxWidth);
-        }
-        
-        float expandingWidth = minWidth;
-        float maxExpandedWidth = expandingWidth;
-        
-        for(int i = 0 ; i < children.size(); i++){
-            children[i]->update();
-            
-            float cW = children[i]->getBoundary().getWidth();
-            float cH = children[i]->getBoundary().getHeight();
-            
-            // Expanding div to contain children
-            if((isWidthAuto && (relX+boundary.x+cW) <= maxWidth)){
-                expandingWidth += cW;
-            }
-            else if(relX+boundary.x+cW > maxWidth){
-                relX = 0;
-                relY += childRowHeight;
-                childRowHeight = 0;
-                if(isWidthAuto){
-                    expandingWidth = 0;
-                }
-            }
-            maxExpandedWidth = max(maxExpandedWidth, cW);
-            maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
-     
-            // Setting child position
-            ofPoint childPos = ofPoint(boundary.x+relX,boundary.y+relY);
-            
-            children[i]->setBoundary(ofRectangle(childPos.x, childPos.y, cW, cH));
-            relX += cW;
-            childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
-        }
-        
-        if(isWidthAuto){
-            boundary.width = maxExpandedWidth;
-        }
-        
-        // Only variable to escape this scope
-        childrenHeight = relY+childRowHeight;
+    float minWidth = 0;
+    if(hasStyle(OSS_KEY::MIN_WIDTH)){
+        minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
+        dimensions.width = max(dimensions.width, minWidth);
     }
+    
+    float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
+    if(hasStyle(OSS_KEY::MAX_WIDTH)){
+        maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
+        dimensions.width = max(dimensions.width, maxWidth);
+    }
+    
+    float expandingWidth = minWidth;
+    float maxExpandedWidth = expandingWidth;
+    
+    for(int i = 0 ; i < children.size(); i++){
+        children[i]->update();
+        
+        float cW = children[i]->getDimensions().getWidth();
+        float cH = children[i]->getDimensions().getHeight();
+        
+        // Expanding div to contain children
+        if((isWidthAuto && (relX+cW) <= maxWidth)){
+            expandingWidth += cW;
+        }
+        else if(relX+cW > maxWidth){
+            relX = 0;
+            relY += childRowHeight;
+            childRowHeight = 0;
+            if(isWidthAuto){
+                expandingWidth = 0;
+            }
+        }
+        maxExpandedWidth = max(maxExpandedWidth, cW);
+        maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
+ 
+        // Setting child position
+        ofPoint childPos = ofPoint(relX,relY);
+        children[i]->setPosition(childPos);
+        children[i]->setDimensions(cW, cH);
+        
+        relX += cW;
+        childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
+    }
+    
+    if(isWidthAuto){
+        dimensions.width = maxExpandedWidth;
+    }
+    
+    // Only variable to escape this scope
+    childrenHeight = relY+childRowHeight;
+    
+    
+    
     
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
         if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO || getStyle(OSS_KEY::HEIGHT)->asFloat() == 0){
-            boundary.height = childrenHeight;
+            dimensions.height = childrenHeight;
         }
         else if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
             float percentHeight = getStyle(OSS_KEY::HEIGHT)->asFloat()/100.0f;
-            boundary.height = percentHeight * parent->getBoundary().getHeight();
+            dimensions.height = percentHeight * parent->getBoundary().getHeight();
         }
         // Fixed size (px)
         else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
-            boundary.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
+            dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
         }
     }
     
-    if(fbo.getWidth() != boundary.getWidth() || fbo.getHeight() != boundary.getHeight()){
-        fbo.allocate(boundary.getWidth(),boundary.getHeight(), GL_RGBA);
+    // Positioning
+    for(int i = 0 ; i < children.size(); i++){
+        ofPoint childPos = children[i]->getPosition();
+        if(children[i]->hasStyle(OSS_KEY::TOP)){
+            if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
+                float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
+                childPos.y += percentTop * getHeight();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
+                childPos.y += children[i]->getStyle(OSS_KEY::TOP)->asFloat();
+            }
+        }
+        if(children[i]->hasStyle(OSS_KEY::BOTTOM)){
+            if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
+                // Inverse
+                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
+                childPos.y += percentTop * getHeight();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
+                childPos.y += getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
+            }
+        }
+        
+        if(children[i]->hasStyle(OSS_KEY::LEFT)){
+            if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
+                float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
+                childPos.x += percentLeft * getWidth();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
+                childPos.x += children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
+            }
+        }
+        if(children[i]->hasStyle(OSS_KEY::RIGHT)){
+            if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
+                // Inverse
+                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
+                childPos.x += percentTop * getWidth();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
+                childPos.x += getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
+            }
+        }
+        
+        children[i]->setPosition(childPos);
+    }
+    
+    
+    // Setting child position
+    
+    if(fbo.getWidth() != dimensions.getWidth() || fbo.getHeight() != dimensions.getHeight()){
+        fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
         fbo.begin();
         ofClear(0,0,0,0);
         fbo.end();
@@ -199,10 +255,8 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 void ofxLayoutElement::draw(){
     
     if(visible()){
-        
-        
         ofPushMatrix();
-        ofTranslate(getBoundary().getPosition());
+        ofTranslate(getPosition());
         ofRotate(0,0,0,0);
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
@@ -220,20 +274,20 @@ void ofxLayoutElement::draw(){
         drawShape();
         drawText();
         
-        
         fbo.end();
         
         glDisable(GL_BLEND);
-        ofPopMatrix();
         
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        fbo.draw(getBoundary().getPosition());
+        fbo.draw(0,0);
         glDisable(GL_BLEND);
         
         for(int i = 0 ; i < children.size(); i++){
             children[i]->draw();
         }
+        
+        ofPopMatrix();
     }
 }
 
@@ -435,7 +489,7 @@ void ofxLayoutElement::drawText(){
             
             layout->getFonts()->at(fontFilename).setLineHeight(lineHeight);
             
-            float textMaxWidth = boundary.width;
+            float textMaxWidth = dimensions.width;
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
                 textMaxWidth = getFloatStyle(OSS_KEY::TEXT_MAX_WIDTH);
             }
@@ -458,10 +512,10 @@ void ofxLayoutElement::drawText(){
                     x = 0.0f;
                 }
                 else if(textAlign == "center"){
-                    x = boundary.width/2-fontBBox.width/2;
+                    x = dimensions.width/2-fontBBox.width/2;
                 }
                 else if(textAlign == "right"){
-                    x = boundary.width - fontBBox.width;
+                    x = dimensions.width - fontBBox.width;
                 }
             }
             
@@ -560,14 +614,14 @@ void ofxLayoutElement::drawBackgroundGradient(){
         }
         
         //TR
-        glVertex3f( boundary.width, 0.0f, 0.0f );
+        glVertex3f( dimensions.width, 0.0f, 0.0f );
         
         
         //SECOND COLOR (FOR BR)
         glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
         
         //BR
-        glVertex3f( boundary.width, boundary.height, 0.0f );
+        glVertex3f( dimensions.width, dimensions.height, 0.0f );
         
         // FOR BL
         if(vertical){
@@ -580,7 +634,7 @@ void ofxLayoutElement::drawBackgroundGradient(){
         }
         
         //BL
-        glVertex3f( 0.0f, boundary.height, 0.0f );
+        glVertex3f( 0.0f, dimensions.height, 0.0f );
         
         glDisable(GL_BLEND);
         glEnd();
@@ -664,7 +718,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     bgTextureTransform.setHeight(texture->getHeight());
     bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, getBoundary());
     if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
-        bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, boundary));
+        bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, dimensions));
     }
     
     float bgX = bgTextureTransform.x;
@@ -697,13 +751,13 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
             while(bgX > 0){
                 bgX -= bgTextureTransform.width;
             }
-            numRepeatX = ceil((float)boundary.width/(float)bgTextureTransform.width);
+            numRepeatX = ceil((float)dimensions.width/(float)bgTextureTransform.width);
         }
         if(repeatY){
             while(bgY > 0){
                 bgY -= bgTextureTransform.height;
             }
-            numRepeatY = ceil((float)boundary.height/(float)bgTextureTransform.height);
+            numRepeatY = ceil((float)dimensions.height/(float)bgTextureTransform.height);
         }
         
     }
@@ -718,7 +772,7 @@ void ofxLayoutElement::drawBackgroundColor(){
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
         ofSetColor(getColorStyle(OSS_KEY::BACKGROUND_COLOR));
         ofFill();
-        ofDrawRectangle(0,0,boundary.width,boundary.height);
+        ofDrawRectangle(0,0,dimensions.width,dimensions.height);
     }
 }
 
@@ -767,11 +821,25 @@ void ofxLayoutElement::appendInlineStyle(string style){
 }
 
 ofRectangle ofxLayoutElement::getBoundary(){
-    return boundary;
+    ofPoint absPos = getGlobalPosition();
+    return ofRectangle(absPos.x,absPos.y,dimensions.width, dimensions.height);
 }
 
-void ofxLayoutElement::setBoundary(ofRectangle boundary){
-    this->boundary = boundary;
+ofPoint ofxLayoutElement::getGlobalPosition(){
+    ofPoint pos(0,0);
+    if(hasParent()){
+        pos.set(parent->getGlobalPosition());
+    }
+    pos.set(pos.x+getPosition().x, pos.y+getPosition().y);
+    return pos;
+}
+
+ofPoint ofxLayoutElement::getPosition(){
+    return position;
+}
+
+void ofxLayoutElement::setDimensions(float width, float height){
+    this->dimensions.set(0, 0, width, height);
 }
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){
@@ -792,4 +860,20 @@ ofFbo* ofxLayoutElement::getFbo(){
 
 bool ofxLayoutElement::hasParent(){
     return parent != NULL;
+}
+
+void ofxLayoutElement::setPosition(ofPoint pos){
+    this->position.set(pos);
+}
+
+ofRectangle ofxLayoutElement::getDimensions(){
+    return this->dimensions;
+}
+
+float ofxLayoutElement::getWidth(){
+    return this->dimensions.getWidth();
+}
+
+float ofxLayoutElement::getHeight(){
+    return this->dimensions.getHeight();
 }

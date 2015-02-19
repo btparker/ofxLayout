@@ -51,7 +51,11 @@ public:
     string getClasses();
     void setClasses(string classes);
     
-    void setBoundary(ofRectangle boundary);
+    void setDimensions(float width, float height);
+    void setPosition(ofPoint pos);
+    ofRectangle getDimensions();
+    float getHeight();
+    float getWidth();
     ofRectangle getBoundary();
     
     bool hasStyle(OSS_KEY::ENUM styleKey);
@@ -106,13 +110,17 @@ public:
     ofFbo* getFbo();
     
     bool hasParent();
+    
+    ofPoint getPosition();
+    ofPoint getGlobalPosition();
 
 protected:
     ofFbo fbo;
     ofxLayout* layout;
     virtual void drawTag(){};
+    ofPoint position;
     
-    ofRectangle boundary;
+    ofRectangle dimensions;
     
     ofVec4f margins;
     
