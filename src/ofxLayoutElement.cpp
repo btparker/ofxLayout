@@ -285,7 +285,8 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(){
-    
+    update();
+    cout << ofGetFrameRate() << endl;
     if(visible()){
         ofPushMatrix();
         ofTranslate(getPosition());
