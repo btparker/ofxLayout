@@ -366,6 +366,9 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::POLYGON:
             tag = "polygon";
             break;
+        case TAG::PATH:
+            tag = "path";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -389,6 +392,9 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "polygon") {
         return TAG::POLYGON;
+    }
+    else if(tagString == "path") {
+        return TAG::PATH;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
@@ -450,7 +456,7 @@ void ofxLayoutElement::drawShape(){
     }
     
     if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
-        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/4);
+        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/10);
     }
     shape.draw();
 }
@@ -877,10 +883,6 @@ void ofxLayoutElement::setDimensions(float width, float height){
 
 void ofxLayoutElement::setLayout(ofxLayout *layout){
     this->layout = layout;
-}
-
-void ofxLayoutElement::setShape(ofPath shape){
-    this->shape = shape;
 }
 
 ofPath* ofxLayoutElement::getShape(){
