@@ -36,7 +36,6 @@ public:
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
     
-    void setShape(ofPath shape);
     ofPath* getShape();
     
     static string getTagString(TAG::ENUM tagEnum);

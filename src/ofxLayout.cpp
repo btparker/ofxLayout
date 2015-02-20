@@ -229,21 +229,20 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     for(int i = 0; i < numPolygons; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        ofPath shape;
+        ofPath* shape = child->getShape();
         string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
         vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
         for(int j = 0; j < ptsStr.size(); j++){
             vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
             ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
             if(j==0){
-                shape.moveTo(pt);
+                shape->moveTo(pt);
             }
             else{
-                shape.lineTo(pt);
+                shape->lineTo(pt);
             }
         }
-        shape.close();
-        child->setShape(shape);
+        shape->close();
         loadFromXmlLayout(xmlLayout, child, TAG::POLYGON, i);
     }
     
@@ -260,10 +259,9 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     //    Z = closepath
     int numPaths = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::PATH));
     for(int i = 0; i < numPaths; i++){
-        cout << i << endl;
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        ofPath shape;
+        ofPath* shape = child->getShape();
         string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
         queue<char> commands;
         queue<string> values;
@@ -291,49 +289,47 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
             for(string number : strNumbers){
                 numbers.push_back(ofToFloat(number));
             }
-            vector<ofPolyline> outline = shape.getOutline();
+            vector<ofPolyline> outline = shape->getOutline();
             ofPolyline lastPolyline = outline[outline.size()-1];
             vector<ofPoint> vertices = lastPolyline.getVertices();
             ofPoint lastPt;
             if(vertices.size() > 0){
                 lastPt = vertices[vertices.size()-1];
             }
-            cout << ofToString(command) << endl;
             switch(command){
                 case 'M':
-                    shape.moveTo(numbers[0],numbers[1]);
+                    shape->moveTo(numbers[0],numbers[1]);
                     break;
                 case 'L':
-                    shape.lineTo(numbers[0],numbers[1]);
+                    shape->lineTo(numbers[0],numbers[1]);
                     break;
                 case 'l':
-                    shape.lineTo(lastPt.x+numbers[0],lastPt.y+numbers[1]);
+                    shape->lineTo(lastPt.x+numbers[0],lastPt.y+numbers[1]);
                     break;
                 case 'V':
-                    shape.lineTo(lastPt.x,numbers[0]);
+                    shape->lineTo(lastPt.x,numbers[0]);
                     break;
                 case 'v':
-                    shape.lineTo(lastPt.x,lastPt.y+numbers[0]);
+                    shape->lineTo(lastPt.x,lastPt.y+numbers[0]);
                     break;
                 case 'H':
-                    shape.lineTo(numbers[0],lastPt.y);
+                    shape->lineTo(numbers[0],lastPt.y);
                     break;
                 case 'h':
-                    shape.lineTo(lastPt.x+numbers[0],lastPt.y);
+                    shape->lineTo(lastPt.x+numbers[0],lastPt.y);
                     break;
                 case 'C':
-                    shape.bezierTo(numbers[0], numbers[1],numbers[2], numbers[3],numbers[4], numbers[5]);
+                    shape->bezierTo(numbers[0], numbers[1],numbers[2], numbers[3],numbers[4], numbers[5]);
                     break;
                 case 'c':
-                    shape.bezierTo(lastPt.x+numbers[0], lastPt.y+numbers[1],lastPt.x+numbers[2], lastPt.y+numbers[3], lastPt.x+numbers[4], lastPt.y+numbers[5]);
+                    shape->bezierTo(lastPt.x+numbers[0], lastPt.y+numbers[1],lastPt.x+numbers[2], lastPt.y+numbers[3], lastPt.x+numbers[4], lastPt.y+numbers[5]);
                     break;
             }
             
             commands.pop();
             values.pop();
         }
-        shape.close();
-        child->setShape(shape);
+        shape->close();
         loadFromXmlLayout(xmlLayout, child, TAG::PATH, i);
     }
 }

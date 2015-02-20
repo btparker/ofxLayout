@@ -885,10 +885,6 @@ void ofxLayoutElement::setLayout(ofxLayout *layout){
     this->layout = layout;
 }
 
-void ofxLayoutElement::setShape(ofPath shape){
-    this->shape = shape;
-}
-
 ofPath* ofxLayoutElement::getShape(){
     return &this->shape;
 }
