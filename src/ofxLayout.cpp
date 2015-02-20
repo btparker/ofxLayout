@@ -263,73 +263,8 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         element->addChild(child);
         ofPath* shape = child->getShape();
         string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
-        queue<char> commands;
-        queue<string> values;
-        string strBuf = "";
-        for(char& c : dStr) {
-            if(isalpha(c)){
-                commands.push(ofToChar(ofToString(c)));
-                if(strBuf != ""){
-                    values.push(strBuf);
-                    strBuf = "";
-                }
-            }
-            else{
-                strBuf += ofToString(c);
-            }
-        }
-        
-        while(values.size() > 0){
-            char command = commands.front();
-            string value = values.front();
-            ofStringReplace(value, "-", " -");
-            ofStringReplace(value, ",", " ");
-            vector<string> strNumbers = ofSplitString(value, " ", true, true);
-            vector<float> numbers;
-            for(string number : strNumbers){
-                numbers.push_back(ofToFloat(number));
-            }
-            vector<ofPolyline> outline = shape->getOutline();
-            ofPolyline lastPolyline = outline[outline.size()-1];
-            vector<ofPoint> vertices = lastPolyline.getVertices();
-            ofPoint lastPt;
-            if(vertices.size() > 0){
-                lastPt = vertices[vertices.size()-1];
-            }
-            switch(command){
-                case 'M':
-                    shape->moveTo(numbers[0],numbers[1]);
-                    break;
-                case 'L':
-                    shape->lineTo(numbers[0],numbers[1]);
-                    break;
-                case 'l':
-                    shape->lineTo(lastPt.x+numbers[0],lastPt.y+numbers[1]);
-                    break;
-                case 'V':
-                    shape->lineTo(lastPt.x,numbers[0]);
-                    break;
-                case 'v':
-                    shape->lineTo(lastPt.x,lastPt.y+numbers[0]);
-                    break;
-                case 'H':
-                    shape->lineTo(numbers[0],lastPt.y);
-                    break;
-                case 'h':
-                    shape->lineTo(lastPt.x+numbers[0],lastPt.y);
-                    break;
-                case 'C':
-                    shape->bezierTo(numbers[0], numbers[1],numbers[2], numbers[3],numbers[4], numbers[5]);
-                    break;
-                case 'c':
-                    shape->bezierTo(lastPt.x+numbers[0], lastPt.y+numbers[1],lastPt.x+numbers[2], lastPt.y+numbers[3], lastPt.x+numbers[4], lastPt.y+numbers[5]);
-                    break;
-            }
-            
-            commands.pop();
-            values.pop();
-        }
-        shape->close();
+        ofxSVGPathParser pp(shape);
+        pp.parse(dStr);
         loadFromXmlLayout(xmlLayout, child, TAG::PATH, i);
     }
 }
