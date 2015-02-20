@@ -43,7 +43,7 @@ ofxLayout::~ofxLayout(){
 /// | ------------------ | ///
 
 void ofxLayout::update(){
-    cout << ofGetFrameRate() << endl;
+//    cout << ofGetFrameRate() << endl;
     assets.update();
     animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
@@ -258,6 +258,84 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     //    T = smooth quadratic Bézier curveto
     //    A = elliptical Arc
     //    Z = closepath
+    int numPaths = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::PATH));
+    for(int i = 0; i < numPaths; i++){
+        cout << i << endl;
+        ofxLayoutElement* child = new ofxLayoutElement();
+        element->addChild(child);
+        ofPath shape;
+        string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
+        queue<char> commands;
+        queue<string> values;
+        string strBuf = "";
+        for(char& c : dStr) {
+            if(isalpha(c)){
+                commands.push(ofToChar(ofToString(c)));
+                if(strBuf != ""){
+                    values.push(strBuf);
+                    strBuf = "";
+                }
+            }
+            else{
+                strBuf += ofToString(c);
+            }
+        }
+        
+        while(values.size() > 0){
+            char command = commands.front();
+            string value = values.front();
+            ofStringReplace(value, "-", " -");
+            ofStringReplace(value, ",", " ");
+            vector<string> strNumbers = ofSplitString(value, " ", true, true);
+            vector<float> numbers;
+            for(string number : strNumbers){
+                numbers.push_back(ofToFloat(number));
+            }
+            vector<ofPolyline> outline = shape.getOutline();
+            ofPolyline lastPolyline = outline[outline.size()-1];
+            vector<ofPoint> vertices = lastPolyline.getVertices();
+            ofPoint lastPt;
+            if(vertices.size() > 0){
+                lastPt = vertices[vertices.size()-1];
+            }
+            cout << ofToString(command) << endl;
+            switch(command){
+                case 'M':
+                    shape.moveTo(numbers[0],numbers[1]);
+                    break;
+                case 'L':
+                    shape.lineTo(numbers[0],numbers[1]);
+                    break;
+                case 'l':
+                    shape.lineTo(lastPt.x+numbers[0],lastPt.y+numbers[1]);
+                    break;
+                case 'V':
+                    shape.lineTo(lastPt.x,numbers[0]);
+                    break;
+                case 'v':
+                    shape.lineTo(lastPt.x,lastPt.y+numbers[0]);
+                    break;
+                case 'H':
+                    shape.lineTo(numbers[0],lastPt.y);
+                    break;
+                case 'h':
+                    shape.lineTo(lastPt.x+numbers[0],lastPt.y);
+                    break;
+                case 'C':
+                    shape.bezierTo(numbers[0], numbers[1],numbers[2], numbers[3],numbers[4], numbers[5]);
+                    break;
+                case 'c':
+                    shape.bezierTo(lastPt.x+numbers[0], lastPt.y+numbers[1],lastPt.x+numbers[2], lastPt.y+numbers[3], lastPt.x+numbers[4], lastPt.y+numbers[5]);
+                    break;
+            }
+            
+            commands.pop();
+            values.pop();
+        }
+        shape.close();
+        child->setShape(shape);
+        loadFromXmlLayout(xmlLayout, child, TAG::PATH, i);
+    }
 }
 
 
@@ -433,7 +511,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         }
     }
     
-    if(element->getTag() == TAG::POLYGON || element->getTag() == TAG::G){
+    if(element->getTag() == TAG::POLYGON || element->getTag() == TAG::G || element->getTag() == TAG::PATH){
         element->getStyle(OSS_KEY::POSITION)->setOssValue(OSS_VALUE::ABSOLUTE);
     }
     for(int i = 0; i < element->children.size(); i++){
