@@ -89,7 +89,7 @@ protected:
     
     void loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
     
-    void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
+    void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element = NULL);
     
     int pixelWidth, pixelHeight;
     

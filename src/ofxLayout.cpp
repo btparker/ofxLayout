@@ -139,7 +139,6 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, &styleRulesRoot);
-        
         loadAnimationsFromOss(&ossStylesheet, &styleRulesRoot);
         loadAnimationInstancesFromOss(&ossStylesheet, &styleRulesRoot);
 
@@ -157,6 +156,9 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string id = xmlLayout->getAttribute(tag,"id", "", which);
     id = populateExpressions(id);
     element->setID(id);
+    if(id != ""){
+        idElementMap[id] = element;
+    }
     
     string classes = xmlLayout->getAttribute(tag,"class", "", which);
     classes = populateExpressions(classes);
@@ -342,7 +344,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     }
 }
 
-void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
+void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element){
     vector<string> keys = jsonElement->getMemberNames();
     for(int i = 0; i < keys.size(); i++){
         string key = keys[i];
@@ -352,27 +354,43 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
         // ID
         if(keyIsId){
             string idName = key.substr(1);
-            loadAnimationInstancesFromOss(&value, &(styleObject->idMap[idName]));
+            loadAnimationInstancesFromOss(&value, &(styleObject->idMap[idName]), idElementMap[idName]);
         }
         // Class
         else if(keyIsClass){
             string className = key.substr(1);
-            loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]));
+            loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]), NULL);
         }
-        else if(key == "animation"){
+        else if(ofStringTimesInString(key, "animation") > 0){
+            if(element == NULL){
+                continue;
+            }
             string animation = (*jsonElement)[key].asString();
+            string animationID;
+            string animationStateID;
+            if(ofStringTimesInString(key, "animation-")>0){
+                animationStateID = key.substr(string("animation-").length());
+                
+            }
+            else{
+                animationStateID = "default";
+            }
+            
+            animationID = element->getID()+":"+animationStateID;
+            
             animation = populateExpressions(animation);
             vector<string> animationParams = ofSplitString(animation, " ");
             string animationName = animationParams[0];
-            string animationID = animationParams[1];
-            float duration = ofToFloat(animationParams[2]);
-            float delay = ofToFloat(animationParams[3]);
-            AnimCurve curve = ofxAnimatableManager::getCurveFromName(animationParams[4]);
+            
+            float duration = ofToFloat(animationParams[1]);
+            float delay = ofToFloat(animationParams[2]);
+            AnimCurve curve = ofxAnimatableManager::getCurveFromName(animationParams[3]);
             
             animationName = populateExpressions(animationName);
             
             if(animatableManager.hasAnimation(animationName)){
                 ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
+                
                 animationInstance->setDuration(duration);
                 animationInstance->setDelay(delay);
                 animationInstance->setCurve(curve);
@@ -387,7 +405,10 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
                         animationInstance->setAnimatable(k, styleObject->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableFloat());
                     }
                 }
-                animationInstance->play();
+                element->addAnimationState(animationStateID,animationInstance);
+            }
+            if(animationStateID == "default"){
+                element->setState(animationStateID);
             }
         }
     }

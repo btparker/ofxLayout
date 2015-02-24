@@ -112,10 +112,18 @@ public:
     
     ofPoint getPosition();
     ofPoint getGlobalPosition();
-
+    string getState();
+    void setState(string state);
+    void addAnimationState(string stateName, ofxAnimationInstance* animInst);
+    void stateTransFinished(ofxAnimatable::AnimationEvent &evt);
+    bool isStateTransitioning();
 protected:
+    bool stateTransitioning;
     ofFbo fbo;
     ofxLayout* layout;
+    map<string, ofxAnimationInstance*> animationStates;
+    string state;
+    
     virtual void drawTag(){};
     ofPoint position;
     

@@ -4,6 +4,7 @@
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
+    stateTransitioning = false;
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
@@ -288,6 +289,7 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 void ofxLayoutElement::draw(){
 //    update();
     if(visible()){
+        ofPushStyle();
         ofPushMatrix();
         ofTranslate(getPosition());
         ofRotate(0,0,0,0);
@@ -301,8 +303,11 @@ void ofxLayoutElement::draw(){
         
 //        fbo.begin();
 //        ofClear(0.0f, 0.0f, 0.0f, 0.0f);
-        
-        ofSetColor(255);
+        float opacity = 1.0;
+        if(hasStyle(OSS_KEY::OPACITY)){
+            opacity = getStyle(OSS_KEY::OPACITY)->asFloat();
+        }
+        ofSetColor(255*opacity);
         drawBackground();
         drawShape();
         drawText();
@@ -321,6 +326,7 @@ void ofxLayoutElement::draw(){
         }
         
         ofPopMatrix();
+        ofPopStyle();
     }
 }
 
@@ -911,4 +917,34 @@ float ofxLayoutElement::getWidth(){
 
 float ofxLayoutElement::getHeight(){
     return this->dimensions.getHeight();
+}
+
+string ofxLayoutElement::getState(){
+    return this->state;
+}
+
+bool ofxLayoutElement::isStateTransitioning(){
+    return stateTransitioning;
+}
+
+void ofxLayoutElement::stateTransFinished(ofxAnimatable::AnimationEvent &evt){
+    stateTransitioning = false;
+    this->state = ((ofxAnimationInstance*)evt.who)->getStateID();
+}
+
+void ofxLayoutElement::setState(string state){
+    if(animationStates.count(state)){
+        animationStates[state]->reset();
+        animationStates[state]->play();
+        stateTransitioning = true;
+        ofAddListener(animationStates[state]->animFinished, this, &ofxLayoutElement::stateTransFinished);
+        
+    }
+    else{
+        this->state = state;
+    }
+}
+
+void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
+    animationStates[stateName] = animInst;
 }

@@ -191,6 +191,7 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "stroke-miterlimit"){
         return OSS_KEY::STROKE_MITERLIMIT;
     }
+
     else{
         ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
@@ -639,6 +640,9 @@ ofColor ofxOSS::parseColor(string colorValue){
         string commaSeparatedChannels = colorValue.substr(si,l);
         
         color = parseColorChannels(commaSeparatedChannels);
+    }
+    else if(colorValue == "none"){
+        color = ofColor(0,0,0,0);
     }
     else{
         ofLogWarning("ofxOSS::parseColor","Could not parse "+colorValue+" to ofColor, returning ofColor::black");
