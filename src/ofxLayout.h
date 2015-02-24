@@ -66,6 +66,12 @@ public:
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
     
+    /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
+    ///
+    /// \param ofxXmlSettings* layout
+    /// \param int which (optional) If there are multiple elements at the current level, specifies which to recurse into
+    void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, TAG::ENUM tagEnum, int which = 0);
+    
     ofxLayoutElement* getBody();
 protected:
     ofxLayoutElement contextTreeRoot;
@@ -73,11 +79,7 @@ protected:
     
     
     
-    /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
-    ///
-    /// \param ofxXmlSettings* layout
-    /// \param int which (optional) If there are multiple elements at the current level, specifies which to recurse into
-    void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, TAG::ENUM tagEnum, int which = 0);
+    
     
     void loadTags(ofxXmlSettings* xmlLayout, ofxLayoutElement* element);
     

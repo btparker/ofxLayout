@@ -534,6 +534,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_COLOR:
             type = OSS_TYPE::COLOR;
             break;
+        case OSS_KEY::BACKGROUND_REPEAT:
+            type = OSS_TYPE::OSS_VALUE;
+            break;
         case OSS_KEY::COLOR:
             type = OSS_TYPE::COLOR;
             break;

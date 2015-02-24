@@ -117,6 +117,9 @@ public:
     void addAnimationState(string stateName, ofxAnimationInstance* animInst);
     void stateTransFinished(ofxAnimatable::AnimationEvent &evt);
     bool isStateTransitioning();
+    
+    void setOpacity(float opacity);
+    float getOpacity();
 protected:
     bool stateTransitioning;
     ofFbo fbo;
@@ -135,6 +138,8 @@ protected:
     TAG::ENUM tag;
     string classes;
     string elementValue;
+    
+    float opacity;
     
     string inlineStyle;
     

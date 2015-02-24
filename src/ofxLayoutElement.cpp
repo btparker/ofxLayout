@@ -5,6 +5,7 @@
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
     stateTransitioning = false;
+    opacity = 1.0;
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
@@ -87,6 +88,7 @@ void ofxLayoutElement::update(){
     if(!hasParent()){
         setDimensions(ofGetViewportWidth(), ofGetViewportHeight());
     }
+    
 
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
@@ -292,7 +294,6 @@ void ofxLayoutElement::draw(){
         ofPushStyle();
         ofPushMatrix();
         ofTranslate(getPosition());
-        ofRotate(0,0,0,0);
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
@@ -303,10 +304,11 @@ void ofxLayoutElement::draw(){
         
 //        fbo.begin();
 //        ofClear(0.0f, 0.0f, 0.0f, 0.0f);
-        float opacity = 1.0;
+        
         if(hasStyle(OSS_KEY::OPACITY)){
-            opacity = getStyle(OSS_KEY::OPACITY)->asFloat();
+            opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
+        
         ofSetColor(255*opacity);
         drawBackground();
         drawShape();
@@ -322,6 +324,7 @@ void ofxLayoutElement::draw(){
 //        glDisable(GL_BLEND);
         
         for(int i = 0 ; i < children.size(); i++){
+            children[i]->setOpacity(opacity);
             children[i]->draw();
         }
         
@@ -453,21 +456,32 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayoutElement::drawShape(){
+    ofPushStyle();
+    ofColor fill;
+    ofColor stroke;
     if(hasStyle(OSS_KEY::FILL)){
-        shape.setFillColor(getColorStyle(OSS_KEY::FILL));
+        fill = getColorStyle(OSS_KEY::FILL);
+        fill.a *= opacity;
+        shape.setFillColor(fill);
     }
 
     if(hasStyle(OSS_KEY::STROKE)){
-        shape.setStrokeColor(getColorStyle(OSS_KEY::STROKE));
+        stroke = getColorStyle(OSS_KEY::STROKE);
+        stroke.a *= opacity;
+        shape.setStrokeColor(stroke);
     }
     
     if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
         shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/10);
     }
+    
+    ofSetColor(255,255, 255, 255);
     shape.draw();
+    ofPopStyle();
 }
 
 void ofxLayoutElement::drawBackground(){
+    ofPushStyle();
     bool blendModeActive = beginBackgroundBlendMode();
     // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
     // based on whether blend mode is enabled or disabled
@@ -483,6 +497,7 @@ void ofxLayoutElement::drawBackground(){
         drawBackgroundColor();
     }
     endBackgroundBlendMode();
+    ofPopStyle();
 }
 
 void ofxLayoutElement::drawText(){
@@ -625,7 +640,8 @@ void ofxLayoutElement::drawBackgroundGradient(){
         ofColor firstColor;//(1.0f, 0.0f, 0.0f, 0.0f);
         ofColor secondColor;//(0.0f, 0.0f, 1.0f, 1.0f  );
         ofxOSS::parseBackgroundGradient(getStringStyle(OSS_KEY::BACKGROUND_GRADIENT), &firstColor, &secondColor, &vertical);
-        
+        firstColor.a *= opacity;
+        secondColor.a *= opacity;
         ofFloatColor firstColorF = firstColor;
         if(firstColor.limit() == 255){
             firstColorF.set(firstColor.r/255.0f, firstColor.g/255.0f, firstColor.b/255.0f, firstColor.a/255.0f);
@@ -725,19 +741,22 @@ void ofxLayoutElement::endBackgroundBlendMode(){
 }
 
 void ofxLayoutElement::drawBackgroundImage(){
+    ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
         ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch("images");
         string imageID = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
-        if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureDrawable(imageID)){
+        if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureReady(imageID)){
             drawBackgroundTexture(imagesBatch->getTexture(imageID));
         }
     }
+    ofPopStyle();
 }
 
 void ofxLayoutElement::drawBackgroundVideo(){
+    ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
-        ofSetColor(255);
+        ofSetColor(255,255,255,255);
         string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
         
         if(video == NULL){
@@ -753,18 +772,22 @@ void ofxLayoutElement::drawBackgroundVideo(){
         }
         
     }
+    ofPopStyle();
 }
 
 
 void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
+    ofPushStyle();
     texture->setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); 
     ofRectangle bgTextureTransform = ofRectangle();
     bgTextureTransform.setWidth(texture->getWidth());
     bgTextureTransform.setHeight(texture->getHeight());
-    bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, getBoundary());
-    if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
-        bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, dimensions));
-    }
+    bgTextureTransform.setX(0);
+    bgTextureTransform.setY(0);
+//    bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, getBoundary());
+//    if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
+//        bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, dimensions));
+//    }
     
     float bgX = bgTextureTransform.x;
     float bgY = bgTextureTransform.y;
@@ -772,7 +795,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     int numRepeatY = 0;
     
     if(hasStyle(OSS_KEY::BACKGROUND_REPEAT)){
-        OSS_VALUE::ENUM repeatValue = getOssValueStyle(OSS_KEY::BACKGROUND_REPEAT);
+        OSS_VALUE::ENUM repeatValue = getStyle(OSS_KEY::BACKGROUND_REPEAT)->asOssValue();
         bool repeatX, repeatY;
         switch(repeatValue){
             case OSS_VALUE::REPEAT:
@@ -804,21 +827,26 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
             }
             numRepeatY = ceil((float)dimensions.height/(float)bgTextureTransform.height);
         }
-        
     }
+    ofSetColor(255, 255, 255,floor(255*opacity));
     for(int x = 0; x <= numRepeatX; x++){
         for(int y = 0; y <= numRepeatY; y++){
             texture->draw(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y, bgTextureTransform.width, bgTextureTransform.height);
         }
     }
+    ofPopStyle();
 }
 
 void ofxLayoutElement::drawBackgroundColor(){
+    ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_COLOR)){
-        ofSetColor(getColorStyle(OSS_KEY::BACKGROUND_COLOR));
+        ofColor color = getColorStyle(OSS_KEY::BACKGROUND_COLOR);
+        color.a *= opacity;
+        ofSetColor(color);
         ofFill();
         ofDrawRectangle(0,0,dimensions.width,dimensions.height);
     }
+    ofPopStyle();
 }
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
@@ -947,4 +975,12 @@ void ofxLayoutElement::setState(string state){
 
 void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
     animationStates[stateName] = animInst;
+}
+
+void ofxLayoutElement::setOpacity(float opacity){
+    this->opacity = opacity;
+}
+
+float ofxLayoutElement::getOpacity(){
+    return opacity;
 }

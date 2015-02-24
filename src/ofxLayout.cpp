@@ -56,7 +56,7 @@ void ofxLayout::update(){
 }
 
 void ofxLayout::draw(){
-    if(drawable()){
+    if(ready()){
         contextTreeRoot.draw();
     }
 }
@@ -232,6 +232,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
         ofPath* shape = child->getShape();
+        shape->setCurveResolution(50);
         string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
         vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
         for(int j = 0; j < ptsStr.size(); j++){
