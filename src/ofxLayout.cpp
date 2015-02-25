@@ -378,6 +378,7 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
             }
             
             animationID = element->getID()+":"+animationStateID;
+
             
             animation = populateExpressions(animation);
             vector<string> animationParams = ofSplitString(animation, " ");
@@ -391,7 +392,7 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
             
             if(animatableManager.hasAnimation(animationName)){
                 ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
-                
+                animationInstance->setStateID(animationStateID);
                 animationInstance->setDuration(duration);
                 animationInstance->setDelay(delay);
                 animationInstance->setCurve(curve);

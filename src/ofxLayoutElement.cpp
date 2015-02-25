@@ -18,6 +18,7 @@ ofxLayoutElement::ofxLayoutElement(){
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
     
+    state = "default";
     ofAddListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
     ofAddListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
@@ -963,12 +964,11 @@ void ofxLayoutElement::stateTransFinished(ofxAnimatable::AnimationEvent &evt){
 }
 
 void ofxLayoutElement::setState(string state){
-    if(animationStates.count(state)){
+    if(animationStates.count(state) > 0){
         animationStates[state]->reset();
         animationStates[state]->play();
         stateTransitioning = true;
         ofAddListener(animationStates[state]->animFinished, this, &ofxLayoutElement::stateTransFinished);
-        
     }
     else{
         this->state = state;
