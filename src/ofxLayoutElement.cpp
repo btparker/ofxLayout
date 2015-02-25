@@ -93,12 +93,12 @@ void ofxLayoutElement::update(){
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
         // If width is zero, sets to auto (expands to fit children)
-        if(getStyle(OSS_KEY::WIDTH)->asFloat() == 0){
-            dimensions.width = 0;
-            getStyle(OSS_KEY::WIDTH)->setOssValue(OSS_VALUE::AUTO);
-        }
+//        if(getStyle(OSS_KEY::WIDTH)->asFloat() == 0){
+//            dimensions.width = 0;
+//            getStyle(OSS_KEY::WIDTH)->setOssValue(OSS_VALUE::AUTO);
+//        }
         // Percent width
-        else if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
+        if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
             float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
             dimensions.width = percentWidth * parent->getBoundary().getWidth();
         }
