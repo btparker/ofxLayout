@@ -297,14 +297,18 @@ void ofxLayoutElement::draw(){
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
-        
+        if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
+            glPushAttrib(GL_SCISSOR_BIT);
+            
+            //Silly lower left origin of glScissor
+            glScissor(0,ofGetViewportHeight() - getHeight(),getWidth(),getHeight());
+            
+            glEnable(GL_SCISSOR_TEST);
+        }
         
         glEnable(GL_BLEND);
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        
-//        fbo.begin();
-//        ofClear(0.0f, 0.0f, 0.0f, 0.0f);
-        
+
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
@@ -314,18 +318,16 @@ void ofxLayoutElement::draw(){
         drawShape();
         drawText();
         
-//        fbo.end();
-        
         glDisable(GL_BLEND);
-        
-//        glEnable(GL_BLEND);
-//        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-//        fbo.draw(0,0);
-//        glDisable(GL_BLEND);
-        
+
         for(int i = 0 ; i < children.size(); i++){
             children[i]->setOpacity(opacity);
             children[i]->draw();
+        }
+        
+        if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW)== OSS_VALUE::HIDDEN){
+            glDisable(GL_SCISSOR_TEST);
+            glPopAttrib();
         }
         
         ofPopMatrix();

@@ -31,6 +31,8 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::TEXT_TRANSFORM, OSS_VALUE::NONE);
     
     generateRule(OSS_KEY::COLOR, ofColor::black);
+    
+    generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::VISIBLE);
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
@@ -191,6 +193,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "stroke-miterlimit"){
         return OSS_KEY::STROKE_MITERLIMIT;
     }
+    else if(key == "overflow"){
+        return OSS_KEY::OSS_OVERFLOW;
+    }
     else{
         return OSS_KEY::INVALID;
     }
@@ -313,6 +318,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::STROKE_MITERLIMIT:
             keyString = "stroke-miterlimit";
             break;
+        case OSS_KEY::OSS_OVERFLOW:
+            keyString = "overflow";
+            break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
     }
@@ -333,6 +341,12 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
         // DISPLAY
         case OSS_VALUE::BLOCK:
             valueStr = "block";
+            break;
+        case OSS_VALUE::VISIBLE:
+            valueStr = "visible";
+            break;
+        case OSS_VALUE::HIDDEN:
+            valueStr = "hidden";
             break;
             
             // POSITION / TEXT ALIGN
@@ -434,6 +448,12 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     // DISPLAY
     else if(value == "block"){
         return OSS_VALUE::BLOCK;
+    }
+    else if(value == "visible"){
+        return OSS_VALUE::VISIBLE;
+    }
+    else if(value == "hidden"){
+        return OSS_VALUE::HIDDEN;
     }
     
     // POSITION / TEXT ALIGN
@@ -605,6 +625,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::POSITION:
+            type = OSS_TYPE::OSS_VALUE;
+            break;
+        case OSS_KEY::OSS_OVERFLOW:
             type = OSS_TYPE::OSS_VALUE;
             break;
         default:

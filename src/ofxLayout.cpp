@@ -330,7 +330,7 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
-        else if(key == "animation" || ofStringTimesInString(key, "@keyframes") > 0){
+        else if(ofStringTimesInString(key,"animation") > 0 || ofStringTimesInString(key, "@keyframes") > 0){
             continue;
         }
         // Style Key

@@ -18,6 +18,7 @@ namespace OSS_KEY{
     enum ENUM{
         // DRAWING
         OPACITY, MASK, DISPLAY,
+        OSS_OVERFLOW,
         
         // TRANSFORMS
         MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM, MARGIN_LEFT,
@@ -48,7 +49,7 @@ namespace OSS_VALUE{
         NONE, AUTO,
         
         // DISPLAY
-        BLOCK,
+        BLOCK, VISIBLE, HIDDEN,
         
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
