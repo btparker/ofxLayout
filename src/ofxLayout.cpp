@@ -163,6 +163,15 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string classes = xmlLayout->getAttribute(tag,"class", "", which);
     classes = populateExpressions(classes);
     element->setClasses(classes);
+    for(string classname : ofSplitString(classes, " ",true,true)){
+        vector<ofxLayoutElement*> cmap = classElementMap[classname];
+        if(std::find(cmap.begin(), cmap.end(), element) != cmap.end()) {
+
+        } else {
+            /* v does not contain x */
+            classElementMap[classname].push_back(element);
+        }
+    }
     
     string style = xmlLayout->getAttribute(tag,"style", "", which);
     style = populateExpressions(style);
@@ -360,7 +369,9 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
         // Class
         else if(keyIsClass){
             string className = key.substr(1);
-            loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]), NULL);
+            for(auto classElement : getElementsByClass(className)){
+                loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]), classElement);
+            }
         }
         else if(ofStringTimesInString(key, "animation") > 0){
             if(element == NULL){
@@ -377,7 +388,8 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
                 animationStateID = "default";
             }
             
-            animationID = element->getID()+":"+animationStateID;
+            animationID = ofToString(element)+":"+animationStateID;
+            cout << animationID << endl;
 
             
             animation = populateExpressions(animation);
@@ -391,6 +403,7 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
             animationName = populateExpressions(animationName);
             
             if(animatableManager.hasAnimation(animationName)){
+                element->copyStyles(styleObject);
                 ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
                 animationInstance->setStateID(animationStateID);
                 animationInstance->setDuration(duration);
@@ -401,17 +414,17 @@ void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOS
                 for(auto k : keyframeKeys) {
                     OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(k);
                     if(type == OSS_TYPE::COLOR){
-                        animationInstance->setAnimatable(k, styleObject->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableColor());
+                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableColor());
                     }
                     if(type == OSS_TYPE::NUMBER){
-                        animationInstance->setAnimatable(k, styleObject->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableFloat());
+                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableFloat());
                     }
                 }
                 element->addAnimationState(animationStateID,animationInstance);
             }
-            if(animationStateID == "default"){
-                element->setState(animationStateID);
-            }
+//            if(animationStateID == "default"){
+//                element->setState(animationStateID);
+//            }
         }
     }
 }
@@ -427,7 +440,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
-        if(styleRulesRoot.classMap.count(classes[i])){
+        if(!element->hasAnimations() && styleRulesRoot.classMap.count(classes[i])){
             element->overrideStyles(&styleRulesRoot.classMap[classes[i]]);
         }
     }
@@ -479,6 +492,15 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     }
     else{
         return idElementMap[ID];
+    }
+}
+
+vector<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
+    if(classElementMap.count(classname) == 0){
+        return vector<ofxLayoutElement*>();
+    }
+    else{
+        return classElementMap[classname];
     }
 }
 

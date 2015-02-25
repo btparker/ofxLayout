@@ -120,6 +120,8 @@ public:
     
     void setOpacity(float opacity);
     float getOpacity();
+    
+    bool hasAnimations();
 protected:
     bool stateTransitioning;
     ofFbo fbo;

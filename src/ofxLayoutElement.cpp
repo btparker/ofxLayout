@@ -979,6 +979,10 @@ void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance*
     animationStates[stateName] = animInst;
 }
 
+bool ofxLayoutElement::hasAnimations(){
+    return animationStates.size() > 0;
+}
+
 void ofxLayoutElement::setOpacity(float opacity){
     this->opacity = opacity;
 }

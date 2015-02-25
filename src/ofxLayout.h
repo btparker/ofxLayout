@@ -54,7 +54,9 @@ public:
     void unload();
     
     ofxLayoutElement* getElementById(string ID);
+    vector<ofxLayoutElement*> getElementsByClass(string classname);
     map<string, ofxLayoutElement*> idElementMap;
+    map<string, vector<ofxLayoutElement*> > classElementMap;
     
     string populateExpressions(string value);
 
