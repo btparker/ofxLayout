@@ -191,9 +191,7 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "stroke-miterlimit"){
         return OSS_KEY::STROKE_MITERLIMIT;
     }
-
     else{
-        ofLogWarning("ofxOSS::getOssKeyFromString","No enum for "+key+" found.");
         return OSS_KEY::INVALID;
     }
 }
