@@ -134,7 +134,7 @@ public:
     float getOpacity();
     void updateGlobalTransformations();
     bool hasAnimations();
-    
+    void drawBorder();
     ofRectangle getGlobalClippingRegion();
     ofRectangle getClippingRegion();
 protected:

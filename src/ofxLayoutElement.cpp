@@ -6,6 +6,7 @@
 ofxLayoutElement::ofxLayoutElement(){
     stateTransitioning = false;
     opacity = 1.0;
+    shape = ofPath();
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
@@ -303,24 +304,34 @@ void ofxLayoutElement::draw(){
         }
         
         updateGlobalTransformations();
+        
+        if(hasStyle(OSS_KEY::BORDER_WIDTH)){
+            setBorders(getFloatStyle(OSS_KEY::BORDER_WIDTH));
+        }
 
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
             ofRectangle glScissorRect = getGlobalClippingRegion();
+            cout << " ** "+getID()+" ** " << endl;
+            cout << getClippingRegion() << endl;
+            cout << getGlobalClippingRegion() << endl;
+            cout << ofGetCurrentViewport() << endl;
             //Silly lower left origin of glScissor
             glScissorRect.y = ofGetViewportHeight() - (glScissorRect.y + glScissorRect.height);
             glScissor(glScissorRect.x, glScissorRect.y, glScissorRect.width, glScissorRect.height);
             
             glEnable(GL_SCISSOR_TEST);
         }
+        
         glEnable(GL_BLEND);
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
-
+        
         ofSetColor(255*opacity);
+//        drawBorder();
         drawBackground();
         drawShape();
         drawText();
@@ -487,6 +498,37 @@ void ofxLayoutElement::drawShape(){
     ofSetColor(255,255, 255, 255);
     shape.draw();
     ofPopStyle();
+}
+
+void ofxLayoutElement::drawBorder(){
+    float bw = 0;
+    float br = 0;
+    ofColor borderColor;
+    
+    if(hasStyle(OSS_KEY::BORDER_WIDTH)){
+        bw = getFloatStyle(OSS_KEY::BORDER_WIDTH);
+    }
+    
+    if(hasStyle(OSS_KEY::BORDER_RADIUS)){
+        br = getFloatStyle(OSS_KEY::BORDER_RADIUS);
+    }
+    
+    ofRectangle rect = getGlobalClippingRegion();
+    
+    ofPushStyle();
+    if(hasStyle(OSS_KEY::BORDER_COLOR)){
+        borderColor = getColorStyle(OSS_KEY::BORDER_COLOR);
+        borderColor.a *= opacity;
+
+        ofSetColor(borderColor);
+    }
+    ofFill();
+    ofDrawRectangle( rect.x, rect.y,bw,rect.height);
+    ofDrawRectangle( rect.x+rect.width-bw, rect.y,bw,rect.height);
+    ofDrawRectangle( rect.x+bw, rect.y,rect.width-2*bw,bw);
+    ofDrawRectangle( rect.x+bw, rect.y+rect.height-bw,rect.width-2*bw,bw);
+    ofPopStyle();
+
 }
 
 void ofxLayoutElement::drawBackground(){
@@ -1018,17 +1060,19 @@ void ofxLayoutElement::updateGlobalTransformations(){
 
 ofRectangle ofxLayoutElement::getGlobalClippingRegion(){
     ofRectangle globalClippingRegion = getClippingRegion();
+
     if(hasParent()){
         globalClippingRegion.translate(parent->getGlobalPosition());
+        globalClippingRegion.translate(getPosition());
     }
     return globalClippingRegion;
 }
 
 ofRectangle ofxLayoutElement::getClippingRegion(){
     ofRectangle clippingRegion;
-    clippingRegion.x = getPosition().x - borders.left;
-    clippingRegion.y = getPosition().y - borders.top;
+    clippingRegion.x = -borders.left;
+    clippingRegion.y = -borders.top;
     clippingRegion.width = getWidth() + borders.left+borders.right;
-    clippingRegion.height = getHeight()+borders.top+borders.bottom;
+    clippingRegion.height = getHeight() + borders.top+borders.bottom;
     return clippingRegion;
 }
