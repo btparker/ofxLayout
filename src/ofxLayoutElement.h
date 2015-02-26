@@ -7,10 +7,10 @@
 #include "ofxMask.h"
 
 struct SideDimensions{
-    float top;
-    float right;
-    float bottom;
-    float left;
+    float top = 0.0f;
+    float right = 0.0f;
+    float bottom = 0.0f;
+    float left = 0.0f;
 };
 
 namespace TAG {
@@ -134,7 +134,11 @@ public:
     float getOpacity();
     void updateGlobalTransformations();
     bool hasAnimations();
+    
+    ofRectangle getGlobalClippingRegion();
+    ofRectangle getClippingRegion();
 protected:
+    
     ofMatrix4x4 globalTransformations;
     bool stateTransitioning;
     ofFbo fbo;
