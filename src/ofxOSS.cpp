@@ -33,6 +33,13 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::COLOR, ofColor::black);
     
     generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::HIDDEN);
+    
+    generateRule(OSS_KEY::BORDER_WIDTH, 0);
+    
+    generateRule(OSS_KEY::BORDER_COLOR, ofColor::black);
+    
+    generateRule(OSS_KEY::BORDER_RADIUS, 0);
+
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
@@ -196,6 +203,16 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "overflow"){
         return OSS_KEY::OSS_OVERFLOW;
     }
+    
+    else if(key == "border-width"){
+        return OSS_KEY::BORDER_WIDTH;
+    }
+    else if(key == "border-radius"){
+        return OSS_KEY::BORDER_RADIUS;
+    }
+    else if(key == "border-color"){
+        return OSS_KEY::BORDER_COLOR;
+    }
     else{
         return OSS_KEY::INVALID;
     }
@@ -320,6 +337,15 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::OSS_OVERFLOW:
             keyString = "overflow";
+            break;
+        case OSS_KEY::BORDER_WIDTH:
+            keyString = "border-width";
+            break;
+        case OSS_KEY::BORDER_COLOR:
+            keyString = "border-color";
+            break;
+        case OSS_KEY::BORDER_RADIUS:
+            keyString = "border-radius";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -629,6 +655,15 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::OSS_OVERFLOW:
             type = OSS_TYPE::OSS_VALUE;
+            break;
+        case OSS_KEY::BORDER_WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::BORDER_COLOR:
+            type = OSS_TYPE::COLOR;
+            break;
+        case OSS_KEY::BORDER_RADIUS:
+            type = OSS_TYPE::NUMBER;
             break;
         default:
             type = OSS_TYPE::NONE;

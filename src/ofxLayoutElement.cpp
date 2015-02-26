@@ -93,7 +93,6 @@ void ofxLayoutElement::update(){
     }
     
     
-
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
         // If width is zero, sets to auto (expands to fit children)
