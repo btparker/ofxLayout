@@ -132,10 +132,10 @@ public:
     
     void setOpacity(float opacity);
     float getOpacity();
-    void updateAbsoluteTransformations();
+    void updateGlobalTransformations();
     bool hasAnimations();
 protected:
-    ofMatrix4x4 absoluteTransformations;
+    ofMatrix4x4 globalTransformations;
     bool stateTransitioning;
     ofFbo fbo;
     ofxLayout* layout;

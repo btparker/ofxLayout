@@ -85,7 +85,7 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
-    absoluteTransformations = ofMatrix4x4::newIdentityMatrix();
+    globalTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
         setPosition(ofPoint(0,0));
@@ -284,7 +284,7 @@ void ofxLayoutElement::update(){
 //        ofClear(0,0,0,0);
 //        fbo.end();
 //    }
-//    absoluteTransformations = ofMatrix4x4::newIdentityMatrix();
+//    globalTransformations = ofMatrix4x4::newIdentityMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
@@ -302,7 +302,7 @@ void ofxLayoutElement::draw(){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
         
-        updateAbsoluteTransformations();
+        updateGlobalTransformations();
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
             //Silly lower left origin of glScissor
@@ -905,7 +905,7 @@ ofRectangle ofxLayoutElement::getBoundary(){
 }
 
 ofPoint ofxLayoutElement::getGlobalPosition(){
-    return absoluteTransformations.getTranslation();
+    return globalTransformations.getTranslation();
 }
 
 ofPoint ofxLayoutElement::getPosition(){
@@ -1004,13 +1004,13 @@ SideDimensions ofxLayoutElement::getBorders(){
     return borders;
 }
 
-void ofxLayoutElement::updateAbsoluteTransformations(){
+void ofxLayoutElement::updateGlobalTransformations(){
     if(hasParent()){
-        absoluteTransformations *= parent->absoluteTransformations;
+        globalTransformations *= parent->globalTransformations;
     }
-    absoluteTransformations.translate(getPosition());
+    globalTransformations.translate(getPosition());
     
     if(hasStyle(OSS_KEY::SCALE)){
-        absoluteTransformations.scale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE),1.0);
+        globalTransformations.scale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE),1.0);
     }
 }
