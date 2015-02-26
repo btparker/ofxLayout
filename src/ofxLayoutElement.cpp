@@ -85,6 +85,7 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
+    absoluteTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
         setPosition(ofPoint(0,0));
@@ -283,6 +284,7 @@ void ofxLayoutElement::update(){
 //        ofClear(0,0,0,0);
 //        fbo.end();
 //    }
+//    absoluteTransformations = ofMatrix4x4::newIdentityMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
@@ -299,15 +301,15 @@ void ofxLayoutElement::draw(){
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
+        
+        updateAbsoluteTransformations();
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
-            
             //Silly lower left origin of glScissor
-            glScissor(0,ofGetViewportHeight() - getHeight(),getWidth(),getHeight());
+            glScissor(getGlobalPosition().x,ofGetViewportHeight() - getGlobalPosition().y-getHeight(),getWidth(),getHeight());
             
             glEnable(GL_SCISSOR_TEST);
         }
-        
         glEnable(GL_BLEND);
         glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -903,12 +905,7 @@ ofRectangle ofxLayoutElement::getBoundary(){
 }
 
 ofPoint ofxLayoutElement::getGlobalPosition(){
-    ofPoint pos(0,0);
-    if(hasParent()){
-        pos.set(parent->getGlobalPosition());
-    }
-    pos.set(pos.x+getPosition().x, pos.y+getPosition().y);
-    return pos;
+    return absoluteTransformations.getTranslation();
 }
 
 ofPoint ofxLayoutElement::getPosition(){
@@ -1005,4 +1002,15 @@ void ofxLayoutElement::setBorders(SideDimensions borders){
 
 SideDimensions ofxLayoutElement::getBorders(){
     return borders;
+}
+
+void ofxLayoutElement::updateAbsoluteTransformations(){
+    if(hasParent()){
+        absoluteTransformations *= parent->absoluteTransformations;
+    }
+    absoluteTransformations.translate(getPosition());
+    
+    if(hasStyle(OSS_KEY::SCALE)){
+        absoluteTransformations.scale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE),1.0);
+    }
 }
