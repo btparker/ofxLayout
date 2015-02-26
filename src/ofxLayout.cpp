@@ -215,11 +215,11 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 }
 
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
-    int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::ELEMENT));
+    int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::DIV));
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        loadFromXmlLayout(xmlLayout, child, TAG::ELEMENT, i);
+        loadFromXmlLayout(xmlLayout, child, TAG::DIV, i);
     }
     
     int numSvg = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::SVG));

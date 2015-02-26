@@ -86,7 +86,8 @@ bool ofxLayoutElement::visible(){
 
 void ofxLayoutElement::update(){
     // If root element, boundary is initially set to the current viewport dimensions
-    if(!hasParent()){
+    if(this->getTag() == TAG::BODY){
+        setPosition(ofPoint(0,0));
         setDimensions(ofGetViewportWidth(), ofGetViewportHeight());
     }
     
@@ -250,7 +251,7 @@ void ofxLayoutElement::update(){
                 offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
             }
         }
-        ofPoint childPos = ofPoint(0,0);
+        ofPoint childPos = offset;
         
         if(hasStyle(OSS_KEY::POSITION)){
             switch(children[i]->getStyle(OSS_KEY::POSITION)->asOssValue()){
@@ -366,8 +367,8 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::BODY:
             tag = "body";
             break;
-        case TAG::ELEMENT:
-            tag = "element";
+        case TAG::DIV:
+            tag = "div";
             break;
         case TAG::SVG:
             tag = "svg";
@@ -393,8 +394,8 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     if(tagString == "body"){
         return TAG::BODY;
     }
-    else if(tagString == "element") {
-        return TAG::ELEMENT;
+    else if(tagString == "div") {
+        return TAG::DIV;
     }
     else if(tagString == "svg") {
         return TAG::SVG;
