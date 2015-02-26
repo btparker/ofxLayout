@@ -991,3 +991,18 @@ void ofxLayoutElement::setOpacity(float opacity){
 float ofxLayoutElement::getOpacity(){
     return opacity;
 }
+
+void ofxLayoutElement::setBorders(float borderWidth){
+    borders.top = borderWidth;
+    borders.right = borderWidth;
+    borders.bottom = borderWidth;
+    borders.left = borderWidth;
+}
+
+void ofxLayoutElement::setBorders(SideDimensions borders){
+    this->borders = borders;
+}
+
+SideDimensions ofxLayoutElement::getBorders(){
+    return borders;
+}
