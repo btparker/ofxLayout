@@ -32,7 +32,7 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::COLOR, ofColor::black);
     
-    generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::VISIBLE);
+    generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::HIDDEN);
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){

@@ -305,8 +305,13 @@ void ofxLayoutElement::draw(){
         updateGlobalTransformations();
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
+            ofRectangle glScissorRect;
+            glScissorRect.x = getGlobalPosition().x;
             //Silly lower left origin of glScissor
-            glScissor(getGlobalPosition().x,ofGetViewportHeight() - getGlobalPosition().y-getHeight(),getWidth(),getHeight());
+            glScissorRect.y = -1*getGlobalPosition().y + ofGetViewportHeight() - getHeight();
+            glScissorRect.width = getWidth();
+            glScissorRect.height = getHeight();
+            glScissor(glScissorRect.x, glScissorRect.y, glScissorRect.width, glScissorRect.height);
             
             glEnable(GL_SCISSOR_TEST);
         }
