@@ -6,6 +6,13 @@
 #include "ofxLoaderSpool.h"
 #include "ofxMask.h"
 
+struct SideDimensions{
+    float top = 0.0f;
+    float right = 0.0f;
+    float bottom = 0.0f;
+    float left = 0.0f;
+};
+
 namespace TAG {
     enum ENUM{BODY, DIV, SVG, G, POLYGON, PATH, INVALID};
 };
@@ -118,11 +125,21 @@ public:
     void stateTransFinished(ofxAnimatable::AnimationEvent &evt);
     bool isStateTransitioning();
     
+    void setBorders(float borderWidth);
+    void setBorders(SideDimensions borders);
+    
+    SideDimensions getBorders();
+    
     void setOpacity(float opacity);
     float getOpacity();
-    
+    void updateGlobalTransformations();
     bool hasAnimations();
+    void drawBorder();
+    ofRectangle getGlobalClippingRegion();
+    ofRectangle getClippingRegion();
 protected:
+    
+    ofMatrix4x4 globalTransformations;
     bool stateTransitioning;
     ofFbo fbo;
     ofxLayout* layout;
@@ -133,8 +150,7 @@ protected:
     ofPoint position;
     
     ofRectangle dimensions;
-    
-    ofVec4f margins;
+    SideDimensions borders;
     
     string ID;
     TAG::ENUM tag;
