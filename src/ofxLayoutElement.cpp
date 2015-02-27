@@ -312,13 +312,9 @@ void ofxLayoutElement::draw(){
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
             ofRectangle glScissorRect = getGlobalClippingRegion();
-            cout << " ** "+getID()+" ** " << endl;
-            cout << getClippingRegion() << endl;
-            cout << getGlobalClippingRegion() << endl;
-            cout << ofGetCurrentViewport() << endl;
             //Silly lower left origin of glScissor
-            glScissorRect.y = ofGetViewportHeight() - (glScissorRect.y + glScissorRect.height);
-            glScissor(glScissorRect.x, glScissorRect.y, glScissorRect.width, glScissorRect.height);
+            glScissorRect.y = ofGetViewportHeight() - (glScissorRect.y);
+            glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
             
             glEnable(GL_SCISSOR_TEST);
         }
@@ -335,7 +331,7 @@ void ofxLayoutElement::draw(){
         drawBackground();
         drawShape();
         drawText();
-        
+
         glDisable(GL_BLEND);
 
         for(int i = 0 ; i < children.size(); i++){
