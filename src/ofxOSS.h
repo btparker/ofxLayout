@@ -17,8 +17,7 @@ namespace OSS_TYPE{
 namespace OSS_KEY{
     enum ENUM{
         // DRAWING
-        OPACITY, MASK, DISPLAY,
-        OSS_OVERFLOW,
+        OPACITY, MASK, DISPLAY, OSS_OVERFLOW,
         
         // BORDERS
         BORDER_WIDTH, BORDER_COLOR, BORDER_RADIUS,
@@ -34,7 +33,7 @@ namespace OSS_KEY{
         
         // TEXT
         FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, TEXT_TRANSFORM, TEXT_BACKGROUND_COLOR,
-        TEXT_PADDING, TEXT_MAX_WIDTH, LINE_HEIGHT,
+        TEXT_PADDING, TEXT_MAX_WIDTH, LINE_HEIGHT, VERTICAL_ALIGN,
         
         BLUR,
         

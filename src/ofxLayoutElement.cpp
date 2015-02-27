@@ -606,10 +606,10 @@ void ofxLayoutElement::drawText(){
             drawBox.width = fontBBox.width;
             drawBox.height = fontBBox.height;
             
+            float fontHeight = fontSize*layout->getFonts()->at(fontFilename).getLineHeight();
             
-            float x;
-            float y = fontSize*layout->getFonts()->at(fontFilename).getLineHeight();
-            
+            float x = 0.0f;
+            float y = fontHeight;
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
                 string textAlign = getStringStyle(OSS_KEY::TEXT_ALIGN);
                 if(textAlign == "left"){
@@ -623,8 +623,22 @@ void ofxLayoutElement::drawText(){
                 }
             }
             
+            if(hasStyle(OSS_KEY::VERTICAL_ALIGN)){
+                string verticalAlign = getStringStyle(OSS_KEY::VERTICAL_ALIGN);
+                
+                if(verticalAlign == "top"){
+                    y = fontHeight;
+                }
+                else if(verticalAlign == "center"){
+                    y = dimensions.height/2+fontHeight/2;
+                }
+                else if(verticalAlign == "bottom"){
+                    y = dimensions.height;
+                }
+            }
+            
             drawBox.x = x;
-            drawBox.y = 0;
+            drawBox.y = y-fontHeight;
             
             if(hasStyle(OSS_KEY::TEXT_PADDING)){
                 float paddingTop, paddingRight, paddingBottom, paddingLeft = 0.0f;

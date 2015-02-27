@@ -18,6 +18,8 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
     
+    generateRule(OSS_KEY::VERTICAL_ALIGN, OSS_VALUE::TOP);
+    
     generateRule(OSS_KEY::FONT_SIZE, 50);
     
     generateRule(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
@@ -152,6 +154,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "text-align"){
         return OSS_KEY::TEXT_ALIGN;
     }
+    else if(key == "vertical-align"){
+        return OSS_KEY::VERTICAL_ALIGN;
+    }
     else if(key == "font-size"){
         return OSS_KEY::FONT_SIZE;
     }
@@ -283,6 +288,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::TEXT_ALIGN:
             keyString = "text-align";
+            break;
+        case OSS_KEY::VERTICAL_ALIGN:
+            keyString = "vertical-align";
             break;
         case OSS_KEY::TEXT_TRANSFORM:
             keyString = "text-transform";
