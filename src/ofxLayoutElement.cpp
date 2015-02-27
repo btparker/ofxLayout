@@ -4,7 +4,7 @@
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
-    stateTransitioning = false;
+//    stateTransitioning = false;
     opacity = 1.0;
     shape = ofPath();
     parent = NULL;
@@ -274,7 +274,6 @@ void ofxLayoutElement::update(){
         }
         children[i]->setPosition(childPos);
     }
-    
     
     // Setting child position
     
@@ -1000,38 +999,38 @@ float ofxLayoutElement::getHeight(){
     return this->dimensions.getHeight();
 }
 
-string ofxLayoutElement::getState(){
-    return this->state;
-}
+//string ofxLayoutElement::getState(){
+//    return this->state;
+//}
+//
+//bool ofxLayoutElement::isStateTransitioning(){
+//    return stateTransitioning;
+//}
+//
+//void ofxLayoutElement::stateTransFinished(ofxAnimatable::AnimationEvent &evt){
+//    stateTransitioning = false;
+//    this->state = ((ofxAnimationInstance*)evt.who)->getStateID();
+//}
 
-bool ofxLayoutElement::isStateTransitioning(){
-    return stateTransitioning;
-}
-
-void ofxLayoutElement::stateTransFinished(ofxAnimatable::AnimationEvent &evt){
-    stateTransitioning = false;
-    this->state = ((ofxAnimationInstance*)evt.who)->getStateID();
-}
-
-void ofxLayoutElement::setState(string state){
-    if(animationStates.count(state) > 0){
-        animationStates[state]->reset();
-        animationStates[state]->play();
-        stateTransitioning = true;
-        ofAddListener(animationStates[state]->animFinished, this, &ofxLayoutElement::stateTransFinished);
-    }
-    else{
-        this->state = state;
-    }
-}
-
-void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
-    animationStates[stateName] = animInst;
-}
-
-bool ofxLayoutElement::hasAnimations(){
-    return animationStates.size() > 0;
-}
+//void ofxLayoutElement::setState(string state){
+//    if(animationStates.count(state) > 0){
+//        animationStates[state]->reset();
+//        animationStates[state]->play();
+//        stateTransitioning = true;
+//        ofAddListener(animationStates[state]->animFinished, this, &ofxLayoutElement::stateTransFinished);
+//    }
+//    else{
+//        this->state = state;
+//    }
+//}
+//
+//void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
+//    animationStates[stateName] = animInst;
+//}
+//
+//bool ofxLayoutElement::hasAnimations(){
+//    return animationStates.size() > 0;
+//}
 
 void ofxLayoutElement::setOpacity(float opacity){
     this->opacity = opacity;

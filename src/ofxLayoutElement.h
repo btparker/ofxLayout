@@ -120,10 +120,13 @@ public:
     ofPoint getPosition();
     ofPoint getGlobalPosition();
     string getState();
-    void setState(string state);
-    void addAnimationState(string stateName, ofxAnimationInstance* animInst);
-    void stateTransFinished(ofxAnimatable::AnimationEvent &evt);
-    bool isStateTransitioning();
+    
+//    void setState(string state);
+
+    //    void addAnimationState(string stateName, ofxAnimationInstance* animInst);
+    
+//    void stateTransFinished(ofxAnimatable::AnimationEvent &evt);
+//    bool isStateTransitioning();
     
     void setBorders(float borderWidth);
     void setBorders(SideDimensions borders);
@@ -133,17 +136,16 @@ public:
     void setOpacity(float opacity);
     float getOpacity();
     void updateGlobalTransformations();
-    bool hasAnimations();
+//    bool hasAnimations();
     void drawBorder();
     ofRectangle getGlobalClippingRegion();
     ofRectangle getClippingRegion();
 protected:
-    
     ofMatrix4x4 globalTransformations;
-    bool stateTransitioning;
+//    bool stateTransitioning;
     ofFbo fbo;
     ofxLayout* layout;
-    map<string, ofxAnimationInstance*> animationStates;
+//    map<string, ofxAnimationInstance*> animationStates;
     string state;
     
     virtual void drawTag(){};

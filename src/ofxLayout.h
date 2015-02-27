@@ -60,7 +60,7 @@ public:
     
     string populateExpressions(string value);
 
-    ofxAnimatableManager animatableManager;
+//    ofxAnimatableManager animatableManager;
     
     ofxLayoutElement* hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements = NULL, ofxLayoutElement* startElement = NULL);
     
@@ -91,10 +91,10 @@ protected:
     /// \param
     void loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
     
-    void loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
-    
-    void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element = NULL);
-    
+//    void loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
+//    
+//    void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element = NULL);
+//    
     int pixelWidth, pixelHeight;
     
     ofFbo fbo;

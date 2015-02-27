@@ -45,7 +45,7 @@ ofxLayout::~ofxLayout(){
 void ofxLayout::update(){
 //    cout << ofGetFrameRate() << endl;
     assets.update();
-    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
+//    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
     if(
        fbo.getWidth() != contextTreeRoot.getWidth() ||
@@ -139,8 +139,8 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, &styleRulesRoot);
-        loadAnimationsFromOss(&ossStylesheet, &styleRulesRoot);
-        loadAnimationInstancesFromOss(&ossStylesheet, &styleRulesRoot);
+//        loadAnimationsFromOss(&ossStylesheet, &styleRulesRoot);
+//        loadAnimationInstancesFromOss(&ossStylesheet, &styleRulesRoot);
 
         applyChanges();
     }
@@ -282,34 +282,34 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
 }
 
 
-void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
-    vector<string> keys = jsonElement->getMemberNames();
-    for(int i = 0; i < keys.size(); i++){
-        string key = keys[i];
-        ofxJSONElement value = (*jsonElement)[key];
-        if(ofStringTimesInString(key, "@keyframes") > 0){
-            string animationName = ofSplitString(key, "@keyframes ", true, true)[0];
-            ofxAnimation* animation = animatableManager.addAnimation(animationName);
-            vector<string> keyframes = value.getMemberNames();
-            for(int j = 0; j < keyframes.size(); j++){
-                string keyframeKey = keyframes[j];
-                ofxAnimationKeyframe* keyframe = animation->addKeyframe(keyframeKey);
-                ofxJSONElement keyframeValue = (*jsonElement)[key][keyframeKey];
-                vector<string> keyframeValueKeys = keyframeValue.getMemberNames();
-                for(int k = 0; k < keyframeValueKeys.size(); k++){
-                    OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(keyframeValueKeys[k]);
-                    if(type == OSS_TYPE::COLOR){
-                        keyframe->setValue(keyframeValueKeys[k], ofxOSS::parseColor(keyframeValue[keyframeValueKeys[k]].asString()));
-                    }
-                    if(type == OSS_TYPE::NUMBER){
-                        keyframe->setValue(keyframeValueKeys[k], ofToFloat(keyframeValue[keyframeValueKeys[k]].asString()));
-                    }
-                }
-                
-            }
-        }
-    }
-}
+//void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
+//    vector<string> keys = jsonElement->getMemberNames();
+//    for(int i = 0; i < keys.size(); i++){
+//        string key = keys[i];
+//        ofxJSONElement value = (*jsonElement)[key];
+//        if(ofStringTimesInString(key, "@keyframes") > 0){
+//            string animationName = ofSplitString(key, "@keyframes ", true, true)[0];
+//            ofxAnimation* animation = animatableManager.addAnimation(animationName);
+//            vector<string> keyframes = value.getMemberNames();
+//            for(int j = 0; j < keyframes.size(); j++){
+//                string keyframeKey = keyframes[j];
+//                ofxAnimationKeyframe* keyframe = animation->addKeyframe(keyframeKey);
+//                ofxJSONElement keyframeValue = (*jsonElement)[key][keyframeKey];
+//                vector<string> keyframeValueKeys = keyframeValue.getMemberNames();
+//                for(int k = 0; k < keyframeValueKeys.size(); k++){
+//                    OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(keyframeValueKeys[k]);
+//                    if(type == OSS_TYPE::COLOR){
+//                        keyframe->setValue(keyframeValueKeys[k], ofxOSS::parseColor(keyframeValue[keyframeValueKeys[k]].asString()));
+//                    }
+//                    if(type == OSS_TYPE::NUMBER){
+//                        keyframe->setValue(keyframeValueKeys[k], ofToFloat(keyframeValue[keyframeValueKeys[k]].asString()));
+//                    }
+//                }
+//                
+//            }
+//        }
+//    }
+//}
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     vector<string> keys = jsonElement->getMemberNames();
@@ -339,9 +339,9 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
-        else if(ofStringTimesInString(key,"animation") > 0 || ofStringTimesInString(key, "@keyframes") > 0){
-            continue;
-        }
+//        else if(ofStringTimesInString(key,"animation") > 0 || ofStringTimesInString(key, "@keyframes") > 0){
+//            continue;
+//        }
         // Style Key
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
@@ -354,80 +354,80 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     }
 }
 
-void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element){
-    vector<string> keys = jsonElement->getMemberNames();
-    for(int i = 0; i < keys.size(); i++){
-        string key = keys[i];
-        ofxJSONElement value = (*jsonElement)[key];
-        bool keyIsId = key.substr(0,1) == "#";
-        bool keyIsClass = key.substr(0,1) == ".";
-        // ID
-        if(keyIsId){
-            string idName = key.substr(1);
-            loadAnimationInstancesFromOss(&value, &(styleObject->idMap[idName]), idElementMap[idName]);
-        }
-        // Class
-        else if(keyIsClass){
-            string className = key.substr(1);
-            for(auto classElement : getElementsByClass(className)){
-                loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]), classElement);
-            }
-        }
-        else if(ofStringTimesInString(key, "animation") > 0){
-            if(element == NULL){
-                continue;
-            }
-            string animation = (*jsonElement)[key].asString();
-            string animationID;
-            string animationStateID;
-            if(ofStringTimesInString(key, "animation-")>0){
-                animationStateID = key.substr(string("animation-").length());
-                
-            }
-            else{
-                animationStateID = "default";
-            }
-            
-            animationID = ofToString(element)+":"+animationStateID;
-            cout << animationID << endl;
-
-            
-            animation = populateExpressions(animation);
-            vector<string> animationParams = ofSplitString(animation, " ");
-            string animationName = animationParams[0];
-            
-            float duration = ofToFloat(animationParams[1]);
-            float delay = ofToFloat(animationParams[2]);
-            AnimCurve curve = ofxAnimatableManager::getCurveFromName(animationParams[3]);
-            
-            animationName = populateExpressions(animationName);
-            
-            if(animatableManager.hasAnimation(animationName)){
-                element->copyStyles(styleObject);
-                ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
-                animationInstance->setStateID(animationStateID);
-                animationInstance->setDuration(duration);
-                animationInstance->setDelay(delay);
-                animationInstance->setCurve(curve);
-                set<string> keyframeKeys = animatableManager.getAnimation(animationName)->getKeyframeSequence()[0]->getKeys();
-                
-                for(auto k : keyframeKeys) {
-                    OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(k);
-                    if(type == OSS_TYPE::COLOR){
-                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableColor());
-                    }
-                    if(type == OSS_TYPE::NUMBER){
-                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableFloat());
-                    }
-                }
-                element->addAnimationState(animationStateID,animationInstance);
-            }
-//            if(animationStateID == "default"){
-//                element->setState(animationStateID);
+//void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element){
+//    vector<string> keys = jsonElement->getMemberNames();
+//    for(int i = 0; i < keys.size(); i++){
+//        string key = keys[i];
+//        ofxJSONElement value = (*jsonElement)[key];
+//        bool keyIsId = key.substr(0,1) == "#";
+//        bool keyIsClass = key.substr(0,1) == ".";
+//        // ID
+//        if(keyIsId){
+//            string idName = key.substr(1);
+//            loadAnimationInstancesFromOss(&value, &(styleObject->idMap[idName]), idElementMap[idName]);
+//        }
+//        // Class
+//        else if(keyIsClass){
+//            string className = key.substr(1);
+//            for(auto classElement : getElementsByClass(className)){
+//                loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]), classElement);
 //            }
-        }
-    }
-}
+//        }
+//        else if(ofStringTimesInString(key, "animation") > 0){
+//            if(element == NULL){
+//                continue;
+//            }
+//            string animation = (*jsonElement)[key].asString();
+//            string animationID;
+//            string animationStateID;
+//            if(ofStringTimesInString(key, "animation-")>0){
+//                animationStateID = key.substr(string("animation-").length());
+//                
+//            }
+//            else{
+//                animationStateID = "default";
+//            }
+//            
+//            animationID = ofToString(element)+":"+animationStateID;
+//            cout << animationID << endl;
+//
+//            
+//            animation = populateExpressions(animation);
+//            vector<string> animationParams = ofSplitString(animation, " ");
+//            string animationName = animationParams[0];
+//            
+//            float duration = ofToFloat(animationParams[1]);
+//            float delay = ofToFloat(animationParams[2]);
+//            AnimCurve curve = ofxAnimatableManager::getCurveFromName(animationParams[3]);
+//            
+//            animationName = populateExpressions(animationName);
+//            
+//            if(animatableManager.hasAnimation(animationName)){
+//                element->copyStyles(styleObject);
+//                ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
+//                animationInstance->setStateID(animationStateID);
+//                animationInstance->setDuration(duration);
+//                animationInstance->setDelay(delay);
+//                animationInstance->setCurve(curve);
+//                set<string> keyframeKeys = animatableManager.getAnimation(animationName)->getKeyframeSequence()[0]->getKeys();
+//                
+//                for(auto k : keyframeKeys) {
+//                    OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(k);
+//                    if(type == OSS_TYPE::COLOR){
+//                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableColor());
+//                    }
+//                    if(type == OSS_TYPE::NUMBER){
+//                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableFloat());
+//                    }
+//                }
+//                element->addAnimationState(animationStateID,animationInstance);
+//            }
+////            if(animationStateID == "default"){
+////                element->setState(animationStateID);
+////            }
+//        }
+//    }
+//}
 
 void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(element == NULL){
@@ -440,7 +440,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
-        if(!element->hasAnimations() && styleRulesRoot.classMap.count(classes[i])){
+        if(styleRulesRoot.classMap.count(classes[i])){
             element->overrideStyles(&styleRulesRoot.classMap[classes[i]]);
         }
     }
