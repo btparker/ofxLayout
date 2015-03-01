@@ -279,6 +279,9 @@ public:
                 if(ofStringTimesInString(value, "%") > 0){
                     setType(OSS_TYPE::PERCENT);
                 }
+                if(ofStringTimesInString(value, "pt")){
+                    value = ofToString((4.0f/3.0f)*ofToFloat(value));
+                }
                 this->numberValue.reset(ofToFloat(value));
                 break;
             default:;

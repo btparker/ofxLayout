@@ -5,6 +5,7 @@
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
 #include "ofxSVGPathParser.h"
+#include "ofShader.h"
 
 class ofxLayout{
     
@@ -75,12 +76,10 @@ public:
     void loadFromXmlLayout(ofxXmlSettings* xmlLayout, ofxLayoutElement*, TAG::ENUM tagEnum, int which = 0);
     
     ofxLayoutElement* getBody();
+    
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
-    
-    
-    
     
     
     void loadTags(ofxXmlSettings* xmlLayout, ofxLayoutElement* element);

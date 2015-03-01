@@ -1,4 +1,7 @@
 #include "ofxLayout.h"
+#include "MiscUtils.h"
+#include "ofGraphics.h"
+
 
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
@@ -240,7 +243,7 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     for(int i = 0; i < numPolygons; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        ofPath* shape = child->getShape();
+        ofPath* shape = child->initShape();
         shape->setCurveResolution(50);
         string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
         vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
@@ -273,10 +276,11 @@ void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     for(int i = 0; i < numPaths; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        ofPath* shape = child->getShape();
+        ofPath* shape = child->initShape();
         string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
         ofxSVGPathParser pp(shape);
         pp.parse(dStr);
+        
         loadFromXmlLayout(xmlLayout, child, TAG::PATH, i);
     }
 }
@@ -505,12 +509,14 @@ vector<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
 }
 
 ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements, ofxLayoutElement* startElement){
+    
     if(returnedElements == NULL){
         returnedElements = new vector<ofxLayoutElement*>();
     }
     if(startElement == NULL){
         startElement = &contextTreeRoot;
     }
+
     // If intersects
     if(startElement->getBoundary().inside(pt)){
         returnedElements->push_back(startElement);
@@ -518,6 +524,7 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* retu
             hittest(pt,returnedElements,startElement->children[i]);
         }
     }
+    
     if(returnedElements->size() > 0){
         return returnedElements->at(returnedElements->size()-1);
     }
@@ -554,3 +561,4 @@ string ofxLayout::populateExpressions(string input){
 ofxLayoutElement* ofxLayout::getBody(){
     return &contextTreeRoot;
 }
+

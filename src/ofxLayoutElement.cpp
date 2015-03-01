@@ -6,7 +6,7 @@
 ofxLayoutElement::ofxLayoutElement(){
 //    stateTransitioning = false;
     opacity = 1.0;
-    shape = ofPath();
+    shape = NULL;
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
@@ -23,6 +23,25 @@ ofxLayoutElement::ofxLayoutElement(){
     ofAddListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
     ofAddListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
+}
+
+ofxLayoutElement::~ofxLayoutElement(){
+    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
+    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
+    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
+    
+    if(shape){
+        shape->clear();
+        delete shape;
+    }
+    
+    if(video != NULL){
+        video->closeMovie();
+        video = NULL;
+    }
+    for(int i = 0 ; i < children.size(); i++){
+        delete children[i];
+    }
 }
 
 void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
@@ -54,19 +73,7 @@ MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
     return this->mouseState;
 }
 
-ofxLayoutElement::~ofxLayoutElement(){
-    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
-    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
-    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
-    
-    if(video != NULL){
-        video->closeMovie();
-        video = NULL;
-    }
-    for(int i = 0 ; i < children.size(); i++){
-        delete children[i];
-    }
-}
+
 
 void ofxLayoutElement::show(){
     styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
@@ -78,7 +85,7 @@ void ofxLayoutElement::hide(){
 
 bool ofxLayoutElement::visible(){
     bool displayNone = hasStyle(OSS_KEY::DISPLAY) && getOssValueStyle(OSS_KEY::DISPLAY) == OSS_VALUE::NONE;
-    bool opacityZero = hasStyle(OSS_KEY::OPACITY) && getFloatStyle(OSS_KEY::OPACITY) == 0.0f;
+    bool opacityZero = opacity != 0 && hasStyle(OSS_KEY::OPACITY) && getFloatStyle(OSS_KEY::OPACITY) == 0.0f;
     return !displayNone && !opacityZero;
 }
 
@@ -325,12 +332,8 @@ void ofxLayoutElement::draw(){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
         
-        ofSetColor(255*opacity);
-//        drawBorder();
-        drawBackground();
-        drawShape();
-        drawText();
-
+        drawContent();
+        
         glDisable(GL_BLEND);
 
         for(int i = 0 ; i < children.size(); i++){
@@ -346,6 +349,15 @@ void ofxLayoutElement::draw(){
         ofPopMatrix();
         ofPopStyle();
     }
+}
+
+void ofxLayoutElement::drawContent(){
+    ofSetColor(255*opacity);
+    //        drawBorder();
+    drawBackground();
+    drawShape();
+    drawText();
+
 }
 
 /// |   Setters/Getters   | ///
@@ -471,28 +483,30 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayoutElement::drawShape(){
-    ofPushStyle();
-    ofColor fill;
-    ofColor stroke;
-    if(hasStyle(OSS_KEY::FILL)){
-        fill = getColorStyle(OSS_KEY::FILL);
-        fill.a *= opacity;
-        shape.setFillColor(fill);
+    if(shape){
+        ofPushStyle();
+        ofColor fill;
+        ofColor stroke;
+        if(hasStyle(OSS_KEY::FILL)){
+            fill = getColorStyle(OSS_KEY::FILL);
+            fill.a *= opacity;
+            shape->setFillColor(fill);
+        }
+        
+        if(hasStyle(OSS_KEY::STROKE)){
+            stroke = getColorStyle(OSS_KEY::STROKE);
+            stroke.a *= opacity;
+            shape->setStrokeColor(stroke);
+        }
+        
+        if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
+            shape->setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/10);
+        }
+        
+        ofSetColor(255,255, 255, 255);
+        shape->draw();
+        ofPopStyle();
     }
-
-    if(hasStyle(OSS_KEY::STROKE)){
-        stroke = getColorStyle(OSS_KEY::STROKE);
-        stroke.a *= opacity;
-        shape.setStrokeColor(stroke);
-    }
-    
-    if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
-        shape.setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/10);
-    }
-    
-    ofSetColor(255,255, 255, 255);
-    shape.draw();
-    ofPopStyle();
 }
 
 void ofxLayoutElement::drawBorder(){
@@ -972,7 +986,7 @@ void ofxLayoutElement::setLayout(ofxLayout *layout){
 }
 
 ofPath* ofxLayoutElement::getShape(){
-    return &this->shape;
+    return this->shape;
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
@@ -1085,3 +1099,17 @@ ofRectangle ofxLayoutElement::getClippingRegion(){
     clippingRegion.height = getHeight() + borders.top+borders.bottom;
     return clippingRegion;
 }
+
+ofPath* ofxLayoutElement::initShape(){
+    shape = new ofPath();
+    return shape;
+}
+
+bool ofxLayoutElement::isShape(){
+    return shape != NULL;
+}
+
+float ofxLayoutElement::getGlobalScale(){
+    return globalTransformations.getScale().x;
+}
+

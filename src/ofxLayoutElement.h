@@ -119,6 +119,7 @@ public:
     
     ofPoint getPosition();
     ofPoint getGlobalPosition();
+    float getGlobalScale();
     string getState();
     
 //    void setState(string state);
@@ -140,7 +141,13 @@ public:
     void drawBorder();
     ofRectangle getGlobalClippingRegion();
     ofRectangle getClippingRegion();
+    
+    ofPath* initShape();
+    bool isShape();
+    void drawContent();
+    
 protected:
+
     ofMatrix4x4 globalTransformations;
 //    bool stateTransitioning;
     ofFbo fbo;
@@ -166,5 +173,5 @@ protected:
     MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
-    ofPath shape;
+    ofPath* shape;
 };
