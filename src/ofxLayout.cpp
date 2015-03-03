@@ -426,9 +426,9 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 //                }
 //                element->addAnimationState(animationStateID,animationInstance);
 //            }
-////            if(animationStateID == "default"){
-////                element->setState(animationStateID);
-////            }
+//            if(animationStateID == "default"){
+//                element->setState(animationStateID);
+//            }
 //        }
 //    }
 //}

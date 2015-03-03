@@ -146,6 +146,8 @@ public:
     bool isShape();
     void drawContent();
     
+    void attachAnimationInstance(ofxAnimationInstance* animationInstance);
+    
 protected:
 
     ofMatrix4x4 globalTransformations;

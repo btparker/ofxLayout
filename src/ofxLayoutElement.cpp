@@ -561,8 +561,8 @@ void ofxLayoutElement::drawBackground(){
 }
 
 void ofxLayoutElement::drawText(){
-    ofEnableAlphaBlending();
-    ofEnableSmoothing();
+//    ofEnableAlphaBlending();
+//    ofEnableSmoothing();
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
         ofRectangle drawBox;
         
@@ -696,13 +696,14 @@ void ofxLayoutElement::drawText(){
             if(hasStyle(OSS_KEY::COLOR)){
                 string colorStr = getStringStyle(OSS_KEY::COLOR);
                 ofColor fontColor = ofxOSS::parseColor(colorStr);
+                fontColor.a *= opacity;
                 ofSetColor(fontColor);
             }
 
             layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
         }
     }
-    ofDisableAlphaBlending();
+//    ofDisableAlphaBlending();
 }
 void ofxLayoutElement::drawBackgroundGradient(){
     if(hasStyle(OSS_KEY::BACKGROUND_GRADIENT)){
@@ -1113,3 +1114,26 @@ float ofxLayoutElement::getGlobalScale(){
     return globalTransformations.getScale().x;
 }
 
+void ofxLayoutElement::attachAnimationInstance(ofxAnimationInstance *animationInstance){
+    set<string> keys = animationInstance->getKeys();
+    for(string key : keys){
+        if(ofxOSS::validKey(key)){
+            OSS_KEY::ENUM ossKey = ofxOSS::getOssKeyFromString(key);
+            if(this->hasStyle(ossKey)){
+                ofxOssRule* style = getStyle(ossKey);
+                OSS_TYPE::ENUM ossType = style->getType();
+                switch (ossType) {
+                    case OSS_TYPE::COLOR:
+                        animationInstance->setAnimatable(key, style->getAnimatableColor());
+                        break;
+                    case OSS_TYPE::NUMBER:
+                    case OSS_TYPE::PERCENT:
+                        animationInstance->setAnimatable(key, style->getAnimatableFloat());
+                        break;
+                    default:
+                        ofLogWarning("ofxLayoutElement::attachAnimationInstance","Can't attach to key '"+key+"', not an animatable type");
+                }
+            }
+        }
+    }
+}
