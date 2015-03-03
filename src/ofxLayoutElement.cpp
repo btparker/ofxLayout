@@ -405,6 +405,9 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::PATH:
             tag = "path";
             break;
+        case TAG::CIRCLE:
+            tag = "circle";
+            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -431,6 +434,9 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "path") {
         return TAG::PATH;
+    }
+    else if(tagString == "circle") {
+        return TAG::CIRCLE;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");

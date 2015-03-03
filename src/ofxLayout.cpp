@@ -218,102 +218,63 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 }
 
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
-    int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::DIV));
+    loadTagElements(TAG::DIV, xmlLayout, element);
+    loadTagElements(TAG::SVG, xmlLayout, element);
+    loadTagElements(TAG::G, xmlLayout, element);
+    loadTagElements(TAG::POLYGON, xmlLayout, element);
+    loadTagElements(TAG::PATH, xmlLayout, element);
+    loadTagElements(TAG::CIRCLE, xmlLayout, element);
+}
+
+void ofxLayout::loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
+    int numElements = xmlLayout->getNumTags(ofxLayoutElement::getTagString(tag));
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        loadFromXmlLayout(xmlLayout, child, TAG::DIV, i);
-    }
-    
-    int numSvg = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::SVG));
-    for(int i = 0; i < numSvg; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        element->addChild(child);
-        loadFromXmlLayout(xmlLayout, child, TAG::SVG, i);
-    }
-    
-    int numG = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::G));
-    for(int i = 0; i < numG; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        element->addChild(child);
-        loadFromXmlLayout(xmlLayout, child, TAG::G, i);
-    }
-    
-    int numPolygons = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::POLYGON));
-    for(int i = 0; i < numPolygons; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        element->addChild(child);
-        ofPath* shape = child->initShape();
-        shape->setCurveResolution(50);
-        string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
-        vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
-        for(int j = 0; j < ptsStr.size(); j++){
-            vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
-            ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
-            if(j==0){
-                shape->moveTo(pt);
-            }
-            else{
-                shape->lineTo(pt);
-            }
-        }
-        shape->close();
-        loadFromXmlLayout(xmlLayout, child, TAG::POLYGON, i);
-    }
-    
-    // SVG Path Commands
-    //    M = moveto
-    //    L = lineto
-    //    H = horizontal lineto
-    //    V = vertical lineto
-    //    C = curveto
-    //    S = smooth curveto
-    //    Q = quadratic Bézier curve
-    //    T = smooth quadratic Bézier curveto
-    //    A = elliptical Arc
-    //    Z = closepath
-    int numPaths = xmlLayout->getNumTags(ofxLayoutElement::getTagString(TAG::PATH));
-    for(int i = 0; i < numPaths; i++){
-        ofxLayoutElement* child = new ofxLayoutElement();
-        element->addChild(child);
-        ofPath* shape = child->initShape();
-        string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
-        ofxSVGPathParser pp(shape);
-        pp.parse(dStr);
         
-        loadFromXmlLayout(xmlLayout, child, TAG::PATH, i);
+        if(tag == TAG::PATH){
+            ofPath* shape = child->initShape();
+            string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
+            
+            // Good ol' ofxSVGPathParser, saving me here
+            ofxSVGPathParser pp(shape);
+            pp.parse(dStr);
+        }
+        else if(tag == TAG::POLYGON){
+            ofPath* shape = child->initShape();
+            
+            // TODO: maybe not hard code this
+            shape->setCurveResolution(50);
+            string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
+            
+            // Getting the points as a vector, then translating
+            vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
+            for(int j = 0; j < ptsStr.size(); j++){
+                vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
+                ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
+                if(j==0){
+                    shape->moveTo(pt);
+                }
+                else{
+                    shape->lineTo(pt);
+                }
+            }
+            shape->close();
+        }
+        else if(tag == TAG::CIRCLE){
+            ofPath* shape = child->initShape();
+            float x = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::CIRCLE),"cx", 0.0f, i);
+            
+            float y = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::CIRCLE),"cy", 0.0f, i);
+            
+            float r = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::CIRCLE),"r", 0.0f, i);
+            
+            shape->circle(0, 0, 5);
+        }
+        loadFromXmlLayout(xmlLayout, child, tag, i);
     }
 }
 
-
-//void ofxLayout::loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
-//    vector<string> keys = jsonElement->getMemberNames();
-//    for(int i = 0; i < keys.size(); i++){
-//        string key = keys[i];
-//        ofxJSONElement value = (*jsonElement)[key];
-//        if(ofStringTimesInString(key, "@keyframes") > 0){
-//            string animationName = ofSplitString(key, "@keyframes ", true, true)[0];
-//            ofxAnimation* animation = animatableManager.addAnimation(animationName);
-//            vector<string> keyframes = value.getMemberNames();
-//            for(int j = 0; j < keyframes.size(); j++){
-//                string keyframeKey = keyframes[j];
-//                ofxAnimationKeyframe* keyframe = animation->addKeyframe(keyframeKey);
-//                ofxJSONElement keyframeValue = (*jsonElement)[key][keyframeKey];
-//                vector<string> keyframeValueKeys = keyframeValue.getMemberNames();
-//                for(int k = 0; k < keyframeValueKeys.size(); k++){
-//                    OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(keyframeValueKeys[k]);
-//                    if(type == OSS_TYPE::COLOR){
-//                        keyframe->setValue(keyframeValueKeys[k], ofxOSS::parseColor(keyframeValue[keyframeValueKeys[k]].asString()));
-//                    }
-//                    if(type == OSS_TYPE::NUMBER){
-//                        keyframe->setValue(keyframeValueKeys[k], ofToFloat(keyframeValue[keyframeValueKeys[k]].asString()));
-//                    }
-//                }
-//                
-//            }
-//        }
-//    }
-//}
 
 void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     vector<string> keys = jsonElement->getMemberNames();
@@ -343,10 +304,6 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
 
             loadFromOss(&value, &(styleObject->classMap[className]));
         }
-//        else if(ofStringTimesInString(key,"animation") > 0 || ofStringTimesInString(key, "@keyframes") > 0){
-//            continue;
-//        }
-        // Style Key
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
             value = populateExpressions(value);
@@ -357,81 +314,6 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
         }
     }
 }
-
-//void ofxLayout::loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element){
-//    vector<string> keys = jsonElement->getMemberNames();
-//    for(int i = 0; i < keys.size(); i++){
-//        string key = keys[i];
-//        ofxJSONElement value = (*jsonElement)[key];
-//        bool keyIsId = key.substr(0,1) == "#";
-//        bool keyIsClass = key.substr(0,1) == ".";
-//        // ID
-//        if(keyIsId){
-//            string idName = key.substr(1);
-//            loadAnimationInstancesFromOss(&value, &(styleObject->idMap[idName]), idElementMap[idName]);
-//        }
-//        // Class
-//        else if(keyIsClass){
-//            string className = key.substr(1);
-//            for(auto classElement : getElementsByClass(className)){
-//                loadAnimationInstancesFromOss(&value, &(styleObject->classMap[className]), classElement);
-//            }
-//        }
-//        else if(ofStringTimesInString(key, "animation") > 0){
-//            if(element == NULL){
-//                continue;
-//            }
-//            string animation = (*jsonElement)[key].asString();
-//            string animationID;
-//            string animationStateID;
-//            if(ofStringTimesInString(key, "animation-")>0){
-//                animationStateID = key.substr(string("animation-").length());
-//                
-//            }
-//            else{
-//                animationStateID = "default";
-//            }
-//            
-//            animationID = ofToString(element)+":"+animationStateID;
-//            cout << animationID << endl;
-//
-//            
-//            animation = populateExpressions(animation);
-//            vector<string> animationParams = ofSplitString(animation, " ");
-//            string animationName = animationParams[0];
-//            
-//            float duration = ofToFloat(animationParams[1]);
-//            float delay = ofToFloat(animationParams[2]);
-//            AnimCurve curve = ofxAnimatableManager::getCurveFromName(animationParams[3]);
-//            
-//            animationName = populateExpressions(animationName);
-//            
-//            if(animatableManager.hasAnimation(animationName)){
-//                element->copyStyles(styleObject);
-//                ofxAnimationInstance* animationInstance = animatableManager.generateAnimationInstance(animationName, animationID);
-//                animationInstance->setStateID(animationStateID);
-//                animationInstance->setDuration(duration);
-//                animationInstance->setDelay(delay);
-//                animationInstance->setCurve(curve);
-//                set<string> keyframeKeys = animatableManager.getAnimation(animationName)->getKeyframeSequence()[0]->getKeys();
-//                
-//                for(auto k : keyframeKeys) {
-//                    OSS_TYPE::ENUM type = ofxOSS::getOssTypeFromOssKey(k);
-//                    if(type == OSS_TYPE::COLOR){
-//                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableColor());
-//                    }
-//                    if(type == OSS_TYPE::NUMBER){
-//                        animationInstance->setAnimatable(k, element->getStyle(ofxOSS::getOssKeyFromString(k))->getAnimatableFloat());
-//                    }
-//                }
-//                element->addAnimationState(animationStateID,animationInstance);
-//            }
-//            if(animationStateID == "default"){
-//                element->setState(animationStateID);
-//            }
-//        }
-//    }
-//}
 
 void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(element == NULL){

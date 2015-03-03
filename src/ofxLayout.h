@@ -77,6 +77,8 @@ public:
     
     ofxLayoutElement* getBody();
     
+    void loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element);
+    
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
@@ -89,10 +91,6 @@ protected:
     /// \param
     /// \param
     void loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
-    
-//    void loadAnimationsFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject);
-//    
-//    void loadAnimationInstancesFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject, ofxLayoutElement* element = NULL);
 //    
     int pixelWidth, pixelHeight;
     

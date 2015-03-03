@@ -14,7 +14,7 @@ struct SideDimensions{
 };
 
 namespace TAG {
-    enum ENUM{BODY, DIV, SVG, G, POLYGON, PATH, INVALID};
+    enum ENUM{BODY, DIV, SVG, G, POLYGON, PATH, CIRCLE, INVALID};
 };
 
 class ofxLayout;
