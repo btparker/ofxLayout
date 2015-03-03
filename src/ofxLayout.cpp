@@ -403,7 +403,9 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* retu
     if(startElement->getBoundary().inside(pt)){
         returnedElements->push_back(startElement);
         for(int i = 0; i < startElement->children.size(); i++){
-            hittest(pt,returnedElements,startElement->children[i]);
+            if(startElement->children[i]->clickable()){
+                hittest(pt,returnedElements,startElement->children[i]);
+            }
         }
     }
     

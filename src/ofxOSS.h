@@ -40,6 +40,8 @@ namespace OSS_KEY{
         // SHAPE
         FILL, STROKE, STROKE_MITERLIMIT,
         
+        POINTER_EVENTS,
+        
         // Invalid is last in case we want to extend the enum
         INVALID
     };

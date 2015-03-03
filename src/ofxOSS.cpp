@@ -41,6 +41,8 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::BORDER_COLOR, ofColor::black);
     
     generateRule(OSS_KEY::BORDER_RADIUS, 0);
+    
+    generateRule(OSS_KEY::POINTER_EVENTS, OSS_VALUE::AUTO);
 
 }
 
@@ -218,6 +220,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "border-color"){
         return OSS_KEY::BORDER_COLOR;
     }
+    else if(key == "pointer-events"){
+        return OSS_KEY::POINTER_EVENTS;
+    }
     else{
         return OSS_KEY::INVALID;
     }
@@ -354,6 +359,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BORDER_RADIUS:
             keyString = "border-radius";
+            break;
+        case OSS_KEY::POINTER_EVENTS:
+            keyString = "pointer-events";
             break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
@@ -672,6 +680,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BORDER_RADIUS:
             type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::POINTER_EVENTS:
+            type = OSS_TYPE::OSS_VALUE;
             break;
         default:
             type = OSS_TYPE::NONE;

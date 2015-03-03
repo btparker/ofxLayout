@@ -145,7 +145,7 @@ public:
     ofPath* initShape();
     bool isShape();
     void drawContent();
-    
+    bool clickable();
     void attachAnimationInstance(ofxAnimationInstance* animationInstance);
     
 protected:

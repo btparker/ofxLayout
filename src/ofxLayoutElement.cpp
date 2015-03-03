@@ -1120,6 +1120,10 @@ float ofxLayoutElement::getGlobalScale(){
     return globalTransformations.getScale().x;
 }
 
+bool ofxLayoutElement::clickable(){
+    return hasStyle(OSS_KEY::POINTER_EVENTS) && getOssValueStyle(OSS_KEY::POINTER_EVENTS) != OSS_VALUE::NONE;
+}
+
 void ofxLayoutElement::attachAnimationInstance(ofxAnimationInstance *animationInstance){
     set<string> keys = animationInstance->getKeys();
     for(string key : keys){
