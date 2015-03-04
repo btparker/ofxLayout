@@ -150,7 +150,7 @@ void ofxLayoutElement::update(){
         
         float cW = children[i]->getDimensions().getWidth();
         float cH = children[i]->getDimensions().getHeight();
-        
+      
         // Expanding div to contain children
         if((isWidthAuto && (relX+cW) <= maxWidth)){
             expandingWidth += cW;
