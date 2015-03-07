@@ -337,7 +337,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     }
     
     ofxOSS inlineStyles = element->getInlineStyles();
-    element->copyStyles(&inlineStyles);
+    element->overrideStyles(&inlineStyles);
     
     // Get assets
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){

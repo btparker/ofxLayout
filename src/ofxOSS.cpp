@@ -16,6 +16,8 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::HEIGHT, "100%");
     
+    generateRule(OSS_KEY::MARGIN_LEFT, "0px");
+    
     generateRule(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
     
     generateRule(OSS_KEY::VERTICAL_ALIGN, OSS_VALUE::TOP);
@@ -41,6 +43,8 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::BORDER_COLOR, ofColor::black);
     
     generateRule(OSS_KEY::BORDER_RADIUS, 0);
+    
+    generateRule(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
     
     generateRule(OSS_KEY::POINTER_EVENTS, OSS_VALUE::AUTO);
 
@@ -420,6 +424,9 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
         case OSS_VALUE::FIXED:
             valueStr = "fixed";
             break;
+        case OSS_VALUE::FILL:
+            valueStr = "fill";
+            break;
             
             // SIZE
         case OSS_VALUE::COVER:
@@ -528,6 +535,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     else if(value == "fixed"){
         return OSS_VALUE::FIXED;
     }
+    else if(value == "fill"){
+        return OSS_VALUE::FILL;
+    }
 
     // SIZE
     else if(value == "cover"){
@@ -580,7 +590,6 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     
     else{
-        ofLogWarning("ofxOSS::getOssValueFromString","No OSS_VALUE found for "+value+".");
         return OSS_VALUE::INVALID;
     }
 }
