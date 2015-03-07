@@ -152,6 +152,7 @@ public:
     void addState(string state, ofxAnimationInstance* animationInstance);
     ofEvent<string>* getStateEvent();
     bool hasState(string state);
+    void addClass(string className);
 protected:
 
     ofMatrix4x4 globalTransformations;

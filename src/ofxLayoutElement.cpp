@@ -76,11 +76,22 @@ MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
 
 
 void ofxLayoutElement::show(){
-    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+    if(states["show"]){
+        setState("show");
+    }
+    else{
+        styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+    }
+
 }
 
 void ofxLayoutElement::hide(){
-    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+    if(states["hide"]){
+        setState("hide");
+    }
+    else{
+        styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+    }
 }
 
 bool ofxLayoutElement::visible(){
@@ -458,6 +469,11 @@ string ofxLayoutElement::getClasses(){
 
 void ofxLayoutElement::setClasses(string classes){
     this->classes = classes;
+}
+
+void ofxLayoutElement::addClass(string className){
+    this->classes += " "+className;
+    this->layout->classElementMap[className].insert(this);
 }
 
 string ofxLayoutElement::getID(){
@@ -1038,31 +1054,14 @@ string ofxLayoutElement::getState(){
 ofEvent<string>* ofxLayoutElement::getStateEvent(){
     return &stateEvt;
 }
-//
-//bool ofxLayoutElement::isStateTransitioning(){
-//    return stateTransitioning;
-//}
-//
-//void ofxLayoutElement::stateTransFinished(ofxAnimatable::AnimationEvent &evt){
-//    stateTransitioning = false;
-//    this->state = ((ofxAnimationInstance*)evt.who)->getStateID();
-//}
 
 void ofxLayoutElement::setState(string state){
-    if(states.count(state) > 0){
+    if(states[state]){
         states[state]->trigger();
     }
     this->state = state;
     ofNotifyEvent(stateEvt, state, this);
 }
-//
-//void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
-//    animationStates[stateName] = animInst;
-//}
-//
-//bool ofxLayoutElement::hasAnimations(){
-//    return animationStates.size() > 0;
-//}
 
 void ofxLayoutElement::setOpacity(float opacity){
     this->opacity = opacity;

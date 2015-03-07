@@ -167,12 +167,12 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     classes = populateExpressions(classes);
     element->setClasses(classes);
     for(string classname : ofSplitString(classes, " ",true,true)){
-        vector<ofxLayoutElement*> cmap = classElementMap[classname];
+        set<ofxLayoutElement*> cmap = classElementMap[classname];
         if(std::find(cmap.begin(), cmap.end(), element) != cmap.end()) {
 
         } else {
             /* v does not contain x */
-            classElementMap[classname].push_back(element);
+            classElementMap[classname].insert(element);
         }
     }
     
@@ -381,9 +381,9 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     }
 }
 
-vector<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
+set<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
     if(classElementMap.count(classname) == 0){
-        return vector<ofxLayoutElement*>();
+        return set<ofxLayoutElement*>();
     }
     else{
         return classElementMap[classname];
@@ -483,11 +483,13 @@ void ofxLayout::applyAnimations(ofxAnimatableManager *am){
         
         if(isID){
             ofxLayoutElement* element = getElementById(selector);
-            element->addState(state, it.second);
+            element->addState(state, am->cloneAnimationInstance(it.second->getID()));
         }
         else if(isClass){
-            for(ofxLayoutElement* element : getElementsByClass(selector)){
-                element->addState(state, it.second);
+            set<ofxLayoutElement*> classElements = getElementsByClass(selector);
+            cout << classElements.size() << endl;
+            for(ofxLayoutElement* element : classElements){
+                element->addState(state, am->cloneAnimationInstance(it.second->getID()));
             }
         }
     }
