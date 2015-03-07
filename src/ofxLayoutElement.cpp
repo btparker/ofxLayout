@@ -1031,9 +1031,13 @@ float ofxLayoutElement::getHeight(){
     return this->dimensions.getHeight();
 }
 
-//string ofxLayoutElement::getState(){
-//    return this->state;
-//}
+string ofxLayoutElement::getState(){
+    return state;
+}
+
+ofEvent<string>* ofxLayoutElement::getStateEvent(){
+    return &stateEvt;
+}
 //
 //bool ofxLayoutElement::isStateTransitioning(){
 //    return stateTransitioning;
@@ -1044,17 +1048,13 @@ float ofxLayoutElement::getHeight(){
 //    this->state = ((ofxAnimationInstance*)evt.who)->getStateID();
 //}
 
-//void ofxLayoutElement::setState(string state){
-//    if(animationStates.count(state) > 0){
-//        animationStates[state]->reset();
-//        animationStates[state]->play();
-//        stateTransitioning = true;
-//        ofAddListener(animationStates[state]->animFinished, this, &ofxLayoutElement::stateTransFinished);
-//    }
-//    else{
-//        this->state = state;
-//    }
-//}
+void ofxLayoutElement::setState(string state){
+    if(states.count(state) > 0){
+        states[state]->trigger();
+    }
+    this->state = state;
+    ofNotifyEvent(stateEvt, state, this);
+}
 //
 //void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
 //    animationStates[stateName] = animInst;
@@ -1160,4 +1160,17 @@ void ofxLayoutElement::attachAnimationInstance(ofxAnimationInstance *animationIn
             }
         }
     }
+}
+
+map<string, ofxAnimationInstance*>* ofxLayoutElement::getStates(){
+    return &states;
+}
+
+void ofxLayoutElement::addState(string state, ofxAnimationInstance *animationInstance){
+    states[state] = animationInstance;
+    attachAnimationInstance(states[state]);
+}
+
+bool ofxLayoutElement::hasState(string state){
+    return states.count(state) > 0;
 }

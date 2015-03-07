@@ -31,6 +31,7 @@ public:
     bool drawable();
     void init();
     void applyChanges();
+    void applyAnimations(ofxAnimatableManager* am);
     
     string getData(string key);
     void setData(string key, string value);

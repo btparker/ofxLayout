@@ -446,3 +446,49 @@ ofxLayoutElement* ofxLayout::getBody(){
     return &contextTreeRoot;
 }
 
+void ofxLayout::applyAnimations(ofxAnimatableManager *am){
+    for(pair<string, ofxAnimationInstance*> it : *am->getAnimationInstances()){
+        bool hasState = false;
+        bool isID = false;
+        bool isClass = false;
+        string selector = "";
+        string state = "default";
+        
+        char c = it.first[0];
+        
+        if(c == '#'){
+            isID = true;
+        }
+        else if(c == '.'){
+            isClass = true;
+        }
+        
+        for(char c : it.first){
+            if(c == '#' || c == '.'){
+                continue;
+            }
+            else if(c == ':'){
+                state = "";
+                hasState = true;
+                continue;
+            }
+            
+            if(hasState){
+                state += c;
+            }
+            else{
+                selector += c;
+            }
+        }
+        
+        if(isID){
+            ofxLayoutElement* element = getElementById(selector);
+            element->addState(state, it.second);
+        }
+        else if(isClass){
+            for(ofxLayoutElement* element : getElementsByClass(selector)){
+                element->addState(state, it.second);
+            }
+        }
+    }
+}

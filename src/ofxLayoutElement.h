@@ -121,8 +121,9 @@ public:
     ofPoint getGlobalPosition();
     float getGlobalScale();
     string getState();
-    
-//    void setState(string state);
+    ofEvent<string> stateEvt;
+    string state;
+    void setState(string state);
 
     //    void addAnimationState(string stateName, ofxAnimationInstance* animInst);
     
@@ -147,7 +148,10 @@ public:
     void drawContent();
     bool clickable();
     void attachAnimationInstance(ofxAnimationInstance* animationInstance);
-    
+    map<string, ofxAnimationInstance*>* getStates();
+    void addState(string state, ofxAnimationInstance* animationInstance);
+    ofEvent<string>* getStateEvent();
+    bool hasState(string state);
 protected:
 
     ofMatrix4x4 globalTransformations;
@@ -155,7 +159,6 @@ protected:
     ofFbo fbo;
     ofxLayout* layout;
 //    map<string, ofxAnimationInstance*> animationStates;
-    string state;
     
     virtual void drawTag(){};
     ofPoint position;
@@ -176,4 +179,6 @@ protected:
     
     ofVideoPlayer* video;
     ofPath* shape;
+    
+    map<string, ofxAnimationInstance*> states;
 };
