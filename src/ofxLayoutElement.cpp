@@ -76,11 +76,22 @@ MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
 
 
 void ofxLayoutElement::show(){
-    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+    if(states["show"]){
+        setState("show");
+    }
+    else{
+        styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+    }
+
 }
 
 void ofxLayoutElement::hide(){
-    styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+    if(states["hide"]){
+        setState("hide");
+    }
+    else{
+        styles.setStyle(OSS_KEY::DISPLAY, OSS_VALUE::NONE);
+    }
 }
 
 bool ofxLayoutElement::visible(){
@@ -145,11 +156,14 @@ void ofxLayoutElement::update(){
     float expandingWidth = minWidth;
     float maxExpandedWidth = expandingWidth;
     
-    for(int i = 0 ; i < children.size(); i++){
-        children[i]->update();
-        
-        float cW = children[i]->getDimensions().getWidth();
-        float cH = children[i]->getDimensions().getHeight();
+    for(ofxLayoutElement* child : children){
+        child->update();
+        if(!child->visible()){
+            continue;
+        }
+        float cW = child->getDimensions().getWidth();
+        float cH = child->getDimensions().getHeight();
+        float mL = child->getFloatStyle(OSS_KEY::MARGIN_LEFT);
         
         // Expanding div to contain children
         if((isWidthAuto && (relX+cW) <= maxWidth)){
@@ -163,13 +177,16 @@ void ofxLayoutElement::update(){
                 expandingWidth = 0;
             }
         }
+        
+        relX += mL;
+        
         maxExpandedWidth = max(maxExpandedWidth, cW);
         maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
  
         // Setting child position
         ofPoint childPos = ofPoint(relX,relY);
-        children[i]->setPosition(childPos);
-        children[i]->setDimensions(cW, cH);
+        child->setPosition(childPos);
+        child->setDimensions(cW, cH);
         
         relX += cW;
         childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
@@ -318,8 +335,9 @@ void ofxLayoutElement::draw(){
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
             ofRectangle glScissorRect = getGlobalClippingRegion();
+            ofRectangle viewport = ofGetCurrentViewport();
             //Silly lower left origin of glScissor
-            glScissorRect.y = ofGetViewportHeight() - (glScissorRect.y);
+            glScissorRect.y = viewport.height - (glScissorRect.y);
             glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
             
             glEnable(GL_SCISSOR_TEST);
@@ -453,13 +471,18 @@ void ofxLayoutElement::setClasses(string classes){
     this->classes = classes;
 }
 
+void ofxLayoutElement::addClass(string className){
+    this->classes += " "+className;
+    this->layout->classElementMap[className].insert(this);
+}
+
 string ofxLayoutElement::getID(){
     return this->ID;
 }
 
 void ofxLayoutElement::setID(string ID){
     this->ID = ID;
-    this->layout->idElementMap["#"+ID] = this;
+    this->layout->idElementMap[ID] = this;
 }
 
 bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
@@ -690,6 +713,10 @@ void ofxLayoutElement::drawText(){
                 drawBox.width += paddingLeft+paddingRight;
                 drawBox.height += paddingTop+paddingBottom;
                 
+            }
+            
+            if(getOssValueStyle(OSS_KEY::WIDTH) == OSS_VALUE::AUTO){
+                dimensions.width = drawBox.width;
             }
             
             ofFill();
@@ -1020,38 +1047,21 @@ float ofxLayoutElement::getHeight(){
     return this->dimensions.getHeight();
 }
 
-//string ofxLayoutElement::getState(){
-//    return this->state;
-//}
-//
-//bool ofxLayoutElement::isStateTransitioning(){
-//    return stateTransitioning;
-//}
-//
-//void ofxLayoutElement::stateTransFinished(ofxAnimatable::AnimationEvent &evt){
-//    stateTransitioning = false;
-//    this->state = ((ofxAnimationInstance*)evt.who)->getStateID();
-//}
+string ofxLayoutElement::getState(){
+    return state;
+}
 
-//void ofxLayoutElement::setState(string state){
-//    if(animationStates.count(state) > 0){
-//        animationStates[state]->reset();
-//        animationStates[state]->play();
-//        stateTransitioning = true;
-//        ofAddListener(animationStates[state]->animFinished, this, &ofxLayoutElement::stateTransFinished);
-//    }
-//    else{
-//        this->state = state;
-//    }
-//}
-//
-//void ofxLayoutElement::addAnimationState(string stateName, ofxAnimationInstance* animInst){
-//    animationStates[stateName] = animInst;
-//}
-//
-//bool ofxLayoutElement::hasAnimations(){
-//    return animationStates.size() > 0;
-//}
+ofEvent<string>* ofxLayoutElement::getStateEvent(){
+    return &stateEvt;
+}
+
+void ofxLayoutElement::setState(string state){
+    if(states[state]){
+        states[state]->trigger();
+    }
+    this->state = state;
+    ofNotifyEvent(stateEvt, state, this);
+}
 
 void ofxLayoutElement::setOpacity(float opacity){
     this->opacity = opacity;
@@ -1089,17 +1099,20 @@ void ofxLayoutElement::updateGlobalTransformations(){
 
 
 ofRectangle ofxLayoutElement::getGlobalClippingRegion(){
-    ofRectangle globalClippingRegion = getClippingRegion();
 
+    ofRectangle globalClippingRegion = getClippingRegion();
     if(hasParent()){
         globalClippingRegion.translate(parent->getGlobalPosition());
         globalClippingRegion.translate(getPosition());
+    }
+    if(getID() == "main"){
+        cout << globalClippingRegion << endl;
     }
     return globalClippingRegion;
 }
 
 ofRectangle ofxLayoutElement::getClippingRegion(){
-    ofRectangle clippingRegion;
+    ofRectangle clippingRegion(0,0,0,0);
     clippingRegion.x = -borders.left;
     clippingRegion.y = -borders.top;
     clippingRegion.width = getWidth() + borders.left+borders.right;
@@ -1146,4 +1159,17 @@ void ofxLayoutElement::attachAnimationInstance(ofxAnimationInstance *animationIn
             }
         }
     }
+}
+
+map<string, ofxAnimationInstance*>* ofxLayoutElement::getStates(){
+    return &states;
+}
+
+void ofxLayoutElement::addState(string state, ofxAnimationInstance *animationInstance){
+    states[state] = animationInstance;
+    attachAnimationInstance(states[state]);
+}
+
+bool ofxLayoutElement::hasState(string state){
+    return states.count(state) > 0;
 }

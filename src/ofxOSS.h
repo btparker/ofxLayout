@@ -62,7 +62,7 @@ namespace OSS_VALUE{
         STATIC, RELATIVE, ABSOLUTE, FIXED,
         
         // SIZE
-        COVER, CONTAIN,
+        COVER, CONTAIN, FILL,
         
         // BLEND MODES
         ALPHA, ADD, SUBTRACT, SCREEN, MULTIPLY, DISABLED,
