@@ -7,14 +7,21 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    contextTreeRoot.setLayout(this);
-    contextTreeRoot.styles = styleRulesRoot;
+    this->x = 0;
+    this->y = 0;
+    this->width = ofGetViewportWidth();
+    this->height = ofGetViewportHeight();
     
-    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
-    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
-    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    init();
+}
+
+
+ofxLayout::ofxLayout(int x, int y, int w, int h){
+    this->x = x;
+    this->y = y;
     
-    // This is so that the functionality can be overwritten in the case of adding new tag types
+    this->width = w;
+    this->height = h;
     init();
 }
 
@@ -50,12 +57,12 @@ void ofxLayout::update(){
     assets.update();
 //    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
-    if(
-       fbo.getWidth() != contextTreeRoot.getWidth() ||
-       fbo.getHeight() != contextTreeRoot.getHeight()
-    ){
-        fbo.allocate(contextTreeRoot.getWidth(), contextTreeRoot.getHeight(), GL_RGBA);
-    }
+//    if(
+//       fbo.getWidth() != contextTreeRoot.getWidth() ||
+//       fbo.getHeight() != contextTreeRoot.getHeight()
+//    ){
+//        fbo.allocate(contextTreeRoot.getWidth(), contextTreeRoot.getHeight(), GL_RGBA);
+//    }
 }
 
 void ofxLayout::draw(){
@@ -65,21 +72,28 @@ void ofxLayout::draw(){
 }
 
 void ofxLayout::unload(){
-    assets.getBatch("images")->clear();
+    assets.getBatch(IMAGES_BATCH)->clear();
 }
 
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayout::init(){
-    assets.addBatch("images");
+    contextTreeRoot.setLayout(this);
+    contextTreeRoot.styles = styleRulesRoot;
+    
+    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
+    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
+    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    
+    assets.addBatch(IMAGES_BATCH);
 }
 
 bool ofxLayout::ready(){
-    return assets.isBatchReady("images");
+    return assets.isBatchReady(IMAGES_BATCH);
 }
 
 bool ofxLayout::drawable(){
-    return assets.isBatchDrawable("images");
+    return assets.isBatchDrawable(IMAGES_BATCH);
 }
 
 void ofxLayout::loadFromFile(string filename){
@@ -132,7 +146,10 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
 
 void ofxLayout::applyChanges(){
     applyStyles();
-    assets.loadBatch("images");
+    assets.loadBatch(IMAGES_BATCH);
+    if(x || y){
+        getBody()->setPosition(ofPoint(x,y));
+    }
 }
 
 void ofxLayout::loadOssFromFile(string ossFilename){
@@ -342,7 +359,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     // Get assets
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         string imageFilename = element->getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
-        ofxLoaderBatch* imagesBatch = assets.getBatch("images");
+        ofxLoaderBatch* imagesBatch = assets.getBatch(IMAGES_BATCH);
         if(!imagesBatch->hasTexture(imageFilename)){
             imagesBatch->addTexture(imageFilename, imageFilename);
         }
@@ -487,10 +504,22 @@ void ofxLayout::applyAnimations(ofxAnimatableManager *am){
         }
         else if(isClass){
             set<ofxLayoutElement*> classElements = getElementsByClass(selector);
-            cout << classElements.size() << endl;
             for(ofxLayoutElement* element : classElements){
                 element->addState(state, am->cloneAnimationInstance(it.second->getID()));
             }
         }
     }
+}
+
+int ofxLayout::getWidth(){
+    return width;
+}
+
+
+int ofxLayout::getHeight(){
+    return height;
+}
+
+ofPoint ofxLayout::getPosition(){
+    return ofPoint(x,y);
 }

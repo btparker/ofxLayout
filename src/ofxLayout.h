@@ -7,6 +7,7 @@
 #include "ofxSVGPathParser.h"
 #include "ofShader.h"
 
+const string IMAGES_BATCH = "images";
 class ofxLayout{
     
 public:
@@ -14,7 +15,7 @@ public:
     /// | -------------------------- | ///
     
     ofxLayout();
-    ofxLayout(int width, int height);
+    ofxLayout(int x, int y, int w, int h);
     ~ofxLayout();
 
     /// |   Cycle Functions  | ///
@@ -32,7 +33,9 @@ public:
     void init();
     void applyChanges();
     void applyAnimations(ofxAnimatableManager* am);
-    
+    int getWidth();
+    int getHeight();
+    ofPoint getPosition();
     string getData(string key);
     void setData(string key, string value);
     
@@ -79,7 +82,7 @@ public:
     ofxLayoutElement* getBody();
     
     void loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element);
-    
+    int width, height;
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
@@ -95,5 +98,7 @@ protected:
 //    
     int pixelWidth, pixelHeight;
     
-    ofFbo fbo;
+//    ofFbo fbo;
+    
+    int x,y;
 };

@@ -10,11 +10,7 @@ ofxLayoutElement::ofxLayoutElement(){
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
-    dimensions = ofRectangle(0,0,ofGetViewportWidth(),ofGetViewportHeight());
-//    fbo.allocate(dimensions.getWidth(),dimensions.getHeight(), GL_RGBA);
-//    fbo.begin();
-//    ofClear(0,0,0,0);
-//    fbo.end();
+    dimensions = ofRectangle(0,0,0,0);
     
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
@@ -107,8 +103,8 @@ void ofxLayoutElement::update(){
     globalTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
-        setPosition(ofPoint(0,0));
-        setDimensions(ofGetViewportWidth(), ofGetViewportHeight());
+        setPosition(layout->getPosition());
+        setDimensions(layout->getWidth(),layout->getHeight());
     }
     
     
@@ -227,7 +223,7 @@ void ofxLayoutElement::update(){
         // If positioning type is fixed, need to compute offset to the viewport, not parent element
         ofRectangle containingDimensions;
         if(hasStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->asOssValue() == OSS_VALUE::FIXED){
-            containingDimensions = ofGetCurrentViewport();
+            containingDimensions = layout->getBody()->getDimensions();
         }
         else{
             containingDimensions = getDimensions();
@@ -335,7 +331,7 @@ void ofxLayoutElement::draw(){
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
             ofRectangle glScissorRect = getGlobalClippingRegion();
-            ofRectangle viewport = ofGetCurrentViewport();
+            ofRectangle viewport = layout->getBody()->getDimensions();
             //Silly lower left origin of glScissor
             glScissorRect.y = viewport.height - (glScissorRect.y);
             glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
@@ -371,7 +367,7 @@ void ofxLayoutElement::draw(){
 
 void ofxLayoutElement::drawContent(){
     ofSetColor(255*opacity);
-    //        drawBorder();
+    drawBorder();
     drawBackground();
     drawShape();
     drawText();
@@ -849,7 +845,7 @@ void ofxLayoutElement::drawBackgroundImage(){
     ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
-        ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch("images");
+        ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch(IMAGES_BATCH);
         string imageID = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureReady(imageID)){
             drawBackgroundTexture(imagesBatch->getTexture(imageID));
