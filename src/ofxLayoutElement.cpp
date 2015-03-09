@@ -1101,9 +1101,6 @@ ofRectangle ofxLayoutElement::getGlobalClippingRegion(){
         globalClippingRegion.translate(parent->getGlobalPosition());
         globalClippingRegion.translate(getPosition());
     }
-    if(getID() == "main"){
-        cout << globalClippingRegion << endl;
-    }
     return globalClippingRegion;
 }
 
