@@ -32,7 +32,7 @@ public:
     bool drawable();
     void init();
     void applyChanges();
-    void applyAnimations(ofxAnimatableManager* am);
+    void applyAnimations();
     int getWidth();
     int getHeight();
     ofPoint getPosition();
@@ -47,7 +47,7 @@ public:
     /// \param string ofmlFilename Location of the OFML file
     /// \param string ossFilename (optional) Location of the OSS file
     void loadOfmlFromFile(string ofmlFilename);
-    
+    void loadAnimationsFromFile(string animationsFilename);
     void loadOssFromFile(string ossFilename);
     void loadDataFromFile(string dataFilename);
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
@@ -83,6 +83,7 @@ public:
     
     void loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element);
     int width, height;
+    ofxAnimatableManager am;
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;

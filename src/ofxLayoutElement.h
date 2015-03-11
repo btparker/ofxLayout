@@ -32,7 +32,7 @@ public:
     /// | ------------------ | ///
     
     void update();
-    void draw();
+    void draw(ofFbo* fbo = NULL);
     
     /// |   Setters/Getters   | ///
     /// | ------------------- | ///
@@ -123,7 +123,7 @@ public:
     string getState();
     ofEvent<string> stateEvt;
     string state;
-    void setState(string state);
+    void setState(string state, bool recursive = false);
 
     //    void addAnimationState(string stateName, ofxAnimationInstance* animInst);
     
@@ -154,10 +154,8 @@ public:
     bool hasState(string state);
     void addClass(string className);
 protected:
-
     ofMatrix4x4 globalTransformations;
 //    bool stateTransitioning;
-    ofFbo fbo;
     ofxLayout* layout;
 //    map<string, ofxAnimationInstance*> animationStates;
     

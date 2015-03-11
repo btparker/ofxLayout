@@ -151,7 +151,7 @@ void ofxLayoutElement::update(){
     
     float expandingWidth = minWidth;
     float maxExpandedWidth = expandingWidth;
-
+    
     for(ofxLayoutElement* child : children){
         child->update();
         if(!child->visible()){
@@ -312,18 +312,21 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
     children.push_back(child);
 }
 
-void ofxLayoutElement::draw(){
+void ofxLayoutElement::draw(ofFbo* fbo){
 //    update();
+    if(fbo){
+        fbo->begin();
+    }
     if(visible()){
         ofPushStyle();
         ofPushMatrix();
-        ofTranslate(getPosition());
+
+        updateGlobalTransformations();
+        
+        ofTranslate(getGlobalPosition());
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
         }
-        
-        updateGlobalTransformations();
-        
         if(hasStyle(OSS_KEY::BORDER_WIDTH)){
             setBorders(getFloatStyle(OSS_KEY::BORDER_WIDTH));
         }
@@ -349,6 +352,12 @@ void ofxLayoutElement::draw(){
         drawContent();
         
         glDisable(GL_BLEND);
+        
+        
+        
+        
+        ofPopMatrix();
+        ofPopStyle();
 
         for(int i = 0 ; i < children.size(); i++){
             children[i]->setOpacity(opacity);
@@ -359,9 +368,9 @@ void ofxLayoutElement::draw(){
             glDisable(GL_SCISSOR_TEST);
             glPopAttrib();
         }
-        
-        ofPopMatrix();
-        ofPopStyle();
+    }
+    if(fbo){
+        fbo->end();
     }
 }
 
@@ -1020,7 +1029,7 @@ ofPath* ofxLayoutElement::getShape(){
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
-    return &fbo;
+    return NULL;
 }
 
 bool ofxLayoutElement::hasParent(){
@@ -1051,11 +1060,17 @@ ofEvent<string>* ofxLayoutElement::getStateEvent(){
     return &stateEvt;
 }
 
-void ofxLayoutElement::setState(string state){
+void ofxLayoutElement::setState(string state, bool recursive){
     if(states[state]){
         states[state]->trigger();
     }
     this->state = state;
+    if(recursive){
+        for(ofxLayoutElement* child : children){
+            child->setState(state,recursive);
+        }
+    }
+    
     ofNotifyEvent(stateEvt, state, this);
 }
 

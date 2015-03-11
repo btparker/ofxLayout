@@ -57,6 +57,7 @@ void ofxLayout::update(){
     assets.update();
 //    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
+    am.update(1.0f/ofGetTargetFrameRate() );
 //    if(
 //       fbo.getWidth() != contextTreeRoot.getWidth() ||
 //       fbo.getHeight() != contextTreeRoot.getHeight()
@@ -103,11 +104,19 @@ void ofxLayout::loadFromFile(string filename){
         loadDataFromFile(filename);
         loadOfmlFromFile(layoutConfig["template"].asString()+"/index.ofml");
         loadOssFromFile(layoutConfig["template"].asString()+"/styles.oss");
+        loadAnimationsFromFile(layoutConfig["template"].asString()+"/animations.json");
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse config file "+filename+".");
     }
 }
+
+void ofxLayout::loadAnimationsFromFile(string animationsFilename){
+    am.setData(data);
+    am.load(animationsFilename);
+    applyAnimations();
+}
+
 void ofxLayout::loadDataFromFile(string dataFilename){
     ofxJSONElement jsonData;
     bool dataParsingSuccessful = jsonData.open(dataFilename);
@@ -463,8 +472,8 @@ ofxLayoutElement* ofxLayout::getBody(){
     return &contextTreeRoot;
 }
 
-void ofxLayout::applyAnimations(ofxAnimatableManager *am){
-    for(pair<string, ofxAnimationInstance*> it : *am->getAnimationInstances()){
+void ofxLayout::applyAnimations(){
+    for(pair<string, ofxAnimationInstance*> it : *am.getAnimationInstances()){
         bool hasState = false;
         bool isID = false;
         bool isClass = false;
@@ -500,12 +509,12 @@ void ofxLayout::applyAnimations(ofxAnimatableManager *am){
         
         if(isID){
             ofxLayoutElement* element = getElementById(selector);
-            element->addState(state, am->cloneAnimationInstance(it.second->getID()));
+            element->addState(state, am.cloneAnimationInstance(it.second->getID()));
         }
         else if(isClass){
             set<ofxLayoutElement*> classElements = getElementsByClass(selector);
             for(ofxLayoutElement* element : classElements){
-                element->addState(state, am->cloneAnimationInstance(it.second->getID()));
+                element->addState(state, am.cloneAnimationInstance(it.second->getID()));
             }
         }
     }
