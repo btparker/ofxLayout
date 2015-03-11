@@ -151,7 +151,7 @@ void ofxLayoutElement::update(){
     
     float expandingWidth = minWidth;
     float maxExpandedWidth = expandingWidth;
-    
+
     for(ofxLayoutElement* child : children){
         child->update();
         if(!child->visible()){
