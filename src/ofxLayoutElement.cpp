@@ -323,6 +323,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
 
         updateGlobalTransformations();
         
+        
         ofTranslate(getGlobalPosition());
         if(hasStyle(OSS_KEY::SCALE)){
             ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
@@ -334,9 +335,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
             ofRectangle glScissorRect = getGlobalClippingRegion();
-            ofRectangle viewport = layout->getBody()->getDimensions();
-            //Silly lower left origin of glScissor
-            glScissorRect.y = viewport.height - (glScissorRect.y);
+            ofRectangle viewport = layout->getBody()->getGlobalClippingRegion();
             glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
             
             glEnable(GL_SCISSOR_TEST);
@@ -352,9 +351,6 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         drawContent();
         
         glDisable(GL_BLEND);
-        
-        
-        
         
         ofPopMatrix();
         ofPopStyle();
