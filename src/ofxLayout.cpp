@@ -168,9 +168,6 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, &styleRulesRoot);
-//        loadAnimationsFromOss(&ossStylesheet, &styleRulesRoot);
-//        loadAnimationInstancesFromOss(&ossStylesheet, &styleRulesRoot);
-
         applyChanges();
     }
     else{
@@ -543,6 +540,16 @@ void ofxLayout::removeElement(ofxLayoutElement* element){
     string id = element->getID();
     if(idElementMap[id]){
         idElementMap.erase(id);
+    }
+    for(string className : ofSplitString(element->getClasses()," ")){
+        if(classElementMap[className].size() > 0){
+            for(ofxLayoutElement* classEl : classElementMap[className]){
+                if(classEl == element){
+                    classElementMap[className].erase(element);
+                    break;
+                }
+            }
+        }
     }
     for(int i = 0; i < p->children.size(); i++){
         if(p->children[i] == element){
