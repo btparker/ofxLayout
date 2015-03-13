@@ -369,6 +369,11 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         string imageFilename = element->getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         ofxLoaderBatch* imagesBatch = assets.getBatch(IMAGES_BATCH);
+        if(ofStringTimesInString(imageFilename, ":")){
+            vector<string> ids = ofSplitString(imageFilename, ":");
+            imagesBatch = assets.getBatch(IMAGES_BATCH)->getBatch(ids[0]);
+            imageFilename = ids[1];
+        }
         if(!imagesBatch->hasTexture(imageFilename)){
             imagesBatch->addTexture(imageFilename, imageFilename);
         }
@@ -531,4 +536,17 @@ int ofxLayout::getHeight(){
 
 ofPoint ofxLayout::getPosition(){
     return ofPoint(x,y);
+}
+
+void ofxLayout::removeElement(ofxLayoutElement* element){
+    ofxLayoutElement* p = element->getParent();
+    string id = element->getID();
+    if(idElementMap[id]){
+        idElementMap.erase(id);
+    }
+    for(int i = 0; i < p->children.size(); i++){
+        if(p->children[i] == element){
+            p->children.erase(p->children.begin()+i);
+        }
+    }
 }

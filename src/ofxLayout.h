@@ -52,6 +52,8 @@ public:
     void loadDataFromFile(string dataFilename);
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
     
+    void removeElement(ofxLayoutElement* element);
+    
     ofxLoaderSpool assets;
     map<string, ofxFontStash> fonts;
     map<string, string> data;

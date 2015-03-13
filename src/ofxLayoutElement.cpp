@@ -852,6 +852,11 @@ void ofxLayoutElement::drawBackgroundImage(){
         ofSetColor(255);
         ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch(IMAGES_BATCH);
         string imageID = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
+        if(ofStringTimesInString(imageID, ":") > 0){
+            vector<string> ids = ofSplitString(imageID,":");
+            imagesBatch = imagesBatch->getBatch(ids[0]);
+            imageID = ids[1];
+        }
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureReady(imageID)){
             drawBackgroundTexture(imagesBatch->getTexture(imageID));
         }
