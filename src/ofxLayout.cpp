@@ -111,6 +111,13 @@ void ofxLayout::loadFromFile(string filename){
     }
 }
 
+void ofxLayout::loadFromTemplate(string templateFolder, ofxJSONElement data){
+    loadData(data);
+    loadOfmlFromFile(templateFolder+"/index.ofml");
+    loadOssFromFile(templateFolder+"/styles.oss");
+    loadAnimationsFromFile(templateFolder+"/animations.json");
+}
+
 void ofxLayout::loadAnimationsFromFile(string animationsFilename){
     am.setData(data);
     am.load(animationsFilename);
@@ -121,15 +128,19 @@ void ofxLayout::loadDataFromFile(string dataFilename){
     ofxJSONElement jsonData;
     bool dataParsingSuccessful = jsonData.open(dataFilename);
     if(dataParsingSuccessful){
-        vector<string> keys = jsonData.getMemberNames();
-        for(int i = 0; i < keys.size(); i++){
-            string key = keys[i];
-            ofxJSONElement value = jsonData[key];
-            setData(key, value.asString());
-        }
+        loadData(jsonData);
     }
     else{
         ofLogError("ofxLayout::loadData","Unable to parse data json "+dataFilename+".");
+    }
+}
+
+void ofxLayout::loadData(ofxJSONElement jsonData){
+    vector<string> keys = jsonData.getMemberNames();
+    for(int i = 0; i < keys.size(); i++){
+        string key = keys[i];
+        ofxJSONElement value = jsonData[key];
+        setData(key, value.asString());
     }
 }
 

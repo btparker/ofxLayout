@@ -40,6 +40,7 @@ public:
     void setData(string key, string value);
     
     void loadFromFile(string filename);
+    void loadFromTemplate(string templateFolder, ofxJSONElement data);
     
     /// \brief Loads an external OFML file (basically, xml or html), ties this element to the root element described in the file,
     /// and generates all child elements as well
@@ -50,6 +51,7 @@ public:
     void loadAnimationsFromFile(string animationsFilename);
     void loadOssFromFile(string ossFilename);
     void loadDataFromFile(string dataFilename);
+    void loadData(ofxJSONElement data);
     void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
     
     void removeElement(ofxLayoutElement* element);
