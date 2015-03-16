@@ -693,6 +693,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::POINTER_EVENTS:
             type = OSS_TYPE::OSS_VALUE;
             break;
+        case OSS_KEY::BLUR:
+            type = OSS_TYPE::NUMBER;
+            break;
         default:
             type = OSS_TYPE::NONE;
             break;

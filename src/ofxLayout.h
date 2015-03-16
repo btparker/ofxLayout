@@ -6,6 +6,7 @@
 #include "ofxFontStash.h"
 #include "ofxSVGPathParser.h"
 #include "ofShader.h"
+#include "ofxFboBlur.h"
 
 const string IMAGES_BATCH = "images";
 class ofxLayout{
@@ -88,6 +89,7 @@ public:
     void loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element);
     int width, height;
     ofxAnimatableManager am;
+    ofxFboBlur blurFbo;
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
@@ -103,7 +105,7 @@ protected:
 //    
     int pixelWidth, pixelHeight;
     
-//    ofFbo fbo;
-    
     int x,y;
+    
+    void allocateBlurFbo(int w, int h);
 };

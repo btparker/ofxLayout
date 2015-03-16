@@ -49,6 +49,23 @@ ofxLayout::~ofxLayout(){
     unload();
 }
 
+void ofxLayout::allocateBlurFbo(int w, int h){
+    ofFbo::Settings s;
+    s.width = w;
+    s.height = h;
+    s.internalformat = GL_RGBA;
+    s.maxFilter = GL_LINEAR; GL_NEAREST;
+    s.numSamples = 4;
+    s.numColorbuffers = 3;
+    s.useDepth = true;
+    s.useStencil = false;
+    
+    blurFbo.setup(s,false, 1.0);
+    blurFbo.blurOffset = 20;
+    blurFbo.blurPasses = 4;
+    blurFbo.numBlurOverlays = 1;
+}
+
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
@@ -58,12 +75,13 @@ void ofxLayout::update(){
 //    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
     am.update(1.0f/ofGetTargetFrameRate() );
-//    if(
-//       fbo.getWidth() != contextTreeRoot.getWidth() ||
-//       fbo.getHeight() != contextTreeRoot.getHeight()
-//    ){
-//        fbo.allocate(contextTreeRoot.getWidth(), contextTreeRoot.getHeight(), GL_RGBA);
-//    }
+    if(
+       blurFbo.getSceneFbo().getWidth() != contextTreeRoot.getWidth() ||
+       blurFbo.getSceneFbo().getHeight() != contextTreeRoot.getHeight()
+    ){
+        allocateBlurFbo(contextTreeRoot.getWidth(),contextTreeRoot.getHeight());
+        
+    }
 }
 
 void ofxLayout::draw(){

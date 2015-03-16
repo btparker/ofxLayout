@@ -347,8 +347,27 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
-        
+        bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->blurFbo.getBlurredSceneFbo().isAllocated();
+        if(isBlurring){
+            if(ofStringTimesInString(getID(), "icon")){
+                cout << "" << endl;
+            }
+            layout->blurFbo.blurOffset = getFloatStyle(OSS_KEY::BLUR);
+            layout->blurFbo.beginDrawScene();
+            ofClear(0.0f, 0.0f, 0.0f, 0.0f);
+        }
         drawContent();
+        
+        if(isBlurring){
+            layout->blurFbo.endDrawScene();
+            
+            glDisable(GL_BLEND);
+            layout->blurFbo.performBlur();
+            ofSetColor(ofColor::white);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            layout->blurFbo.drawBlurFbo(true);
+        }
         
         glDisable(GL_BLEND);
         
