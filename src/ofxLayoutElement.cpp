@@ -644,7 +644,12 @@ void ofxLayoutElement::drawText(){
             }
             
             float fontSize;
-            if(hasStyle(OSS_KEY::FONT_SIZE)){
+            bool fitText = false;
+            if(getOssValueStyle(OSS_KEY::FONT_SIZE) == OSS_VALUE::FIT){
+                fontSize = 5.0;
+                fitText = true;
+            }
+            else if(hasStyle(OSS_KEY::FONT_SIZE)){
                 fontSize = getFloatStyle(OSS_KEY::FONT_SIZE);
             }
             
@@ -664,7 +669,15 @@ void ofxLayoutElement::drawText(){
             }
             
             int numLines;
-            ofRectangle fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
+            ofRectangle fontBBox;
+            
+            if(fitText){
+                fontBBox = layout->getFonts()->at(fontFilename).getBBox(text,fontSize,0,0);
+                fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
+            }
+
+            fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
+
             drawBox.width = fontBBox.width;
             drawBox.height = fontBBox.height;
             

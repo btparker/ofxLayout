@@ -76,8 +76,8 @@ void ofxLayout::update(){
     contextTreeRoot.update();
     am.update(1.0f/ofGetTargetFrameRate() );
     if(
-       blurFbo.getSceneFbo().getWidth() != contextTreeRoot.getWidth() ||
-       blurFbo.getSceneFbo().getHeight() != contextTreeRoot.getHeight()
+       blurFbo.getWidth() != contextTreeRoot.getWidth() ||
+       blurFbo.getHeight() != contextTreeRoot.getHeight()
     ){
         allocateBlurFbo(contextTreeRoot.getWidth(),contextTreeRoot.getHeight());
         
@@ -413,7 +413,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
             fonts[fontFilename] = ofxFontStash();
             fonts[fontFilename].setup(fontFilename,
                                       1.0,
-                                      1024,
+                                      2048,
                                       true,
                                       8,
                                       2.0f
@@ -540,7 +540,9 @@ void ofxLayout::applyAnimations(){
         
         if(isID){
             ofxLayoutElement* element = getElementById(selector);
-            element->addState(state, am.cloneAnimationInstance(it.second->getID()));
+            if(element){
+                element->addState(state, am.cloneAnimationInstance(it.second->getID()));
+            }
         }
         else if(isClass){
             set<ofxLayoutElement*> classElements = getElementsByClass(selector);

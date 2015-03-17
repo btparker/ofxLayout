@@ -57,6 +57,7 @@ namespace OSS_VALUE{
         
         // POSITION / TEXT ALIGN
         CENTER, LEFT, RIGHT, TOP, BOTTOM,
+        FIT,
         
         // POSITIONING TYPES
         STATIC, RELATIVE, ABSOLUTE, FIXED,
@@ -72,6 +73,7 @@ namespace OSS_VALUE{
         
         // BACKGROUND REPEAT
         REPEAT, REPEAT_X, REPEAT_Y,
+        
         
         // Invalid is last in case we want to extend the enum
         INVALID
@@ -269,12 +271,13 @@ public:
     }
     
     void setValue(string value){
+        this->ossValue = ofxOSS::getOssValueFromString(value);
+        if(this->ossValue != OSS_VALUE::INVALID){
+            setType(OSS_TYPE::OSS_VALUE);
+        }
         switch(getType()){
             case OSS_TYPE::COLOR:
                 this->colorValue.setColor(ofxOSS::parseColor(value));
-                break;
-            case OSS_TYPE::OSS_VALUE:
-                this->ossValue = ofxOSS::getOssValueFromString(value);
                 break;
             case OSS_TYPE::NUMBER:
             case OSS_TYPE::PERCENT:

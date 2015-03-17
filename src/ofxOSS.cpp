@@ -477,7 +477,9 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
         case OSS_VALUE::REPEAT_Y:
             valueStr = "repeat-y";
             break;
-            
+        case OSS_VALUE::FIT:
+            valueStr = "fit";
+            break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
     }
@@ -587,6 +589,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     else if (value == "repeat-y"){
         return OSS_VALUE::REPEAT_Y;
+    }
+    else if (value == "fit"){
+        return OSS_VALUE::FIT;
     }
     
     else{
