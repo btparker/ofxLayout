@@ -350,9 +350,6 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         }
         bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->blurFbo.getBlurredSceneFbo().isAllocated();
         if(isBlurring){
-            if(ofStringTimesInString(getID(), "icon")){
-                cout << "" << endl;
-            }
             layout->blurFbo.blurOffset = getFloatStyle(OSS_KEY::BLUR);
             layout->blurFbo.beginDrawScene();
             ofClear(0.0f, 0.0f, 0.0f, 0.0f);
