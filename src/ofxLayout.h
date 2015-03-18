@@ -16,7 +16,9 @@ public:
     /// | -------------------------- | ///
     
     ofxLayout();
+    ofxLayout(ofPoint pos, ofRectangle dimensions);
     ofxLayout(int x, int y, int w, int h);
+    void init(int x, int y, int w, int h);
     ~ofxLayout();
 
     /// |   Cycle Functions  | ///
@@ -31,7 +33,6 @@ public:
     /// | ------------- | ///
     bool ready();
     bool drawable();
-    void init();
     void applyChanges();
     void applyAnimations();
     int getWidth();

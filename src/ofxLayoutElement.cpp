@@ -223,6 +223,7 @@ void ofxLayoutElement::update(){
         // If positioning type is fixed, need to compute offset to the viewport, not parent element
         ofRectangle containingDimensions;
         if(hasStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->asOssValue() == OSS_VALUE::FIXED){
+            containingDimensions.setPosition(layout->getPosition());
             containingDimensions = layout->getBody()->getDimensions();
         }
         else{
@@ -285,7 +286,7 @@ void ofxLayoutElement::update(){
                     break;
                 case OSS_VALUE::FIXED:
                     // Note that offset is computed differently for fixed
-                    childPos = offset - getGlobalPosition();
+                    childPos = offset - getGlobalPosition() + layout->getPosition();
                     break;
                 case OSS_VALUE::STATIC:
                 default:

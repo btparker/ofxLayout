@@ -7,22 +7,31 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
-    this->x = 0;
-    this->y = 0;
-    this->width = ofGetViewportWidth();
-    this->height = ofGetViewportHeight();
-    
-    init();
+    init(0,0,ofGetViewportWidth(),ofGetViewportHeight());
 }
 
+ofxLayout::ofxLayout(ofPoint pos, ofRectangle dimensions){
+    init(pos.x,pos.y,dimensions.width, dimensions.height);
+}
 
 ofxLayout::ofxLayout(int x, int y, int w, int h){
+    init(x,y,w,h);
+}
+
+void ofxLayout::init(int x, int y, int w, int h){
     this->x = x;
     this->y = y;
-    
     this->width = w;
     this->height = h;
-    init();
+    
+    contextTreeRoot.setLayout(this);
+    contextTreeRoot.styles = styleRulesRoot;
+    
+    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
+    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
+    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    
+    assets.addBatch(IMAGES_BATCH);
 }
 
 map<string, ofxFontStash>* ofxLayout::getFonts(){
@@ -96,16 +105,7 @@ void ofxLayout::unload(){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
-void ofxLayout::init(){
-    contextTreeRoot.setLayout(this);
-    contextTreeRoot.styles = styleRulesRoot;
-    
-    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
-    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
-    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
-    
-    assets.addBatch(IMAGES_BATCH);
-}
+
 
 bool ofxLayout::ready(){
     return assets.isBatchReady(IMAGES_BATCH);
