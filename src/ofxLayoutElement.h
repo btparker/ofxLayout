@@ -92,7 +92,7 @@ public:
     void drawBackgroundColor();
     void drawBackgroundGradient();
     void drawBackgroundTexture(ofTexture* texture);
-    void drawText();
+    ofRectangle drawText(bool dontDraw = false);
     void drawShape();
     
     bool beginBackgroundBlendMode();

@@ -136,11 +136,18 @@ void ofxLayoutElement::update(){
     float childRowHeight = 0;
     
     bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
-
+    bool isHeightAuto = hasStyle(OSS_KEY::HEIGHT) && getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO;
+    
+    
     float minWidth = 0;
     if(hasStyle(OSS_KEY::MIN_WIDTH)){
         minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
         dimensions.width = max(dimensions.width, minWidth);
+    }
+    
+    if(isWidthAuto && hasStyle(OSS_KEY::FONT_FAMILY)){
+        ofRectangle textBox = drawText(true);
+        minWidth = max(minWidth,textBox.width);
     }
     
     float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
@@ -194,8 +201,6 @@ void ofxLayoutElement::update(){
     
     // Only variable to escape this scope
     childrenHeight = relY+childRowHeight;
-    
-    
     
     
     // *** COMPUTE HEIGHT *** //
@@ -274,6 +279,11 @@ void ofxLayoutElement::update(){
                 offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
             }
         }
+        
+        if(children[i]->getOssValueStyle(OSS_KEY::MARGIN_LEFT) == OSS_VALUE::AUTO){
+            offset.x = dimensions.width/2.0-children[i]->getDimensions().getWidth()/2.0;
+        }
+        
         ofPoint childPos = offset;
         
         if(hasStyle(OSS_KEY::POSITION)){
@@ -607,7 +617,7 @@ void ofxLayoutElement::drawBackground(){
     ofPopStyle();
 }
 
-void ofxLayoutElement::drawText(){
+ofRectangle ofxLayoutElement::drawText(bool dontDraw){
 //    ofEnableAlphaBlending();
 //    ofEnableSmoothing();
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
@@ -764,9 +774,10 @@ void ofxLayoutElement::drawText(){
                 ofSetColor(fontColor);
             }
 
-            layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, false, 0, true);
+            return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, dontDraw, 0, true);
         }
     }
+    return ofRectangle();
 //    ofDisableAlphaBlending();
 }
 void ofxLayoutElement::drawBackgroundGradient(){
