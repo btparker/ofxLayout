@@ -12,9 +12,9 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::BACKGROUND_POSITION, OSS_VALUE::AUTO);
     
-    generateRule(OSS_KEY::WIDTH, OSS_VALUE::AUTO);
+    generateRule(OSS_KEY::WIDTH, "100%");
     
-    generateRule(OSS_KEY::HEIGHT, OSS_VALUE::AUTO);
+    generateRule(OSS_KEY::HEIGHT, "100%");
     
     generateRule(OSS_KEY::MARGIN_LEFT, "0px");
     
