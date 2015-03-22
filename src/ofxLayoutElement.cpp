@@ -599,21 +599,15 @@ void ofxLayoutElement::drawBorder(){
 
 void ofxLayoutElement::drawBackground(){
     ofPushStyle();
-    bool blendModeActive = beginBackgroundBlendMode();
-    // I'm sure there is a clever blending order for this, but for now I switch the order of color and image
-    // based on whether blend mode is enabled or disabled
-    if(!blendModeActive){
-        drawBackgroundColor();
-    }
     
     drawBackgroundGradient();
     drawBackgroundImage();
     drawBackgroundVideo();
     
-    if(blendModeActive){
-        drawBackgroundColor();
-    }
+    beginBackgroundBlendMode();
+    drawBackgroundColor();
     endBackgroundBlendMode();
+    
     ofPopStyle();
 }
 
