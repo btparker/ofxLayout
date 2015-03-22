@@ -324,7 +324,6 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
 }
 
 void ofxLayoutElement::draw(ofFbo* fbo){
-//    update();
     if(fbo){
         fbo->begin();
     }
@@ -334,10 +333,12 @@ void ofxLayoutElement::draw(ofFbo* fbo){
 
         updateGlobalTransformations();
         
-        
         ofTranslate(getGlobalPosition());
         if(hasStyle(OSS_KEY::SCALE)){
-            ofScale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE));
+            ofPushMatrix();
+            float scale = getFloatStyle(OSS_KEY::SCALE);
+            ofTranslate((1-scale)*dimensions.width/2, (1-scale)*dimensions.height/2);
+            ofScale(scale,scale);
         }
         if(hasStyle(OSS_KEY::BORDER_WIDTH)){
             setBorders(getFloatStyle(OSS_KEY::BORDER_WIDTH));
@@ -358,6 +359,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
+        
         bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->blurFbo.getBlurredSceneFbo().isAllocated();
         if(isBlurring){
             layout->blurFbo.blurOffset = getFloatStyle(OSS_KEY::BLUR);
@@ -378,6 +380,10 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         }
         
         glDisable(GL_BLEND);
+        
+        if(hasStyle(OSS_KEY::SCALE)){
+            ofPopMatrix();
+        }
         
         ofPopMatrix();
         ofPopStyle();
