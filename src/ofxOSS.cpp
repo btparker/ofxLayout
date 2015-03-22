@@ -47,7 +47,6 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
     
     generateRule(OSS_KEY::POINTER_EVENTS, OSS_VALUE::AUTO);
-
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){

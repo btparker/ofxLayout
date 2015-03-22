@@ -685,14 +685,17 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             }
 
             fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
+            
+            
 
             drawBox.width = fontBBox.width;
             drawBox.height = fontBBox.height;
             
-            float fontHeight = fontSize*layout->getFonts()->at(fontFilename).getLineHeight();
+            float fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
             
             float x = 0.0f;
-            float y = fontHeight;
+            float y = 0.0f;
+            
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
                 string textAlign = getStringStyle(OSS_KEY::TEXT_ALIGN);
                 if(textAlign == "left"){
@@ -710,18 +713,18 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 string verticalAlign = getStringStyle(OSS_KEY::VERTICAL_ALIGN);
                 
                 if(verticalAlign == "top"){
-                    y = fontHeight;
+                    y = 0;
                 }
                 else if(verticalAlign == "center"){
                     y = dimensions.height/2+fontHeight/2;
                 }
                 else if(verticalAlign == "bottom"){
-                    y = dimensions.height;
+                    y = dimensions.height-fontHeight;
                 }
             }
             
             drawBox.x = x;
-            drawBox.y = y-fontHeight;
+            drawBox.y = y;
             
             if(hasStyle(OSS_KEY::TEXT_PADDING)){
                 float paddingTop, paddingRight, paddingBottom, paddingLeft = 0.0f;
@@ -773,8 +776,8 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 fontColor.a *= opacity;
                 ofSetColor(fontColor);
             }
-
-            return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y, textMaxWidth,numLines, dontDraw, 0, true);
+            layout->getFonts()->at(fontFilename).setKerning(true);
+            return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true);
         }
     }
     return ofRectangle();
