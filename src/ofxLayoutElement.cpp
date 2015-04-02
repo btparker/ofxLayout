@@ -167,6 +167,15 @@ void ofxLayoutElement::update(){
         float cW = child->getDimensions().getWidth();
         float cH = child->getDimensions().getHeight();
         float mL = child->getFloatStyle(OSS_KEY::MARGIN_LEFT);
+        float mR = child->getFloatStyle(OSS_KEY::MARGIN_RIGHT);
+        float mT = child->getFloatStyle(OSS_KEY::MARGIN_TOP);
+        float mB = child->getFloatStyle(OSS_KEY::MARGIN_BOTTOM);
+        
+        cW += mL;
+        cW += mR;
+        
+        cH += mB;
+        cH += mT;
         
         // Expanding div to contain children
         if((isWidthAuto && (relX+cW) <= maxWidth)){
@@ -181,13 +190,11 @@ void ofxLayoutElement::update(){
             }
         }
         
-        relX += mL;
-        
         maxExpandedWidth = max(maxExpandedWidth, cW);
         maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
  
         // Setting child position
-        ofPoint childPos = ofPoint(relX,relY);
+        ofPoint childPos = ofPoint(relX+mL,relY+mT);
         child->setPosition(childPos);
         child->setDimensions(cW, cH);
         
@@ -206,7 +213,13 @@ void ofxLayoutElement::update(){
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
         if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO || getStyle(OSS_KEY::HEIGHT)->asFloat() == 0){
-            dimensions.height = childrenHeight;
+            if(hasStyle(OSS_KEY::FONT_FAMILY)){
+                dimensions.height = drawText(true).getHeight();
+            }
+            else{
+                dimensions.height = childrenHeight;
+            }
+
         }
         else if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
             float percentHeight = getStyle(OSS_KEY::HEIGHT)->asFloat()/100.0f;
@@ -217,7 +230,6 @@ void ofxLayoutElement::update(){
             dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
         }
     }
-    
     // Positioning
     for(int i = 0 ; i < children.size(); i++){
         ofPoint relativePos = children[i]->getPosition();
@@ -409,7 +421,6 @@ void ofxLayoutElement::drawContent(){
     drawBackground();
     drawShape();
     drawText();
-
 }
 
 /// |   Setters/Getters   | ///

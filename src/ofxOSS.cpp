@@ -18,6 +18,12 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::MARGIN_LEFT, "0px");
     
+    generateRule(OSS_KEY::MARGIN_RIGHT, "0px");
+    
+    generateRule(OSS_KEY::MARGIN_TOP, "0px");
+    
+    generateRule(OSS_KEY::MARGIN_BOTTOM, "0px");
+    
     generateRule(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
     
     generateRule(OSS_KEY::VERTICAL_ALIGN, OSS_VALUE::TOP);
