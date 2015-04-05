@@ -672,9 +672,20 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             
             float fontSize;
             bool fitText = false;
+            string textToFit = text;
             if(getOssValueStyle(OSS_KEY::FONT_SIZE) == OSS_VALUE::FIT){
                 fontSize = 5.0;
                 fitText = true;
+            }
+            else if(getOssValueStyle(OSS_KEY::FONT_SIZE) == OSS_VALUE::FIT_WORD){
+                fontSize = 5.0;
+                fitText = true;
+                textToFit = "";
+                for(string word : ofSplitString(text, " ")){
+                    if(word.length() > textToFit.length()){
+                        textToFit = word;
+                    }
+                }
             }
             else if(hasStyle(OSS_KEY::FONT_SIZE)){
                 fontSize = getFloatStyle(OSS_KEY::FONT_SIZE);
@@ -699,7 +710,7 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             ofRectangle fontBBox;
             
             if(fitText){
-                fontBBox = layout->getFonts()->at(fontFilename).getBBox(text,fontSize,0,0);
+                fontBBox = layout->getFonts()->at(fontFilename).getBBox(textToFit,fontSize,0,0);
                 fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
             }
             

@@ -491,6 +491,9 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
         case OSS_VALUE::FIT:
             valueStr = "fit";
             break;
+        case OSS_VALUE::FIT_WORD:
+            valueStr = "fit-word";
+            break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssValue","No string value found for OSS_VALUE provided.");
     }
@@ -603,6 +606,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     else if (value == "fit"){
         return OSS_VALUE::FIT;
+    }
+    else if (value == "fit-word"){
+        return OSS_VALUE::FIT_WORD;
     }
     
     else{
