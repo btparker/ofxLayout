@@ -171,6 +171,12 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "font-size"){
         return OSS_KEY::FONT_SIZE;
     }
+    else if(key == "font-size-min"){
+        return OSS_KEY::FONT_SIZE_MIN;
+    }
+    else if(key == "font-size-max"){
+        return OSS_KEY::FONT_SIZE_MAX;
+    }
     else if(key == "opacity"){
         return OSS_KEY::OPACITY;
     }
@@ -662,6 +668,8 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::FONT_SIZE:
+        case OSS_KEY::FONT_SIZE_MIN:
+        case OSS_KEY::FONT_SIZE_MAX:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::LINE_HEIGHT:

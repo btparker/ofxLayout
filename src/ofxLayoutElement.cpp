@@ -702,6 +702,14 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 fontBBox = layout->getFonts()->at(fontFilename).getBBox(text,fontSize,0,0);
                 fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
             }
+            
+            if(hasStyle(OSS_KEY::FONT_SIZE_MIN)){
+                fontSize = max(getFloatStyle(OSS_KEY::FONT_SIZE_MIN),fontSize);
+            }
+            
+            if(hasStyle(OSS_KEY::FONT_SIZE_MAX)){
+                fontSize = min(getFloatStyle(OSS_KEY::FONT_SIZE_MAX),fontSize);
+            }
 
             fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
             
