@@ -153,6 +153,7 @@ public:
     ofEvent<string>* getStateEvent();
     bool hasState(string state);
     void addClass(string className);
+    ofTexture* getBackgroundImageTexture();
 protected:
     ofMatrix4x4 globalTransformations;
 //    bool stateTransitioning;

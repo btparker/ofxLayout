@@ -145,6 +145,14 @@ void ofxLayoutElement::update(){
         dimensions.width = max(dimensions.width, minWidth);
     }
     
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && getBackgroundImageTexture() && isWidthAuto){
+        dimensions.width = max(getBackgroundImageTexture()->getWidth(), minWidth);
+    }
+    
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && getBackgroundImageTexture() && isHeightAuto){
+        dimensions.height = getBackgroundImageTexture()->getHeight();
+    }
+    
     if(isWidthAuto && hasStyle(OSS_KEY::FONT_FAMILY)){
         ofRectangle textBox = drawText(true);
         minWidth = max(minWidth,textBox.width);
@@ -203,7 +211,7 @@ void ofxLayoutElement::update(){
     }
     
     if(isWidthAuto){
-        dimensions.width = maxExpandedWidth;
+        dimensions.width = max(maxExpandedWidth,dimensions.width);
     }
     
     // Only variable to escape this scope
@@ -217,7 +225,7 @@ void ofxLayoutElement::update(){
                 dimensions.height = drawText(true).getHeight();
             }
             else{
-                dimensions.height = childrenHeight;
+                dimensions.height = max(dimensions.height,childrenHeight);
             }
 
         }
@@ -629,7 +637,7 @@ void ofxLayoutElement::drawBackground(){
 }
 
 ofRectangle ofxLayoutElement::drawText(bool dontDraw){
-//    ofEnableAlphaBlending();
+    ofEnableAlphaBlending();
 //    ofEnableSmoothing();
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
         ofRectangle drawBox;
@@ -707,6 +715,9 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             float x = 0.0f;
             float y = 0.0f;
             
+            
+            TextAlign::ENUM ta = TextAlign::LEFT;
+            
             if(hasStyle(OSS_KEY::TEXT_ALIGN)){
                 string textAlign = getStringStyle(OSS_KEY::TEXT_ALIGN);
                 if(textAlign == "left"){
@@ -714,9 +725,11 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 }
                 else if(textAlign == "center"){
                     x = dimensions.width/2-fontBBox.width/2;
+                    ta = TextAlign::MIDDLE;
                 }
                 else if(textAlign == "right"){
                     x = dimensions.width - fontBBox.width;
+                    ta = TextAlign::RIGHT;
                 }
             }
             
@@ -788,11 +801,15 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 ofSetColor(fontColor);
             }
             layout->getFonts()->at(fontFilename).setKerning(true);
-            return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true);
+            glPushAttrib(GL_BLEND);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true, ta);
+            glPopAttrib();
         }
     }
     return ofRectangle();
-//    ofDisableAlphaBlending();
+    ofDisableAlphaBlending();
 }
 void ofxLayoutElement::drawBackgroundGradient(){
     if(hasStyle(OSS_KEY::BACKGROUND_GRADIENT)){
@@ -905,6 +922,13 @@ void ofxLayoutElement::drawBackgroundImage(){
     ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
+        drawBackgroundTexture(getBackgroundImageTexture());
+    }
+    ofPopStyle();
+}
+
+ofTexture* ofxLayoutElement::getBackgroundImageTexture(){
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch(IMAGES_BATCH);
         string imageID = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         if(ofStringTimesInString(imageID, ":") > 0){
@@ -913,10 +937,10 @@ void ofxLayoutElement::drawBackgroundImage(){
             imageID = ids[1];
         }
         if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureReady(imageID)){
-            drawBackgroundTexture(imagesBatch->getTexture(imageID));
+            return imagesBatch->getTexture(imageID);
         }
     }
-    ofPopStyle();
+    return NULL;
 }
 
 void ofxLayoutElement::drawBackgroundVideo(){
@@ -943,6 +967,9 @@ void ofxLayoutElement::drawBackgroundVideo(){
 
 
 void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
+    if(!texture){
+        return;
+    }
     ofPushStyle();
     texture->setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); 
     ofRectangle bgTextureTransform = ofRectangle();

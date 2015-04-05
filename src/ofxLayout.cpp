@@ -69,7 +69,7 @@ void ofxLayout::allocateBlurFbo(int w, int h){
     s.useDepth = true;
     s.useStencil = false;
     
-    blurFbo.setup(s,false, 1.0);
+    blurFbo.setup(s,false);
     blurFbo.blurOffset = 20;
     blurFbo.blurPasses = 4;
     blurFbo.numBlurOverlays = 1;
@@ -85,8 +85,8 @@ void ofxLayout::update(){
     contextTreeRoot.update();
     am.update(1.0f/ofGetTargetFrameRate() );
     if(
-       blurFbo.getWidth() != contextTreeRoot.getWidth() ||
-       blurFbo.getHeight() != contextTreeRoot.getHeight()
+       blurFbo.getSceneFbo().getWidth() != contextTreeRoot.getWidth() ||
+       blurFbo.getSceneFbo().getHeight() != contextTreeRoot.getHeight()
     ){
         allocateBlurFbo(contextTreeRoot.getWidth(),contextTreeRoot.getHeight());
         
@@ -400,7 +400,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
             imagesBatch = assets.getBatch(IMAGES_BATCH)->getBatch(ids[0]);
             imageFilename = ids[1];
         }
-        if(!imagesBatch->hasTexture(imageFilename)){
+        if(!imageFilename.empty() && !imagesBatch->hasTexture(imageFilename)){
             imagesBatch->addTexture(imageFilename, imageFilename);
         }
     }
