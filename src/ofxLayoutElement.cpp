@@ -625,7 +625,6 @@ void ofxLayoutElement::drawBorder(){
 void ofxLayoutElement::drawBackground(){
     ofPushStyle();
     
-    drawBackgroundGradient();
     drawBackgroundImage();
     drawBackgroundVideo();
     
@@ -637,8 +636,6 @@ void ofxLayoutElement::drawBackground(){
 }
 
 ofRectangle ofxLayoutElement::drawText(bool dontDraw){
-    ofEnableAlphaBlending();
-//    ofEnableSmoothing();
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
         ofRectangle drawBox;
         
@@ -822,85 +819,13 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             layout->getFonts()->at(fontFilename).setKerning(true);
             glPushAttrib(GL_BLEND);
             glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true, ta);
             glPopAttrib();
         }
     }
     return ofRectangle();
-    ofDisableAlphaBlending();
 }
-void ofxLayoutElement::drawBackgroundGradient(){
-    if(hasStyle(OSS_KEY::BACKGROUND_GRADIENT)){
-        
-        bool vertical;// = true;
-        ofColor firstColor;//(1.0f, 0.0f, 0.0f, 0.0f);
-        ofColor secondColor;//(0.0f, 0.0f, 1.0f, 1.0f  );
-        ofxOSS::parseBackgroundGradient(getStringStyle(OSS_KEY::BACKGROUND_GRADIENT), &firstColor, &secondColor, &vertical);
-        firstColor.a *= opacity;
-        secondColor.a *= opacity;
-        ofFloatColor firstColorF = firstColor;
-        if(firstColor.limit() == 255){
-            firstColorF.set(firstColor.r/255.0f, firstColor.g/255.0f, firstColor.b/255.0f, firstColor.a/255.0f);
-        }
-        
-        ofFloatColor secondColorF = secondColor;
-        if(secondColor.limit() == 255){
-            secondColorF.set(secondColor.r/255.0f, secondColor.g/255.0f, secondColor.b/255.0f, secondColor.a/255.0f);
-        }
-        // Maybe there is a simpler OF way, but I was having issues with
-        // boundary using ofBackgroundGradient
-        
-        glDepthMask(false);
-        glEnable(GL_BLEND);
-        glBegin(GL_QUADS);
-        
-        //FIRST COLOR
-        glColor4f( firstColorF.r, firstColorF.g, firstColorF.b, firstColorF.a );
-        
-        // TL
-        glVertex3f( 0.0f, 0.0f, 0.0f );
-        
-        // FOR TR
-        if(vertical){
-            //FIRST COLOR
-            glColor4f( firstColorF.r, firstColorF.g, firstColorF.b, firstColorF.a  );
-        }
-        else{
-            //SECOND COLOR
-            glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
-        }
-        
-        //TR
-        glVertex3f( dimensions.width, 0.0f, 0.0f );
-        
-        
-        //SECOND COLOR (FOR BR)
-        glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
-        
-        //BR
-        glVertex3f( dimensions.width, dimensions.height, 0.0f );
-        
-        // FOR BL
-        if(vertical){
-            //SECOND COLOR
-            glColor4f( secondColorF.r, secondColorF.g, secondColorF.b, secondColorF.a  );
-        }
-        else{
-            //FIRST COLOR
-            glColor4f( firstColorF.r, firstColorF.g, firstColorF.b, firstColorF.a  );
-        }
-        
-        //BL
-        glVertex3f( 0.0f, dimensions.height, 0.0f );
-        
-        glDisable(GL_BLEND);
-        glEnd();
-        glDepthMask(true);
-    }
-    
-}
-
 bool ofxLayoutElement::beginBackgroundBlendMode(){
     bool blendModeActive = true;
     
@@ -990,7 +915,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
         return;
     }
     ofPushStyle();
-    texture->setTextureMinMagFilter(GL_NEAREST,GL_NEAREST); 
+    texture->setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
     ofRectangle bgTextureTransform = ofRectangle();
     bgTextureTransform.setWidth(texture->getWidth());
     bgTextureTransform.setHeight(texture->getHeight());

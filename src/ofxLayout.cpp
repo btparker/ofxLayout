@@ -63,15 +63,15 @@ void ofxLayout::allocateBlurFbo(int w, int h){
     s.width = w;
     s.height = h;
     s.internalformat = GL_RGBA;
-    s.maxFilter = GL_LINEAR; GL_NEAREST;
-    s.numSamples = 4;
+    s.maxFilter = GL_LINEAR;
+    s.numSamples = 8;
     s.numColorbuffers = 3;
     s.useDepth = true;
-    s.useStencil = false;
+    s.useStencil = true;
     
     blurFbo.setup(s,false);
     blurFbo.blurOffset = 20;
-    blurFbo.blurPasses = 4;
+    blurFbo.blurPasses = 2;
     blurFbo.numBlurOverlays = 1;
 }
 

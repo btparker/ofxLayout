@@ -90,7 +90,6 @@ public:
     void drawBackgroundImage();
     void drawBackgroundVideo();
     void drawBackgroundColor();
-    void drawBackgroundGradient();
     void drawBackgroundTexture(ofTexture* texture);
     ofRectangle drawText(bool dontDraw = false);
     void drawShape();
