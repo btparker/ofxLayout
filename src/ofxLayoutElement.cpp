@@ -7,6 +7,7 @@ ofxLayoutElement::ofxLayoutElement(){
 //    stateTransitioning = false;
     opacity = 1.0;
     shape = NULL;
+    svg = NULL;
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
@@ -29,6 +30,10 @@ ofxLayoutElement::~ofxLayoutElement(){
     if(shape){
         shape->clear();
         delete shape;
+    }
+    
+    if(svg){
+        delete svg;
     }
     
     if(video != NULL){
@@ -866,23 +871,44 @@ void ofxLayoutElement::drawBackgroundImage(){
     ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
         ofSetColor(255);
-        drawBackgroundTexture(getBackgroundImageTexture());
+        // Get filename
+        string imageFilename = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
+        ofFile file(ofToDataPath(imageFilename));
+        string bgImgExt = ofToLower(file.getExtension());
+        if(bgImgExt == "svg"){
+            if(!svg){
+                svg = new ofxSVG();
+                svg->load(imageFilename);
+            }
+            svg->draw();
+        }
+        else{
+            ofTexture* tex = getBackgroundImageTexture();
+            drawBackgroundTexture(tex);
+        }
     }
     ofPopStyle();
 }
 
 ofTexture* ofxLayoutElement::getBackgroundImageTexture(){
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+        // Get filename
+        string imageFilename = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
+        ofFile file(ofToDataPath(imageFilename));
+        string bgImgExt = ofToLower(file.getExtension());
+        if(bgImgExt == "svg"){
+            return NULL;
+        }
         ofxLoaderBatch* imagesBatch = layout->getAssets()->getBatch(IMAGES_BATCH);
-        string imageID = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
-        if(ofStringTimesInString(imageID, ":") > 0){
-            vector<string> ids = ofSplitString(imageID,":");
+        if(ofStringTimesInString(imageFilename, ":") > 0){
+            vector<string> ids = ofSplitString(imageFilename,":");
             imagesBatch = imagesBatch->getBatch(ids[0]);
-            imageID = ids[1];
+            imageFilename = ids[1];
         }
-        if(imagesBatch->hasTexture(imageID) && imagesBatch->isTextureReady(imageID)){
-            return imagesBatch->getTexture(imageID);
+        if(imagesBatch->hasTexture(imageFilename) && imagesBatch->isTextureReady(imageFilename)){
+            return imagesBatch->getTexture(imageFilename);
         }
+        
     }
     return NULL;
 }

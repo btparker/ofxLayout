@@ -5,6 +5,7 @@
 #include "ofxProgressiveTextureLoad.h"
 #include "ofxLoaderSpool.h"
 #include "ofxMask.h"
+#include "ofxSVG.h"
 
 struct SideDimensions{
     float top = 0.0f;
@@ -123,11 +124,6 @@ public:
     ofEvent<string> stateEvt;
     string state;
     void setState(string state, bool recursive = false);
-
-    //    void addAnimationState(string stateName, ofxAnimationInstance* animInst);
-    
-//    void stateTransFinished(ofxAnimatable::AnimationEvent &evt);
-//    bool isStateTransitioning();
     
     void setBorders(float borderWidth);
     void setBorders(SideDimensions borders);
@@ -155,9 +151,7 @@ public:
     ofTexture* getBackgroundImageTexture();
 protected:
     ofMatrix4x4 globalTransformations;
-//    bool stateTransitioning;
     ofxLayout* layout;
-//    map<string, ofxAnimationInstance*> animationStates;
     
     virtual void drawTag(){};
     ofPoint position;
@@ -178,6 +172,6 @@ protected:
     
     ofVideoPlayer* video;
     ofPath* shape;
-    
+    ofxSVG* svg;
     map<string, ofxAnimationInstance*> states;
 };

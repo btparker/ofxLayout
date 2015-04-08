@@ -4,7 +4,6 @@
 #include "ofxXmlSettings.h"
 #include "ofxLoaderSpool.h"
 #include "ofxFontStash.h"
-#include "ofxSVGPathParser.h"
 #include "ofShader.h"
 #include "ofxFboBlur.h"
 

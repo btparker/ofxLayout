@@ -289,8 +289,8 @@ void ofxLayout::loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLay
             string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
             
             // Good ol' ofxSVGPathParser, saving me here
-            ofxSVGPathParser pp(shape);
-            pp.parse(dStr);
+//            ofxSVGPathParser pp(shape);
+//            pp.parse(dStr);
         }
         else if(tag == TAG::POLYGON){
             ofPath* shape = child->initShape();
@@ -400,7 +400,12 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
             imagesBatch = assets.getBatch(IMAGES_BATCH)->getBatch(ids[0]);
             imageFilename = ids[1];
         }
-        if(!imageFilename.empty() && !imagesBatch->hasTexture(imageFilename)){
+        ofFile file(ofToDataPath(imageFilename));
+        string bgImgExt = file.getExtension();
+        if(bgImgExt == "svg"){
+            // ignoring it, can't progressively load svg
+        }
+        else if(!imageFilename.empty() && !imagesBatch->hasTexture(imageFilename)){
             imagesBatch->addTexture(imageFilename, imageFilename);
         }
     }
