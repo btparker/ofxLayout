@@ -32,6 +32,8 @@ void ofxLayout::init(int x, int y, int w, int h){
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
     
     assets.addBatch(IMAGES_BATCH);
+    
+    mFboBlur = new ofxMultiFboBlur();
 }
 
 map<string, ofxFontStash>* ofxLayout::getFonts(){
@@ -54,7 +56,7 @@ ofxLayout::~ofxLayout(){
     ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
     ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
-    
+    delete mFboBlur;
     unload();
 }
 
@@ -62,17 +64,13 @@ void ofxLayout::allocateBlurFbo(int w, int h){
     ofFbo::Settings s;
     s.width = w;
     s.height = h;
-    s.internalformat = GL_RGBA;
+    s.internalformat = GL_RGB;
     s.maxFilter = GL_LINEAR;
-    s.numSamples = 8;
-    s.numColorbuffers = 3;
-    s.useDepth = true;
-    s.useStencil = true;
     
-    blurFbo.setup(s,false);
-    blurFbo.blurOffset = 20;
-    blurFbo.blurPasses = 2;
-    blurFbo.numBlurOverlays = 1;
+    mFboBlur->setup(s, 5, 15.0);
+    mFboBlur->setBlurOffset(20);
+    mFboBlur->setBlurPasses(4);
+    mFboBlur->setNumBlurOverlays(1);
 }
 
 /// |   Cycle Functions  | ///
@@ -85,8 +83,8 @@ void ofxLayout::update(){
     contextTreeRoot.update();
     am.update(1.0f/ofGetTargetFrameRate() );
     if(
-       blurFbo.getSceneFbo().getWidth() != contextTreeRoot.getWidth() ||
-       blurFbo.getSceneFbo().getHeight() != contextTreeRoot.getHeight()
+       mFboBlur->getWidth() != contextTreeRoot.getWidth() ||
+       mFboBlur->getHeight() != contextTreeRoot.getHeight()
     ){
         allocateBlurFbo(contextTreeRoot.getWidth(),contextTreeRoot.getHeight());
         
