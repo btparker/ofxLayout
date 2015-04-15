@@ -5,7 +5,7 @@
 #include "ofxProgressiveTextureLoad.h"
 #include "ofxLoaderSpool.h"
 #include "ofxMask.h"
-#include "ofxSVG.h"
+#include "ofxSvg.h"
 
 struct SideDimensions{
     float top = 0.0f;
@@ -164,7 +164,8 @@ protected:
     TAG::ENUM tag;
     string classes;
     string elementValue;
-    
+    void beginBackgroundSize();
+    void endBackgroundSize();
     float opacity;
     
     string inlineStyle;

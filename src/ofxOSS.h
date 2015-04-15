@@ -174,11 +174,6 @@ public:
     
     ofPoint computePosition(string posString, ofRectangle boundary, ofRectangle parentBoundary);
     
-    /// \brief Based on the background size style, image dimensions, and the element boundary, returns the computed draw dimensions of the image.
-    ///
-    /// \param ofRectangle dimensions
-    /// \param ofRectangle boundary
-    ofRectangle computeBackgroundTransform(ofRectangle dimensions, ofRectangle boundary);
     
     /// \brief Based on the background position style, (update) image dimensions, and the element boundary, returns the computed background transform of the image
     ///

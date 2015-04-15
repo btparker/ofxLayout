@@ -863,50 +863,6 @@ ofPoint ofxOSS::computePosition(string posString, ofRectangle boundary, ofRectan
     }
 }
 
-ofRectangle ofxOSS::computeBackgroundTransform(ofRectangle dimensions, ofRectangle boundary){
-    ofRectangle result = ofRectangle(dimensions);
-    
-    string bgSizeStr = getStyle(OSS_KEY::BACKGROUND_SIZE)->asString();
-    
-    
-    vector<string> bgSizeStrSplit = ofSplitString(bgSizeStr, " ",true, true);
-    
-    bool isSizeStyleSingleRule = bgSizeStrSplit.size() == 1;
-    // Doing this so there is no untrimmed space
-    
-    bgSizeStr = isSizeStyleSingleRule ? bgSizeStrSplit[0] : bgSizeStr;
-    
-    if(isSizeStyleSingleRule && bgSizeStr == getStringFromOssValue(OSS_VALUE::AUTO)){
-        //does nothing, the result being the dimensions
-    }
-    else if(isSizeStyleSingleRule && (bgSizeStr == getStringFromOssValue(OSS_VALUE::COVER) || bgSizeStr == getStringFromOssValue(OSS_VALUE::CONTAIN))){
-        float wRatio = (dimensions.getWidth())/boundary.getWidth();
-        float hRatio = (dimensions.getHeight())/boundary.getHeight();
-        
-        float scale;
-        
-        if(bgSizeStr == getStringFromOssValue(OSS_VALUE::COVER)){
-            scale = 1.0/min(wRatio,hRatio);
-        }
-        else{
-            scale = 1.0/max(wRatio,hRatio);
-        }
-        
-        result.scale(scale);
-    }
-    // example: "50px 75%"
-    else{
-        string wSizeStr = bgSizeStrSplit[0];
-        string hSizeStr = isSizeStyleSingleRule ? wSizeStr : bgSizeStrSplit[1];
-        
-        result.setWidth(getDimensionStyleValue(wSizeStr, boundary.getWidth()));
-        result.setHeight(getDimensionStyleValue(hSizeStr, boundary.getHeight()));
-    }
-    
-    return result;
-}
-
-
 /// |   Private Functions   | ///
 /// | --------------------- | ///
 

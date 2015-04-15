@@ -388,8 +388,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             glEnable(GL_SCISSOR_TEST);
         }
         
-        glEnable(GL_BLEND);
-        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        
 
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
@@ -401,20 +400,20 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             layout->mFboBlur->beginDrawScene();
             ofClear(0.0f, 0.0f, 0.0f, 0.0f);
         }
+        
         drawContent();
         
         if(isBlurring){
             layout->mFboBlur->endDrawScene();
-            
+            glPushAttrib(GL_BLEND);
             glDisable(GL_BLEND);
             layout->mFboBlur->performBlur();
             ofSetColor(ofColor::white);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             layout->mFboBlur->drawBlurFbo();
+            glPopAttrib();
         }
-        
-        glDisable(GL_BLEND);
         
         if(hasStyle(OSS_KEY::SCALE)){
             ofPopMatrix();
@@ -639,15 +638,57 @@ void ofxLayoutElement::drawBorder(){
 
 void ofxLayoutElement::drawBackground(){
     ofPushStyle();
-    
+    if(hasStyle(OSS_KEY::BACKGROUND_SIZE)){
+        beginBackgroundSize();
+    }
     drawBackgroundImage();
     drawBackgroundVideo();
-    
+    if(hasStyle(OSS_KEY::BACKGROUND_SIZE)){
+        endBackgroundSize();
+    }
     beginBackgroundBlendMode();
     drawBackgroundColor();
     endBackgroundBlendMode();
     
     ofPopStyle();
+}
+
+void ofxLayoutElement::beginBackgroundSize(){
+    float bgWidth, bgHeight;
+    if(getBackgroundImageTexture()){
+        bgWidth = getBackgroundImageTexture()->getWidth();
+        bgHeight = getBackgroundImageTexture()->getHeight();
+    }
+    else if(svg){
+        bgWidth = svg->getWidth();
+        bgHeight = svg->getHeight();
+    }
+    
+    float wRatio = bgWidth/getWidth();
+    float hRatio = bgHeight/getHeight();
+    
+    float scale;
+    
+    if(getOssValueStyle(OSS_KEY::BACKGROUND_SIZE) == OSS_VALUE::COVER){
+        scale = 1.0/min(wRatio,hRatio);
+    }
+    else if(getOssValueStyle(OSS_KEY::BACKGROUND_SIZE) == OSS_VALUE::CONTAIN){
+        scale = 1.0/max(wRatio,hRatio);
+    }
+    else{
+        scale = 1.0;
+    }
+    
+    ofPushMatrix();
+    float xTrans = (getWidth()-bgWidth*scale)/2;
+    float yTrans = (getHeight()-bgHeight*scale)/2;
+    ofTranslate(xTrans, yTrans);
+    ofScale(scale, scale);
+
+}
+
+void ofxLayoutElement::endBackgroundSize(){
+    ofPopMatrix();
 }
 
 ofRectangle ofxLayoutElement::drawText(bool dontDraw){
@@ -835,8 +876,9 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             glPushAttrib(GL_BLEND);
             glEnable(GL_BLEND);
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            return layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true, ta);
+            ofRectangle rect = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true, ta);
             glPopAttrib();
+            return rect;
         }
     }
     return ofRectangle();
@@ -885,7 +927,7 @@ void ofxLayoutElement::drawBackgroundImage(){
         ofFile file(ofToDataPath(imageFilename));
         string bgImgExt = ofToLower(file.getExtension());
         if(bgImgExt == "svg"){
-            svg->draw();
+            svg->draw(opacity);
         }
         else{
             drawBackgroundTexture(getBackgroundImageTexture());
@@ -995,12 +1037,17 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
             numRepeatY = ceil((float)dimensions.height/(float)bgTextureTransform.height);
         }
     }
+    glPushAttrib(GL_BLEND);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     ofSetColor(255, 255, 255,floor(255*opacity));
     for(int x = 0; x <= numRepeatX; x++){
         for(int y = 0; y <= numRepeatY; y++){
             texture->draw(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y, bgTextureTransform.width, bgTextureTransform.height);
         }
     }
+    glDisable(GL_BLEND);
+    glPopAttrib();
     ofPopStyle();
 }
 
