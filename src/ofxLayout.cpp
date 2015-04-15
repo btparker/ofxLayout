@@ -400,8 +400,8 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         }
         ofFile file(ofToDataPath(imageFilename));
         string bgImgExt = file.getExtension();
-        if(bgImgExt == "svg"){
-            // ignoring it, can't progressively load svg
+        if(bgImgExt == "svg" && ofFile::doesFileExist(imageFilename)){
+            element->loadSvg(imageFilename);
         }
         else if(!imageFilename.empty() && !imagesBatch->hasTexture(imageFilename)){
             imagesBatch->addTexture(imageFilename, imageFilename);

@@ -149,6 +149,7 @@ public:
     bool hasState(string state);
     void addClass(string className);
     ofTexture* getBackgroundImageTexture();
+    void loadSvg(string imageFilename);
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;

@@ -150,12 +150,22 @@ void ofxLayoutElement::update(){
         dimensions.width = max(dimensions.width, minWidth);
     }
     
-    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && getBackgroundImageTexture() && isWidthAuto){
-        dimensions.width = max(getBackgroundImageTexture()->getWidth(), minWidth);
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && isWidthAuto){
+        if(getBackgroundImageTexture()){
+            dimensions.width = max(getBackgroundImageTexture()->getWidth(), minWidth);
+        }
+        else if(svg){
+            dimensions.width = max(svg->getWidth(), minWidth);
+        }
     }
     
-    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && getBackgroundImageTexture() && isHeightAuto){
-        dimensions.height = getBackgroundImageTexture()->getHeight();
+    if(hasStyle(OSS_KEY::BACKGROUND_IMAGE) && isHeightAuto){
+        if(getBackgroundImageTexture()){
+            dimensions.height = getBackgroundImageTexture()->getHeight();
+        }
+        else if(svg){
+            dimensions.height = svg->getHeight();
+        }
     }
     
     if(isWidthAuto && hasStyle(OSS_KEY::FONT_FAMILY)){
@@ -870,21 +880,15 @@ void ofxLayoutElement::endBackgroundBlendMode(){
 void ofxLayoutElement::drawBackgroundImage(){
     ofPushStyle();
     if(hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
-        ofSetColor(255);
         // Get filename
         string imageFilename = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         ofFile file(ofToDataPath(imageFilename));
         string bgImgExt = ofToLower(file.getExtension());
         if(bgImgExt == "svg"){
-            if(!svg){
-                svg = new ofxSVG();
-                svg->load(imageFilename);
-            }
             svg->draw();
         }
         else{
-            ofTexture* tex = getBackgroundImageTexture();
-            drawBackgroundTexture(tex);
+            drawBackgroundTexture(getBackgroundImageTexture());
         }
     }
     ofPopStyle();
@@ -1233,4 +1237,9 @@ void ofxLayoutElement::addState(string state, ofxAnimationInstance *animationIns
 
 bool ofxLayoutElement::hasState(string state){
     return states.count(state) > 0;
+}
+
+void ofxLayoutElement::loadSvg(string imageFilename){
+    svg = new ofxSVG();
+    svg->load(imageFilename);
 }
