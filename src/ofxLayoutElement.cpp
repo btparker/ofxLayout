@@ -17,16 +17,9 @@ ofxLayoutElement::ofxLayoutElement(){
     mouseState = MOUSE_STATE::NONE;
     
     state = "default";
-    ofAddListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
-    ofAddListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
-    ofAddListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
-    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayoutElement::mouseMoved);
-    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayoutElement::mousePressed);
-    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayoutElement::mouseReleased);
-    
     if(shape){
         shape->clear();
         delete shape;
@@ -46,15 +39,39 @@ ofxLayoutElement::~ofxLayoutElement(){
 }
 
 void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
-    if(dimensions.inside(args.x, args.y)){
-        
-    }
+    mouseMovedPt = getLocalPoint(args);
+    ostringstream stream;
+    stream << mouseMovedPt;
+    string str =  stream.str();
+    ofNotifyEvent(mouseMovedEvt, str, this);
 }
 
 void ofxLayoutElement::mouseReleased(ofMouseEventArgs &args){
+    mouseReleasedPt = getLocalPoint(args);
+    ostringstream stream;
+    stream << mouseReleasedPt;
+    string str =  stream.str();
+    ofNotifyEvent(mouseReleasedEvt, str, this);
 }
 
 void ofxLayoutElement::mousePressed(ofMouseEventArgs &args){
+    mousePressedPt = getLocalPoint(args);
+    ostringstream stream;
+    stream << mousePressedPt;
+    string str =  stream.str();
+    ofNotifyEvent(mousePressedEvt, str, this);
+}
+
+void ofxLayoutElement::mouseDragged(ofMouseEventArgs &args){
+    mouseDraggedPt = getLocalPoint(args);
+    ostringstream stream;
+    stream << mouseDraggedPt;
+    string str =  stream.str();
+    ofNotifyEvent(mouseDraggedEvt, str, this);
+}
+
+ofPoint ofxLayoutElement::getLocalPoint(ofPoint pt){
+    return pt-getGlobalPosition();
 }
 
 void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
@@ -1294,4 +1311,17 @@ void ofxLayoutElement::loadSvg(string imageFilename){
 
 bool ofxLayoutElement::hittest(ofPoint pt){
     return getGlobalClippingRegion().inside(pt);
+}
+
+ofPoint ofxLayoutElement::getMouseMoved(){
+    return mouseMovedPt;
+}
+ofPoint ofxLayoutElement::getMouseReleased(){
+    return mouseReleasedPt;
+}
+ofPoint ofxLayoutElement::getMousePressed(){
+    return mousePressedPt;
+}
+ofPoint ofxLayoutElement::getMouseDragged(){
+    return mouseDraggedPt;
 }

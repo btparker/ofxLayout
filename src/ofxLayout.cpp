@@ -65,16 +65,23 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
 }
 
 void ofxLayout::mouseMoved(ofMouseEventArgs &args){
+    ofxLayoutElement* mouseMovedElement = hittest(args);
+    mouseMovedElement->mouseMoved(args);
 }
 
 void ofxLayout::mouseReleased(ofMouseEventArgs &args){
+    ofxLayoutElement* mouseReleasedElement = hittest(args);
+    mouseReleasedElement->mouseReleased(args);
 }
 
 void ofxLayout::mousePressed(ofMouseEventArgs &args){
+    ofxLayoutElement* mousePressedElement = hittest(args);
+    mousePressedElement->mousePressed(args);
 }
 
-
 void ofxLayout::mouseDragged(ofMouseEventArgs &args){
+    ofxLayoutElement* mouseDraggedElement = hittest(args);
+    mouseDraggedElement->mouseDragged(args);
 }
 
 ofxLayout::~ofxLayout(){

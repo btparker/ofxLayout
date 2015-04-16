@@ -106,6 +106,7 @@ public:
     void mouseMoved(ofMouseEventArgs& args);
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
+    void mouseDragged(ofMouseEventArgs& args);
     
     // Display methods
     void show();
@@ -151,6 +152,19 @@ public:
     ofTexture* getBackgroundImageTexture();
     void loadSvg(string imageFilename);
     bool hittest(ofPoint pt);
+    ofPoint getLocalPoint(ofPoint pt);
+    
+    ofPoint getMouseMoved();
+    ofPoint getMouseReleased();
+    ofPoint getMousePressed();
+    ofPoint getMouseDragged();
+    
+    
+    ofEvent<string> mouseMovedEvt;
+    ofEvent<string> mouseReleasedEvt;
+    ofEvent<string> mousePressedEvt;
+    ofEvent<string> mouseDraggedEvt;
+    
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -177,4 +191,9 @@ protected:
     ofPath* shape;
     ofxSVG* svg;
     map<string, ofxAnimationInstance*> states;
+    
+    ofPoint mouseMovedPt;
+    ofPoint mouseReleasedPt;
+    ofPoint mousePressedPt;
+    ofPoint mouseDraggedPt;
 };
