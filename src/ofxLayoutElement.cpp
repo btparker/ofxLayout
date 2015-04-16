@@ -1301,6 +1301,7 @@ bool ofxLayoutElement::hasState(string state){
 void ofxLayoutElement::loadSvg(string imageFilename){
     svg = new ofxSVG();
     svg->load(imageFilename);
+    getStyle(OSS_KEY::BACKGROUND_IMAGE)->setValue(imageFilename);
 }
 
 bool ofxLayoutElement::hittest(ofPoint pt){
