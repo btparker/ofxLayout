@@ -150,6 +150,7 @@ public:
     void addClass(string className);
     ofTexture* getBackgroundImageTexture();
     void loadSvg(string imageFilename);
+    bool hittest(ofPoint pt);
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;

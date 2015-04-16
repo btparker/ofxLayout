@@ -173,7 +173,7 @@ void ofxLayoutElement::update(){
         minWidth = max(minWidth,textBox.width);
     }
     
-    float maxWidth = hasParent() ? parent->getBoundary().getWidth() : INFINITY;
+    float maxWidth = isWidthAuto ? parent->getBoundary().getWidth() : dimensions.width;
     if(hasStyle(OSS_KEY::MAX_WIDTH)){
         maxWidth = getStyle(OSS_KEY::MAX_WIDTH)->asFloat();
         dimensions.width = max(dimensions.width, maxWidth);
@@ -194,17 +194,14 @@ void ofxLayoutElement::update(){
         float mT = child->getFloatStyle(OSS_KEY::MARGIN_TOP);
         float mB = child->getFloatStyle(OSS_KEY::MARGIN_BOTTOM);
         
-        cW += mL;
-        cW += mR;
-        
-        cH += mB;
-        cH += mT;
+        float bW = cW + mL + mR;
+        float bH = cH + mT + mB;
         
         // Expanding div to contain children
-        if((isWidthAuto && (relX+cW) <= maxWidth)){
-            expandingWidth += cW;
+        if((isWidthAuto && (relX+bW) <= maxWidth)){
+            expandingWidth += bW;
         }
-        else if(relX+cW > maxWidth){
+        else if(relX+bW > maxWidth){
             relX = 0;
             relY += childRowHeight;
             childRowHeight = 0;
@@ -213,7 +210,7 @@ void ofxLayoutElement::update(){
             }
         }
         
-        maxExpandedWidth = max(maxExpandedWidth, cW);
+        maxExpandedWidth = max(maxExpandedWidth, bW);
         maxExpandedWidth = max(expandingWidth,maxExpandedWidth);
  
         // Setting child position
@@ -221,8 +218,12 @@ void ofxLayoutElement::update(){
         child->setPosition(childPos);
         child->setDimensions(cW, cH);
         
-        relX += cW;
-        childRowHeight =  cH > childRowHeight ? cH : childRowHeight;
+        relX += bW;
+        childRowHeight =  bH > childRowHeight ? bH : childRowHeight;
+    }
+    
+    for(ofxLayoutElement* child : children){
+        
     }
     
     if(isWidthAuto){
@@ -335,7 +336,7 @@ void ofxLayoutElement::update(){
                     break;
                 case OSS_VALUE::STATIC:
                 default:
-                    childPos = relativePos;
+                    childPos = relativePos+offset;
             }
         }
         children[i]->setPosition(childPos);
@@ -1289,4 +1290,8 @@ bool ofxLayoutElement::hasState(string state){
 void ofxLayoutElement::loadSvg(string imageFilename){
     svg = new ofxSVG();
     svg->load(imageFilename);
+}
+
+bool ofxLayoutElement::hittest(ofPoint pt){
+    return getGlobalClippingRegion().inside(pt);
 }

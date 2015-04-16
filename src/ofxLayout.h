@@ -72,11 +72,10 @@ public:
 
 //    ofxAnimatableManager animatableManager;
     
-    ofxLayoutElement* hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements = NULL, ofxLayoutElement* startElement = NULL);
-    
     void mouseMoved(ofMouseEventArgs& args);
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
+    void mouseDragged(ofMouseEventArgs& args);
     
     /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
     ///
@@ -90,6 +89,7 @@ public:
     int width, height;
     ofxAnimatableManager am;
     ofxMultiFboBlur* mFboBlur;
+    ofxLayoutElement* hittest(ofPoint pt);
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;

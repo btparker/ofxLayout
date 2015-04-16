@@ -29,10 +29,11 @@ void ofxLayout::init(int x, int y, int w, int h){
     ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
     ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    ofAddListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
     
     assets.addBatch(IMAGES_BATCH);
     
-    mFboBlur = new ofxMultiFboBlur();
+    mFboBlur = NULL;
 }
 
 map<string, ofxFontStash>* ofxLayout::getFonts(){
@@ -42,6 +43,27 @@ map<string, ofxFontStash>* ofxLayout::getFonts(){
 ofxLoaderSpool* ofxLayout::getAssets(){
     return &assets;
 }
+
+ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
+    ofxLayoutElement* hitElement = getBody();
+    while(hitElement && hitElement->hittest(pt)){
+        ofxLayoutElement* element = NULL;
+        for(ofxLayoutElement* child : hitElement->children){
+            if(child->visible() && child->hittest(pt)){
+                element = child;
+                break;
+            }
+        }
+        if(element && hitElement != element){
+            hitElement = element;
+        }
+        else{
+            break;
+        }
+    }
+    return hitElement;
+}
+
 void ofxLayout::mouseMoved(ofMouseEventArgs &args){
 }
 
@@ -51,10 +73,15 @@ void ofxLayout::mouseReleased(ofMouseEventArgs &args){
 void ofxLayout::mousePressed(ofMouseEventArgs &args){
 }
 
+
+void ofxLayout::mouseDragged(ofMouseEventArgs &args){
+}
+
 ofxLayout::~ofxLayout(){
     ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
     ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    ofRemoveListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
     delete mFboBlur;
     unload();
 }
@@ -65,7 +92,7 @@ void ofxLayout::allocateBlurFbo(int w, int h){
     s.height = h;
     s.internalformat = GL_RGB;
     s.maxFilter = GL_LINEAR;
-    
+    mFboBlur = new ofxMultiFboBlur();
     mFboBlur->setup(s, 5, 15.0);
     mFboBlur->setBlurOffset(20);
     mFboBlur->setBlurPasses(4);
@@ -77,13 +104,18 @@ void ofxLayout::allocateBlurFbo(int w, int h){
 
 void ofxLayout::update(){
 //    cout << ofGetFrameRate() << endl;
+    width = ofGetViewportWidth();
+    height = ofGetViewportHeight();
     assets.update();
 //    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
     am.update(1.0f/ofGetTargetFrameRate() );
     if(
-       mFboBlur->getWidth() != contextTreeRoot.getWidth() ||
-       mFboBlur->getHeight() != contextTreeRoot.getHeight()
+       (!mFboBlur && width > 0) ||
+    (mFboBlur && mFboBlur->isAllocated() && (
+       mFboBlur->getWidth() != width ||
+       mFboBlur->getHeight() != height
+    ))
     ){
         allocateBlurFbo(contextTreeRoot.getWidth(),contextTreeRoot.getHeight());
         
@@ -446,33 +478,6 @@ set<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
     }
     else{
         return classElementMap[classname];
-    }
-}
-
-ofxLayoutElement* ofxLayout::hittest(ofPoint pt, vector<ofxLayoutElement*>* returnedElements, ofxLayoutElement* startElement){
-    
-    if(returnedElements == NULL){
-        returnedElements = new vector<ofxLayoutElement*>();
-    }
-    if(startElement == NULL){
-        startElement = &contextTreeRoot;
-    }
-
-    // If intersects
-    if(startElement->getBoundary().inside(pt)){
-        returnedElements->push_back(startElement);
-        for(int i = 0; i < startElement->children.size(); i++){
-            if(startElement->children[i]->clickable()){
-                hittest(pt,returnedElements,startElement->children[i]);
-            }
-        }
-    }
-    
-    if(returnedElements->size() > 0){
-        return returnedElements->at(returnedElements->size()-1);
-    }
-    else{
-        return NULL;
     }
 }
 
