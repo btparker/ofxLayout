@@ -40,38 +40,32 @@ ofxLayoutElement::~ofxLayoutElement(){
 
 void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
     mouseMovedPt = getLocalPoint(args);
-    ostringstream stream;
-    stream << mouseMovedPt;
-    string str =  stream.str();
-    ofNotifyEvent(mouseMovedEvt, str, this);
+    string evtStr = "mouseMoved";
+    ofNotifyEvent(mouseMovedEvt, evtStr, this);
 }
 
 void ofxLayoutElement::mouseReleased(ofMouseEventArgs &args){
     mouseReleasedPt = getLocalPoint(args);
-    ostringstream stream;
-    stream << mouseReleasedPt;
-    string str =  stream.str();
-    ofNotifyEvent(mouseReleasedEvt, str, this);
+    string evtStr = "mouseReleased";
+    ofNotifyEvent(mouseReleasedEvt, evtStr, this);
 }
 
 void ofxLayoutElement::mousePressed(ofMouseEventArgs &args){
     mousePressedPt = getLocalPoint(args);
-    ostringstream stream;
-    stream << mousePressedPt;
-    string str =  stream.str();
-    ofNotifyEvent(mousePressedEvt, str, this);
+    string evtStr = "mousePressed";
+    ofNotifyEvent(mousePressedEvt, evtStr, this);
 }
 
 void ofxLayoutElement::mouseDragged(ofMouseEventArgs &args){
     mouseDraggedPt = getLocalPoint(args);
-    ostringstream stream;
-    stream << mouseDraggedPt;
-    string str =  stream.str();
-    ofNotifyEvent(mouseDraggedEvt, str, this);
+    string evtStr = "mouseDragged";
+    ofNotifyEvent(mouseDraggedEvt, evtStr, this);
 }
 
 ofPoint ofxLayoutElement::getLocalPoint(ofPoint pt){
-    return pt-getGlobalPosition();
+    ofMatrix4x4 mat = layout->getMouseTransformation();
+    ofPoint gp = getGlobalPosition();
+    return pt*mat-gp;
 }
 
 void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){

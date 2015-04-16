@@ -90,6 +90,8 @@ public:
     ofxAnimatableManager am;
     ofxMultiFboBlur* mFboBlur;
     ofxLayoutElement* hittest(ofPoint pt);
+    void setMouseTransformation(ofMatrix4x4 mouseTransformation);
+    ofMatrix4x4 getMouseTransformation();
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
@@ -108,4 +110,6 @@ protected:
     int x,y;
     
     void allocateBlurFbo(int w, int h);
+    
+    ofMatrix4x4 mouseTransformation;
 };

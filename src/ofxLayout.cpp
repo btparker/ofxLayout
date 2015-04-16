@@ -6,6 +6,7 @@
 /// | -------------------------- | ///
 
 ofxLayout::ofxLayout(){
+    mouseTransformation = ofMatrix4x4::newIdentityMatrix();
     init(0,0,ofGetViewportWidth(),ofGetViewportHeight());
 }
 
@@ -64,24 +65,36 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
     return hitElement;
 }
 
+void ofxLayout::setMouseTransformation(ofMatrix4x4 mouseTransformation){
+    this->mouseTransformation = mouseTransformation;
+}
+
 void ofxLayout::mouseMoved(ofMouseEventArgs &args){
-    ofxLayoutElement* mouseMovedElement = hittest(args);
+    ofPoint mousePt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseMovedElement = hittest(mousePt);
     mouseMovedElement->mouseMoved(args);
 }
 
 void ofxLayout::mouseReleased(ofMouseEventArgs &args){
-    ofxLayoutElement* mouseReleasedElement = hittest(args);
+    ofPoint mousePt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseReleasedElement = hittest(mousePt);
     mouseReleasedElement->mouseReleased(args);
 }
 
 void ofxLayout::mousePressed(ofMouseEventArgs &args){
-    ofxLayoutElement* mousePressedElement = hittest(args);
+    ofPoint mousePt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mousePressedElement = hittest(mousePt);
     mousePressedElement->mousePressed(args);
 }
 
 void ofxLayout::mouseDragged(ofMouseEventArgs &args){
-    ofxLayoutElement* mouseDraggedElement = hittest(args);
+    ofPoint mousePt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseDraggedElement = hittest(mousePt);
     mouseDraggedElement->mouseDragged(args);
+}
+
+ofMatrix4x4 ofxLayout::getMouseTransformation(){
+    return this->mouseTransformation;
 }
 
 ofxLayout::~ofxLayout(){
