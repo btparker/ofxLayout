@@ -49,7 +49,8 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
     ofxLayoutElement* hitElement = getBody();
     while(hitElement && hitElement->hittest(pt)){
         ofxLayoutElement* element = NULL;
-        for(ofxLayoutElement* child : hitElement->children){
+        for(unsigned i = hitElement->children.size(); i-- > 0;){
+            ofxLayoutElement* child = hitElement->children[i];
             if(child->visible() && child->hittest(pt)){
                 element = child;
                 break;
