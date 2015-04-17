@@ -190,6 +190,7 @@ void ofxLayout::loadAnimationsFromFile(string animationsFilename){
     am.setData(data);
     am.load(animationsFilename);
     applyAnimations();
+    contextTreeRoot.setState("default",true);
 }
 
 void ofxLayout::loadDataFromFile(string dataFilename){

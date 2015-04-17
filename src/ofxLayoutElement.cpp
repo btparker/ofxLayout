@@ -15,8 +15,6 @@ ofxLayoutElement::ofxLayoutElement(){
     
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
-    
-    state = "default";
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -812,7 +810,7 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                     ta = TextAlign::MIDDLE;
                 }
                 else if(textAlign == "right"){
-                    x = dimensions.width - fontBBox.width;
+                    x = dimensions.width - fontBBox.width*1.01f;
                     ta = TextAlign::RIGHT;
                 }
             }
@@ -827,7 +825,7 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                     y = dimensions.height/2+fontHeight/2;
                 }
                 else if(verticalAlign == "bottom"){
-                    y = dimensions.height-fontHeight;
+                    y = dimensions.height-fontHeight*1.05f;
                 }
             }
             
@@ -938,7 +936,7 @@ void ofxLayoutElement::drawBackgroundImage(){
         string imageFilename = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         ofFile file(ofToDataPath(imageFilename));
         string bgImgExt = ofToLower(file.getExtension());
-        if(bgImgExt == "svg"){
+        if(bgImgExt == "svg" && svg){
             svg->draw(opacity);
         }
         else{
