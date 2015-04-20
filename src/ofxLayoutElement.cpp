@@ -177,9 +177,10 @@ void ofxLayoutElement::update(){
         }
     }
     
+    updateText();
+    
     if(isWidthAuto && hasStyle(OSS_KEY::FONT_FAMILY)){
-        ofRectangle textBox = drawText(true);
-        minWidth = max(minWidth,textBox.width);
+        minWidth = max(minWidth,fontData.drawBox.width);
     }
     
     float maxWidth = isWidthAuto ? parent->getBoundary().getWidth() : dimensions.width;
@@ -247,7 +248,7 @@ void ofxLayoutElement::update(){
     if(hasStyle(OSS_KEY::HEIGHT)){
         if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO || getStyle(OSS_KEY::HEIGHT)->asFloat() == 0){
             if(hasStyle(OSS_KEY::FONT_FAMILY)){
-                dimensions.height = drawText(true).getHeight();
+                dimensions.height = fontData.drawBox.getHeight();
             }
             else{
                 dimensions.height = max(dimensions.height,childrenHeight);
@@ -701,41 +702,49 @@ void ofxLayoutElement::endBackgroundSize(){
     ofPopMatrix();
 }
 
-ofRectangle ofxLayoutElement::drawText(bool dontDraw){
+void ofxLayoutElement::updateText(){
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
-        ofRectangle drawBox;
+
+        // FONTNAME
+        {
+            fontData.fontFilename = getStringStyle(OSS_KEY::FONT_FAMILY);
+            if(layout->getFonts()->count(fontData.fontFilename) == 0){
+                fontData.fontFilename.clear();
+                return;
+            }
+        }
         
-        string fontFilename = getStringStyle(OSS_KEY::FONT_FAMILY);
-        if(layout->getFonts()->count(fontFilename) > 0){
-            string text = getValue();
+        //FONT TEXT
+        {
+            fontData.text = getValue();
             if(hasStyle(OSS_KEY::TEXT_TRANSFORM)){
-                vector<string> words = ofSplitString(text, " ",true,true);
+                vector<string> words = ofSplitString(fontData.text, " ",true,true);
                 OSS_VALUE::ENUM textTransform = getOssValueStyle(OSS_KEY::TEXT_TRANSFORM);
                 switch(textTransform){
-                    case OSS_VALUE::NONE:
-                        //do nothing
-                        break;
                     case OSS_VALUE::UPPERCASE:
-                        text = ofToUpper(text);
+                        fontData.text = ofToUpper(fontData.text);
                         break;
                     case OSS_VALUE::LOWERCASE:
-                        text = ofToLower(text);
+                        fontData.text = ofToLower(fontData.text);
                         break;
                     case OSS_VALUE::CAPITALIZE:
                         for(int i = 0; i < words.size(); i++) {
                             words[i] = ofToLower(words[i]);
                             words[i] = ofToUpper(words[i].substr(0,1))+words[i].substr(1,words[i].size());
                         }
-                        text = ofJoinString(words, " ");
+                        fontData.text = ofJoinString(words, " ");
                         break;
                     default:
-                        text = text;
+                        fontData.text = fontData.text;
                 }
             }
-            
-            float fontSize;
+        }
+        
+        // FONT SIZE
+        {
+            int fontSize;
             bool fitText = false;
-            string textToFit = text;
+            string textToFit = fontData.text;
             if(getOssValueStyle(OSS_KEY::FONT_SIZE) == OSS_VALUE::FIT){
                 fontSize = 5.0;
                 fitText = true;
@@ -744,7 +753,7 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 fontSize = 5.0;
                 fitText = true;
                 textToFit = "";
-                for(string word : ofSplitString(text, " ")){
+                for(string word : ofSplitString(fontData.text, " ")){
                     if(word.length() > textToFit.length()){
                         textToFit = word;
                     }
@@ -754,6 +763,23 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 fontSize = getFloatStyle(OSS_KEY::FONT_SIZE);
             }
             
+            if(fitText){
+                ofRectangle fontBBox = layout->getFonts()->at(fontData.fontFilename).getBBox(textToFit,fontSize,0,0);
+                fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
+            }
+            
+            if(hasStyle(OSS_KEY::FONT_SIZE_MIN)){
+                fontSize = max(getFloatStyle(OSS_KEY::FONT_SIZE_MIN),(float)fontSize);
+            }
+            
+            if(hasStyle(OSS_KEY::FONT_SIZE_MAX)){
+                fontSize = min(getFloatStyle(OSS_KEY::FONT_SIZE_MAX),(float)fontSize);
+            }
+            fontData.fontSize = fontSize;
+        }
+        
+        // LINE HEIGHT
+        {
             float lineHeight;
             if(hasStyle(OSS_KEY::LINE_HEIGHT)){
                 lineHeight = getFloatStyle(OSS_KEY::LINE_HEIGHT)/100.0f;
@@ -762,8 +788,26 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                 lineHeight = 1.0f;
             }
             
-            layout->getFonts()->at(fontFilename).setLineHeight(lineHeight);
-            
+            layout->getFonts()->at(fontData.fontFilename).setLineHeight(lineHeight);
+        }
+        
+        // AUTO WIDTH
+        if(getOssValueStyle(OSS_KEY::WIDTH) == OSS_VALUE::AUTO){
+            dimensions.width = fontData.drawBox.width;
+        }
+        
+    }
+}
+
+
+void ofxLayoutElement::drawText(){
+    if(hasStyle(OSS_KEY::FONT_FAMILY)){
+//        ofRectangle drawBox;
+        
+        string fontFilename = fontData.fontFilename;
+        if(layout->getFonts()->count(fontFilename) > 0){
+            string text = fontData.text;
+            int fontSize = fontData.fontSize;
             float textMaxWidth = dimensions.width;
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
                 textMaxWidth = getFloatStyle(OSS_KEY::TEXT_MAX_WIDTH);
@@ -772,27 +816,12 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             int numLines;
             ofRectangle fontBBox;
             
-            if(fitText){
-                fontBBox = layout->getFonts()->at(fontFilename).getBBox(textToFit,fontSize,0,0);
-                fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
-            }
+            fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 1, true);
             
-            if(hasStyle(OSS_KEY::FONT_SIZE_MIN)){
-                fontSize = max(getFloatStyle(OSS_KEY::FONT_SIZE_MIN),fontSize);
-            }
+            fontData.drawBox.width = fontBBox.width;
+            fontData.fontHeight = fontBBox.height;
             
-            if(hasStyle(OSS_KEY::FONT_SIZE_MAX)){
-                fontSize = min(getFloatStyle(OSS_KEY::FONT_SIZE_MAX),fontSize);
-            }
-
-            fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
-            
-            
-
-            drawBox.width = fontBBox.width;
-            drawBox.height = fontBBox.height;
-            
-            float fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
+//            float fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
             
             float x = 0.0f;
             float y = 0.0f;
@@ -822,58 +851,56 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
                     y = 0;
                 }
                 else if(verticalAlign == "center"){
-                    y = dimensions.height/2+fontHeight/2;
+                    y = dimensions.height/2-fontData.fontHeight/2;
                 }
                 else if(verticalAlign == "bottom"){
-                    y = dimensions.height-fontHeight*1.05f;
+                    y = dimensions.height-fontData.fontHeight*1.05f;
                 }
             }
             
-            drawBox.x = x;
-            drawBox.y = y;
+//            drawBox.x = x;
+//            drawBox.y = y;
             
-            if(hasStyle(OSS_KEY::TEXT_PADDING)){
-                float paddingTop, paddingRight, paddingBottom, paddingLeft = 0.0f;
-                vector<string> paddings = ofSplitString(getStringStyle(OSS_KEY::TEXT_PADDING), " ");
-                if(paddings.size() == 1){
-                    float padding = ofToFloat(paddings[0]);
-                    paddingTop = padding;
-                    paddingRight = padding;
-                    paddingBottom = padding;
-                    paddingLeft = padding;
-                }
-                else if(paddings.size() == 2){
-                    float paddingV = ofToFloat(paddings[0]);
-                    float paddingH = ofToFloat(paddings[1]);
-                    paddingTop = paddingV;
-                    paddingRight = paddingH;
-                    paddingBottom = paddingV;
-                    paddingLeft = paddingH;
-                }
-                
-                else if(paddings.size() == 4){
-                    paddingTop = ofToFloat(paddings[0]);
-                    paddingRight = ofToFloat(paddings[1]);
-                    paddingBottom = ofToFloat(paddings[2]);
-                    paddingLeft = ofToFloat(paddings[3]);
-                }
-                
-                x += paddingLeft;
-                
-                drawBox.width += paddingLeft+paddingRight;
-                drawBox.height += paddingTop+paddingBottom;
-                
-            }
+//            if(hasStyle(OSS_KEY::TEXT_PADDING)){
+//                float paddingTop, paddingRight, paddingBottom, paddingLeft = 0.0f;
+//                vector<string> paddings = ofSplitString(getStringStyle(OSS_KEY::TEXT_PADDING), " ");
+//                if(paddings.size() == 1){
+//                    float padding = ofToFloat(paddings[0]);
+//                    paddingTop = padding;
+//                    paddingRight = padding;
+//                    paddingBottom = padding;
+//                    paddingLeft = padding;
+//                }
+//                else if(paddings.size() == 2){
+//                    float paddingV = ofToFloat(paddings[0]);
+//                    float paddingH = ofToFloat(paddings[1]);
+//                    paddingTop = paddingV;
+//                    paddingRight = paddingH;
+//                    paddingBottom = paddingV;
+//                    paddingLeft = paddingH;
+//                }
+//                
+//                else if(paddings.size() == 4){
+//                    paddingTop = ofToFloat(paddings[0]);
+//                    paddingRight = ofToFloat(paddings[1]);
+//                    paddingBottom = ofToFloat(paddings[2]);
+//                    paddingLeft = ofToFloat(paddings[3]);
+//                }
+//                
+//                x += paddingLeft;
+//                
+//                drawBox.width += paddingLeft+paddingRight;
+//                drawBox.height += paddingTop+paddingBottom;
+//                
+//            }
             
-            if(getOssValueStyle(OSS_KEY::WIDTH) == OSS_VALUE::AUTO){
-                dimensions.width = drawBox.width;
-            }
             
-            ofFill();
-            if(hasStyle(OSS_KEY::TEXT_BACKGROUND_COLOR)){
-                ofSetColor(getColorStyle(OSS_KEY::TEXT_BACKGROUND_COLOR));
-                ofDrawRectangle(drawBox);
-            }
+            
+//            ofFill();
+//            if(hasStyle(OSS_KEY::TEXT_BACKGROUND_COLOR)){
+//                ofSetColor(getColorStyle(OSS_KEY::TEXT_BACKGROUND_COLOR));
+//                ofDrawRectangle(drawBox);
+//            }
             
             ofFill();
             if(hasStyle(OSS_KEY::COLOR)){
@@ -886,12 +913,10 @@ ofRectangle ofxLayoutElement::drawText(bool dontDraw){
             glPushAttrib(GL_BLEND);
             glEnable(GL_BLEND);
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            ofRectangle rect = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, x, y+fontHeight, textMaxWidth,numLines, dontDraw, 0, true, ta);
+            fontData.drawBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(fontData.text, fontData.fontSize, x, y+fontData.fontHeight, textMaxWidth,numLines, false, 0, true, ta);
             glPopAttrib();
-            return rect;
         }
     }
-    return ofRectangle();
 }
 bool ofxLayoutElement::beginBackgroundBlendMode(){
     bool blendModeActive = true;
@@ -1003,10 +1028,6 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     bgTextureTransform.setHeight(texture->getHeight());
     bgTextureTransform.setX(0);
     bgTextureTransform.setY(0);
-//    bgTextureTransform = styles.computeBackgroundTransform(bgTextureTransform, getBoundary());
-//    if(hasStyle(OSS_KEY::BACKGROUND_POSITION)){
-//        bgTextureTransform.setPosition(styles.getBackgroundPosition(bgTextureTransform, dimensions));
-//    }
     
     float bgX = bgTextureTransform.x;
     float bgY = bgTextureTransform.y;

@@ -198,12 +198,12 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "background-gradient"){
         return OSS_KEY::BACKGROUND_GRADIENT;
     }
-    else if(key == "text-background-color"){
-        return OSS_KEY::TEXT_BACKGROUND_COLOR;
-    }
-    else if(key == "text-padding"){
-        return OSS_KEY::TEXT_PADDING;
-    }
+//    else if(key == "text-background-color"){
+//        return OSS_KEY::TEXT_BACKGROUND_COLOR;
+//    }
+//    else if(key == "text-padding"){
+//        return OSS_KEY::TEXT_PADDING;
+//    }
     else if(key == "text-max-width"){
         return OSS_KEY::TEXT_MAX_WIDTH;
     }
@@ -339,12 +339,12 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::BACKGROUND_GRADIENT:
             keyString = "background-gradient";
             break;
-        case OSS_KEY::TEXT_BACKGROUND_COLOR:
-            keyString = "text-background-color";
-            break;
-        case OSS_KEY::TEXT_PADDING:
-            keyString = "text-padding";
-            break;
+//        case OSS_KEY::TEXT_BACKGROUND_COLOR:
+//            keyString = "text-background-color";
+//            break;
+//        case OSS_KEY::TEXT_PADDING:
+//            keyString = "text-padding";
+//            break;
         case OSS_KEY::TEXT_MAX_WIDTH:
             keyString = "text-max-width";
             break;
@@ -684,9 +684,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::TEXT_MAX_WIDTH:
             type = OSS_TYPE::NUMBER;
             break;
-        case OSS_KEY::TEXT_BACKGROUND_COLOR:
-            type = OSS_TYPE::COLOR;
-            break;
+//        case OSS_KEY::TEXT_BACKGROUND_COLOR:
+//            type = OSS_TYPE::COLOR;
+//            break;
         case OSS_KEY::TEXT_TRANSFORM:
             type = OSS_TYPE::OSS_VALUE;
             break;

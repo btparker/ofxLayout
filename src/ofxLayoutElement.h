@@ -14,6 +14,21 @@ struct SideDimensions{
     float left = 0.0f;
 };
 
+struct FontData{
+    string fontFilename;
+    string text;
+    int fontSize;
+    int x;
+    int y;
+    int fontHeight;
+    int textMaxWidth;
+    int numLines;
+    ofColor color;
+    string ta;
+    ofRectangle drawBox;
+    TextAlign::ENUM textAlign;
+};
+
 namespace TAG {
     enum ENUM{BODY, DIV, SVG, G, POLYGON, PATH, CIRCLE, INVALID};
 };
@@ -92,7 +107,7 @@ public:
     void drawBackgroundVideo();
     void drawBackgroundColor();
     void drawBackgroundTexture(ofTexture* texture);
-    ofRectangle drawText(bool dontDraw = false);
+    void drawText();
     void drawShape();
     
     bool beginBackgroundBlendMode();
@@ -168,13 +183,12 @@ public:
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
-    
     virtual void drawTag(){};
     ofPoint position;
     
     ofRectangle dimensions;
     SideDimensions borders;
-    
+    void updateText();
     string ID;
     TAG::ENUM tag;
     string classes;
@@ -196,4 +210,5 @@ protected:
     ofPoint mouseReleasedPt;
     ofPoint mousePressedPt;
     ofPoint mouseDraggedPt;
+    FontData fontData;
 };
