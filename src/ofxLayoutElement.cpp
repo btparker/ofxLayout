@@ -802,8 +802,6 @@ void ofxLayoutElement::updateText(){
 
 void ofxLayoutElement::drawText(){
     if(hasStyle(OSS_KEY::FONT_FAMILY)){
-//        ofRectangle drawBox;
-        
         string fontFilename = fontData.fontFilename;
         if(layout->getFonts()->count(fontFilename) > 0){
             string text = fontData.text;
@@ -814,14 +812,10 @@ void ofxLayoutElement::drawText(){
             }
             
             int numLines;
-            ofRectangle fontBBox;
             
-            fontBBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 1, true);
+            fontData.drawBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
             
-            fontData.drawBox.width = fontBBox.width;
-            fontData.fontHeight = fontBBox.height;
-            
-//            float fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
+            fontData.fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
             
             float x = 0.0f;
             float y = 0.0f;
@@ -835,11 +829,11 @@ void ofxLayoutElement::drawText(){
                     x = 0.0f;
                 }
                 else if(textAlign == "center"){
-                    x = dimensions.width/2-fontBBox.width/2;
+                    x = dimensions.width/2-fontData.drawBox.width/2;
                     ta = TextAlign::MIDDLE;
                 }
                 else if(textAlign == "right"){
-                    x = dimensions.width - fontBBox.width*1.01f;
+                    x = dimensions.width - fontData.drawBox.width*1.01f;
                     ta = TextAlign::RIGHT;
                 }
             }
