@@ -26,6 +26,7 @@ struct FontData{
     ofColor color;
     string ta;
     ofRectangle drawBox;
+    ofRectangle bounding;
     TextAlign::ENUM textAlign;
 };
 

@@ -741,6 +741,8 @@ void ofxLayoutElement::updateText(){
         }
         
         // FONT SIZE
+//        bool updateFontSize =
+//            getStyle(OSS_KEY::FONT_SIZE)->getType() == OSS_K
         {
             int fontSize;
             bool fitText = false;
@@ -778,6 +780,11 @@ void ofxLayoutElement::updateText(){
             fontData.fontSize = fontSize;
         }
         
+        // LETTER SPACING
+        {
+            layout->getFonts()->at(fontData.fontFilename).setCharacterSpacing(getFloatStyle(OSS_KEY::LETTER_SPACING));
+        }
+        
         // LINE HEIGHT
         {
             float lineHeight;
@@ -796,6 +803,8 @@ void ofxLayoutElement::updateText(){
             dimensions.width = fontData.drawBox.width;
         }
         
+        
+        
     }
 }
 
@@ -813,10 +822,7 @@ void ofxLayoutElement::drawText(){
             
             int numLines;
             
-            fontData.drawBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(text, fontSize, 0, 0, textMaxWidth,numLines, true, 0, true);
-            
             fontData.fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
-            
             float x = 0.0f;
             float y = 0.0f;
             

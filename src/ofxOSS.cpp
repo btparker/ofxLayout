@@ -30,6 +30,8 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::FONT_SIZE, 50);
     
+    generateRule(OSS_KEY::LETTER_SPACING, 0);
+    
     generateRule(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
     
     generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
@@ -167,6 +169,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     }
     else if(key == "vertical-align"){
         return OSS_KEY::VERTICAL_ALIGN;
+    }
+    else if(key == "letter-spacing"){
+        return OSS_KEY::LETTER_SPACING;
     }
     else if(key == "font-size"){
         return OSS_KEY::FONT_SIZE;
@@ -317,6 +322,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::SCALE:
             keyString = "scale";
+            break;
+        case OSS_KEY::LETTER_SPACING:
+            keyString = "letter-spacing";
             break;
         case OSS_KEY::FONT_SIZE:
             keyString = "font-size";
@@ -673,6 +681,7 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::MARGIN_LEFT:
             type = OSS_TYPE::NUMBER;
             break;
+        case OSS_KEY::LETTER_SPACING:
         case OSS_KEY::FONT_SIZE:
         case OSS_KEY::FONT_SIZE_MIN:
         case OSS_KEY::FONT_SIZE_MAX:

@@ -472,7 +472,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
                                       2048,
                                       true,
                                       8,
-                                      2.0f
+                                      4.0f
                                       );
         }
     }
