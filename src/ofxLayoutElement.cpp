@@ -114,6 +114,7 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
+//    if(getID() == ")
     globalTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
@@ -250,8 +251,8 @@ void ofxLayoutElement::update(){
             if(hasStyle(OSS_KEY::FONT_FAMILY)){
                 dimensions.height = fontData.drawBox.getHeight();
             }
-            else{
-                dimensions.height = max(dimensions.height,childrenHeight);
+            else if(!children.empty()){
+                dimensions.height = childrenHeight;
             }
 
         }
