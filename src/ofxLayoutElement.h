@@ -94,7 +94,6 @@ public:
     void appendInlineStyle(string style);
     
     void overrideStyles(ofxOSS* styleObject);
-    void copyStyles(ofxOSS* styleObject);
     
     void addChild(ofxLayoutElement* child);
     
@@ -160,7 +159,7 @@ public:
     void drawContent();
     bool clickable();
     void attachAnimationInstance(ofxAnimationInstance* animationInstance);
-    map<string, ofxAnimationInstance*>* getStates();
+    map<string, vector<ofxAnimationInstance*> >* getStates();
     void addState(string state, ofxAnimationInstance* animationInstance);
     ofEvent<string>* getStateEvent();
     bool hasState(string state);
@@ -205,7 +204,7 @@ protected:
     ofVideoPlayer* video;
     ofPath* shape;
     ofxSVG* svg;
-    map<string, ofxAnimationInstance*> states;
+    map<string, vector<ofxAnimationInstance*> > states;
     
     ofPoint mouseMovedPt;
     ofPoint mouseReleasedPt;

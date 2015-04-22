@@ -86,7 +86,7 @@ MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
 
 
 void ofxLayoutElement::show(){
-    if(states["show"]){
+    if(!states["show"].empty()){
         setState("show");
     }
     else{
@@ -96,7 +96,7 @@ void ofxLayoutElement::show(){
 }
 
 void ofxLayoutElement::hide(){
-    if(states["hide"]){
+    if(!states["hide"].empty()){
         setState("hide");
     }
     else{
@@ -1096,21 +1096,10 @@ void ofxLayoutElement::drawBackgroundColor(){
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
-        this->styles.rules[iterator->first] = iterator->second;
+        this->styles.generateRule(iterator->first, iterator->second->asString());
     }
 }
 
-
-void ofxLayoutElement::copyStyles(ofxOSS *styleObject){
-    for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
-        if(this->styles.rules.count(iterator->first) == 0){
-            this->styles.rules[iterator->first] = iterator->second;
-        }
-        else{
-            this->styles.rules[iterator->first]->setValue(iterator->second->asString());
-        }
-    }
-}
 
 string ofxLayoutElement::getInlineStyle(){
     return this->inlineStyle;
@@ -1196,8 +1185,10 @@ ofEvent<string>* ofxLayoutElement::getStateEvent(){
 }
 
 void ofxLayoutElement::setState(string state, bool recursive){
-    if(states[state]){
-        states[state]->trigger();
+    if(states.count(state) > 0){
+        for(ofxAnimationInstance* anim : states[state]){
+            anim->trigger();
+        }
     }
     this->state = state;
     if(recursive){
@@ -1304,13 +1295,13 @@ void ofxLayoutElement::attachAnimationInstance(ofxAnimationInstance *animationIn
     }
 }
 
-map<string, ofxAnimationInstance*>* ofxLayoutElement::getStates(){
+map<string, vector<ofxAnimationInstance*> >* ofxLayoutElement::getStates(){
     return &states;
 }
 
 void ofxLayoutElement::addState(string state, ofxAnimationInstance *animationInstance){
-    states[state] = animationInstance;
-    attachAnimationInstance(states[state]);
+    states[state].push_back(animationInstance);
+    attachAnimationInstance(states[state].back());
 }
 
 bool ofxLayoutElement::hasState(string state){
