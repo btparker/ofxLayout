@@ -92,6 +92,8 @@ public:
     ofxLayoutElement* hittest(ofPoint pt);
     void setMouseTransformation(ofMatrix4x4 mouseTransformation);
     ofMatrix4x4 getMouseTransformation();
+    void enableMouseEvents();
+    void disableMouseEvents();
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;

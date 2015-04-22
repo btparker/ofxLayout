@@ -27,14 +27,25 @@ void ofxLayout::init(int x, int y, int w, int h){
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
-    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
-    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
-    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
-    ofAddListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
+    
     
     assets.addBatch(IMAGES_BATCH);
     
     mFboBlur = NULL;
+}
+
+void ofxLayout::enableMouseEvents(){
+    ofAddListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
+    ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
+    ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    ofAddListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
+}
+
+void ofxLayout::disableMouseEvents(){
+    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
+    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
+    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
+    ofRemoveListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
 }
 
 map<string, ofxFontStash>* ofxLayout::getFonts(){
@@ -47,11 +58,11 @@ ofxLoaderSpool* ofxLayout::getAssets(){
 
 ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
     ofxLayoutElement* hitElement = getBody();
-    while(hitElement && hitElement->hittest(pt)){
+    while(hitElement && !hitElement->children.empty()){
         ofxLayoutElement* element = NULL;
-        for(unsigned i = hitElement->children.size(); i-- > 0;){
+        for(int i = hitElement->children.size()-1; i >= 0; i--){
             ofxLayoutElement* child = hitElement->children[i];
-            if(child->visible() && child->hittest(pt)){
+            if(child->visible() && child->clickable() && child->hittest(pt)){
                 element = child;
                 break;
             }
@@ -99,10 +110,7 @@ ofMatrix4x4 ofxLayout::getMouseTransformation(){
 }
 
 ofxLayout::~ofxLayout(){
-    ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
-    ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
-    ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
-    ofRemoveListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
+    disableMouseEvents();
     delete mFboBlur;
     unload();
 }
