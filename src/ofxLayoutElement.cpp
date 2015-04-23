@@ -803,7 +803,7 @@ void ofxLayoutElement::drawText(){
         if(layout->getFonts()->count(fontFilename) > 0){
             string text = fontData.text;
             int fontSize = fontData.fontSize;
-            float textMaxWidth = dimensions.width;
+            float textMaxWidth = INFINITY;
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
                 textMaxWidth = getFloatStyle(OSS_KEY::TEXT_MAX_WIDTH);
             }
