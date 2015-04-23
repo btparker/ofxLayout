@@ -1173,17 +1173,21 @@ ofEvent<string>* ofxLayoutElement::getStateEvent(){
 }
 
 void ofxLayoutElement::setState(string state, bool recursive){
-    if(states.count(state) > 0){
-        for(ofxAnimationInstance* anim : states[state]){
-            anim->trigger();
+    if(state != this->state){
+        if(states.count(state) > 0){
+            for(ofxAnimationInstance* anim : states[state]){
+                anim->trigger();
+            }
         }
+        this->state = state;
     }
-    this->state = state;
+    
     if(recursive){
         for(ofxLayoutElement* child : children){
             child->setState(state,recursive);
         }
     }
+    
     
     ofNotifyEvent(stateEvt, state, this);
 }
