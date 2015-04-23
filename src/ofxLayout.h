@@ -76,6 +76,10 @@ public:
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
     void mouseDragged(ofMouseEventArgs& args);
+    ofEvent<string> mouseMovedEvt;
+    ofEvent<string> mouseReleasedEvt;
+    ofEvent<string> mousePressedEvt;
+    ofEvent<string> mouseDraggedEvt;
     
     /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
     ///

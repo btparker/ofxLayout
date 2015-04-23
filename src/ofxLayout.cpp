@@ -85,24 +85,32 @@ void ofxLayout::mouseMoved(ofMouseEventArgs &args){
     ofPoint mousePt = ofPoint(args)*mouseTransformation;
     ofxLayoutElement* mouseMovedElement = hittest(mousePt);
     mouseMovedElement->mouseMoved(args);
+    string evtStr = "mouseMoved";
+    ofNotifyEvent(mouseMovedEvt, evtStr, mouseMovedElement);
 }
 
 void ofxLayout::mouseReleased(ofMouseEventArgs &args){
     ofPoint mousePt = ofPoint(args)*mouseTransformation;
     ofxLayoutElement* mouseReleasedElement = hittest(mousePt);
     mouseReleasedElement->mouseReleased(args);
+    string evtStr = "mouseReleased";
+    ofNotifyEvent(mouseReleasedEvt, evtStr, mouseReleasedElement);
 }
 
 void ofxLayout::mousePressed(ofMouseEventArgs &args){
     ofPoint mousePt = ofPoint(args)*mouseTransformation;
     ofxLayoutElement* mousePressedElement = hittest(mousePt);
     mousePressedElement->mousePressed(args);
+    string evtStr = "mousePressed";
+    ofNotifyEvent(mousePressedEvt, evtStr, mousePressedElement);
 }
 
 void ofxLayout::mouseDragged(ofMouseEventArgs &args){
     ofPoint mousePt = ofPoint(args)*mouseTransformation;
     ofxLayoutElement* mouseDraggedElement = hittest(mousePt);
     mouseDraggedElement->mouseDragged(args);
+    string evtStr = "mouseDragged";
+    ofNotifyEvent(mouseDraggedEvt, evtStr, mouseDraggedElement);
 }
 
 ofMatrix4x4 ofxLayout::getMouseTransformation(){
@@ -433,7 +441,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     if(styleObject == NULL){
         styleObject = &styleRulesRoot;
     }
-    
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
@@ -441,7 +448,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
             element->overrideStyles(&styleRulesRoot.classMap[classes[i]]);
         }
     }
-    
     string id = element->getID();
     if(styleRulesRoot.idMap.count(id)){
         element->overrideStyles(&styleRulesRoot.idMap[id]);

@@ -122,14 +122,8 @@ void ofxLayoutElement::update(){
         setDimensions(layout->getWidth(),layout->getHeight());
     }
     
-    
     // *** COMPUTE WIDTH *** //
     if(hasStyle(OSS_KEY::WIDTH)){
-        // If width is zero, sets to auto (expands to fit children)
-//        if(getStyle(OSS_KEY::WIDTH)->asFloat() == 0){
-//            dimensions.width = 0;
-//            getStyle(OSS_KEY::WIDTH)->setOssValue(OSS_VALUE::AUTO);
-//        }
         // Percent width
         if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
             float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
@@ -231,10 +225,6 @@ void ofxLayoutElement::update(){
         
         relX += bW;
         childRowHeight =  bH > childRowHeight ? bH : childRowHeight;
-    }
-    
-    for(ofxLayoutElement* child : children){
-        
     }
     
     if(isWidthAuto){
@@ -803,9 +793,6 @@ void ofxLayoutElement::updateText(){
         if(getOssValueStyle(OSS_KEY::WIDTH) == OSS_VALUE::AUTO){
             dimensions.width = fontData.drawBox.width;
         }
-        
-        
-        
     }
 }
 
