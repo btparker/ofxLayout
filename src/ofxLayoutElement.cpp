@@ -237,7 +237,7 @@ void ofxLayoutElement::update(){
     
     // *** COMPUTE HEIGHT *** //
     if(hasStyle(OSS_KEY::HEIGHT)){
-        if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO || getStyle(OSS_KEY::HEIGHT)->asFloat() == 0){
+        if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO){
             if(hasStyle(OSS_KEY::FONT_FAMILY)){
                 dimensions.height = fontData.drawBox.getHeight();
             }
