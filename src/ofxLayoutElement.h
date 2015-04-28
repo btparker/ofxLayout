@@ -139,7 +139,7 @@ public:
     string getState();
     ofEvent<string> stateEvt;
     string state;
-    void setState(string state, bool recursive = false);
+    void setState(string state, bool recursive = false, bool reset = false);
     
     void setBorders(float borderWidth);
     void setBorders(SideDimensions borders);
@@ -179,7 +179,9 @@ public:
     ofEvent<string> mouseReleasedEvt;
     ofEvent<string> mousePressedEvt;
     ofEvent<string> mouseDraggedEvt;
-    
+    ofxLayout* getLayout();
+    void lockState(bool stateLocked);
+    bool isStateLocked();
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -211,4 +213,6 @@ protected:
     ofPoint mousePressedPt;
     ofPoint mouseDraggedPt;
     FontData fontData;
+    ofRectangle scissorStack;
+    bool stateLocked;
 };

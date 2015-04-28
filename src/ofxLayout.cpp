@@ -206,7 +206,7 @@ void ofxLayout::loadAnimationsFromFile(string animationsFilename){
     am.setData(data);
     am.load(animationsFilename);
     applyAnimations();
-    contextTreeRoot.setState("default",true);
+    contextTreeRoot.setState("default",true, true);
 }
 
 void ofxLayout::loadDataFromFile(string dataFilename){
@@ -583,14 +583,16 @@ void ofxLayout::applyAnimations(){
         
         if(isID){
             ofxLayoutElement* element = getElementById(selector);
-            if(element){
+            if(element && !element->hasState(state)){
                 element->addState(state, am.cloneAnimationInstance(it.second->getID()));
             }
         }
         else if(isClass){
             set<ofxLayoutElement*> classElements = getElementsByClass(selector);
             for(ofxLayoutElement* element : classElements){
-                element->addState(state, am.cloneAnimationInstance(it.second->getID()));
+                if(!element->hasState(state)){
+                    element->addState(state, am.cloneAnimationInstance(it.second->getID()));
+                }
             }
         }
     }

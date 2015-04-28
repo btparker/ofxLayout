@@ -12,9 +12,10 @@ ofxLayoutElement::ofxLayoutElement(){
     video = NULL;
     position = ofPoint(0,0);
     dimensions = ofRectangle(0,0,0,0);
-    
+    tag = TAG::DIV;
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
+    stateLocked = false;
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -120,6 +121,11 @@ void ofxLayoutElement::update(){
     if(this->getTag() == TAG::BODY){
         setPosition(layout->getPosition());
         setDimensions(layout->getWidth(),layout->getHeight());
+        
+        if(hasStyle(OSS_KEY::WIDTH)){
+            this->getStyle(OSS_KEY::WIDTH)->setValue("100%");
+            this->getStyle(OSS_KEY::HEIGHT)->setValue("100%");
+        }
     }
     
     // *** COMPUTE WIDTH *** //
@@ -146,8 +152,7 @@ void ofxLayoutElement::update(){
     
     bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
     bool isHeightAuto = hasStyle(OSS_KEY::HEIGHT) && getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO;
-    
-    
+
     float minWidth = 0;
     if(hasStyle(OSS_KEY::MIN_WIDTH)){
         minWidth = getStyle(OSS_KEY::MIN_WIDTH)->asFloat();
@@ -357,7 +362,16 @@ void ofxLayoutElement::update(){
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
     child->setParent(this);
+    if(!child->getID().empty()){
+        this->layout->idElementMap[child->getID()] = child;
+    }
+    for(string className : ofSplitString(child->getClasses()," ")){
+        this->layout->classElementMap[className].insert(child);
+    }
     children.push_back(child);
+    layout->applyStyles(child);
+    layout->applyAnimations();
+    child->setState("default");
 }
 
 void ofxLayoutElement::draw(ofFbo* fbo){
@@ -383,11 +397,12 @@ void ofxLayoutElement::draw(ofFbo* fbo){
 
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
+            
+            
+            glEnable(GL_SCISSOR_TEST);
             ofRectangle glScissorRect = getGlobalClippingRegion();
             ofRectangle viewport = layout->getBody()->getGlobalClippingRegion();
             glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
-            
-            glEnable(GL_SCISSOR_TEST);
         }
         
         
@@ -542,7 +557,6 @@ void ofxLayoutElement::setClasses(string classes){
 
 void ofxLayoutElement::addClass(string className){
     this->classes += " "+className;
-    this->layout->classElementMap[className].insert(this);
 }
 
 string ofxLayoutElement::getID(){
@@ -551,7 +565,6 @@ string ofxLayoutElement::getID(){
 
 void ofxLayoutElement::setID(string ID){
     this->ID = ID;
-    this->layout->idElementMap[ID] = this;
 }
 
 bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
@@ -803,7 +816,7 @@ void ofxLayoutElement::drawText(){
         if(layout->getFonts()->count(fontFilename) > 0){
             string text = fontData.text;
             int fontSize = fontData.fontSize;
-            float textMaxWidth = INFINITY;
+            float textMaxWidth = layout->getWidth();
             if(hasStyle(OSS_KEY::TEXT_MAX_WIDTH)){
                 textMaxWidth = getFloatStyle(OSS_KEY::TEXT_MAX_WIDTH);
             }
@@ -1062,7 +1075,8 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     ofSetColor(255, 255, 255,floor(255*opacity));
     for(int x = 0; x <= numRepeatX; x++){
         for(int y = 0; y <= numRepeatY; y++){
-            texture->draw(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y, bgTextureTransform.width, bgTextureTransform.height);
+            ofRectangle textureSize(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y,bgTextureTransform.width, bgTextureTransform.height);
+            texture->draw(textureSize);
         }
     }
     glDisable(GL_BLEND);
@@ -1172,24 +1186,23 @@ ofEvent<string>* ofxLayoutElement::getStateEvent(){
     return &stateEvt;
 }
 
-void ofxLayoutElement::setState(string state, bool recursive){
-    if(state != this->state){
-        if(states.count(state) > 0){
-            for(ofxAnimationInstance* anim : states[state]){
+void ofxLayoutElement::setState(string stateChange, bool recursive, bool reset){
+    if((reset || stateChange != this->state) && !isStateLocked()){
+        if(states.count(stateChange) > 0){
+            for(ofxAnimationInstance* anim : states[stateChange]){
                 anim->trigger();
             }
         }
-        this->state = state;
+        this->state = stateChange;
+        
+        ofNotifyEvent(stateEvt, stateChange, this);
     }
     
     if(recursive){
         for(ofxLayoutElement* child : children){
-            child->setState(state,recursive);
+            child->setState(stateChange, recursive, reset);
         }
     }
-    
-    
-    ofNotifyEvent(stateEvt, state, this);
 }
 
 void ofxLayoutElement::setOpacity(float opacity){
@@ -1321,4 +1334,16 @@ ofPoint ofxLayoutElement::getMousePressed(){
 }
 ofPoint ofxLayoutElement::getMouseDragged(){
     return mouseDraggedPt;
+}
+
+ofxLayout* ofxLayoutElement::getLayout(){
+    return layout;
+}
+
+void ofxLayoutElement::lockState(bool stateLocked){
+    this->stateLocked = stateLocked;
+}
+
+bool ofxLayoutElement::isStateLocked(){
+    return this->stateLocked;
 }
