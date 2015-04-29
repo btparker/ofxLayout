@@ -88,7 +88,7 @@ ofxOssRule* ofxOSS::getStyle(string key){
 }
 
 ofxOssRule* ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
-    return this->rules[styleKey];
+    return &rules[styleKey];
 }
 
 bool ofxOSS::validKey(string key){
@@ -918,27 +918,23 @@ void ofxOSS::generateRule(string key, string value){
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
-    this->rules[key] = new ofxOssRule();
-    this->rules[key]->setType(getOssTypeFromOssKey(key));
-    this->rules[key]->setValue(value);
+    this->rules[key].setType(getOssTypeFromOssKey(key));
+    this->rules[key].setValue(value);
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
-    this->rules[key] = new ofxOssRule();
-    this->rules[key]->setType(getOssTypeFromOssKey(key));
-    this->rules[key]->setOssValue(value);
+    this->rules[key].setType(getOssTypeFromOssKey(key));
+    this->rules[key].setOssValue(value);
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, float value){
-    this->rules[key] = new ofxOssRule();
-    this->rules[key]->setType(getOssTypeFromOssKey(key));
-    this->rules[key]->setFloat(value);
+    this->rules[key].setType(getOssTypeFromOssKey(key));
+    this->rules[key].setFloat(value);
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, ofColor value){
-    this->rules[key] = new ofxOssRule();
-    this->rules[key]->setType(getOssTypeFromOssKey(key));
-    this->rules[key]->setColor(value);
+    this->rules[key].setType(getOssTypeFromOssKey(key));
+    this->rules[key].setColor(value);
 }
 
 void ofxOSS::parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical){

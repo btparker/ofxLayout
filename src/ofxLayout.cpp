@@ -30,8 +30,6 @@ void ofxLayout::init(int x, int y, int w, int h){
     
     
     assets.addBatch(IMAGES_BATCH);
-    
-    mFboBlur = NULL;
 }
 
 void ofxLayout::enableMouseEvents(){
@@ -119,7 +117,6 @@ ofMatrix4x4 ofxLayout::getMouseTransformation(){
 
 ofxLayout::~ofxLayout(){
     disableMouseEvents();
-    delete mFboBlur;
     unload();
 }
 
@@ -129,11 +126,10 @@ void ofxLayout::allocateBlurFbo(int w, int h){
     s.height = h;
     s.internalformat = GL_RGB;
     s.maxFilter = GL_LINEAR;
-    mFboBlur = new ofxMultiFboBlur();
-    mFboBlur->setup(s, 5, 15.0);
-    mFboBlur->setBlurOffset(20);
-    mFboBlur->setBlurPasses(4);
-    mFboBlur->setNumBlurOverlays(1);
+    mFboBlur.setup(s, 5, 15.0);
+    mFboBlur.setBlurOffset(20);
+    mFboBlur.setBlurPasses(4);
+    mFboBlur.setNumBlurOverlays(1);
 }
 
 /// |   Cycle Functions  | ///
@@ -144,19 +140,8 @@ void ofxLayout::update(){
     width = ofGetViewportWidth();
     height = ofGetViewportHeight();
     assets.update();
-//    animatableManager.update( 1.0f/ofGetTargetFrameRate() );
     contextTreeRoot.update();
-    am.update(1.0f/ofGetTargetFrameRate() );
-    if(
-       (!mFboBlur && width > 0) ||
-    (mFboBlur && mFboBlur->isAllocated() && (
-       mFboBlur->getWidth() != width ||
-       mFboBlur->getHeight() != height
-    ))
-    ){
-        allocateBlurFbo(contextTreeRoot.getWidth(),contextTreeRoot.getHeight());
-        
-    }
+    am.update(1.0f/ofGetTargetFrameRate());
 }
 
 void ofxLayout::draw(){
@@ -166,6 +151,7 @@ void ofxLayout::draw(){
 }
 
 void ofxLayout::unload(){
+    fonts.clear();
     assets.getBatch(IMAGES_BATCH)->clear();
 }
 
@@ -265,6 +251,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     if(ossParsingSuccessful){
         loadFromOss(&ossStylesheet, &styleRulesRoot);
         applyChanges();
+        allocateBlurFbo(width, height);
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse OSS file "+ossFilename+".");

@@ -92,7 +92,7 @@ public:
     void loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element);
     int width, height;
     ofxAnimatableManager am;
-    ofxMultiFboBlur* mFboBlur;
+    ofxMultiFboBlur mFboBlur;
     ofxLayoutElement* hittest(ofPoint pt);
     void setMouseTransformation(ofMatrix4x4 mouseTransformation);
     ofMatrix4x4 getMouseTransformation();

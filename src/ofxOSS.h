@@ -193,7 +193,7 @@ public:
     
     ofxOSS* parent = NULL;
     
-    map<OSS_KEY::ENUM, ofxOssRule*> rules;
+    map<OSS_KEY::ENUM, ofxOssRule> rules;
     
     map<string,ofxOSS> idMap;
     map<string,ofxOSS> classMap;

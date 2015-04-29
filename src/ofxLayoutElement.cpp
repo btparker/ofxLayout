@@ -411,24 +411,24 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
         
-        bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->mFboBlur->isAllocated();
+        bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->mFboBlur.isAllocated();
         if(isBlurring){
-            layout->mFboBlur->setBlurOffset(getFloatStyle(OSS_KEY::BLUR));
-            layout->mFboBlur->beginDrawScene();
+            layout->mFboBlur.setBlurOffset(getFloatStyle(OSS_KEY::BLUR));
+            layout->mFboBlur.beginDrawScene();
             ofClear(0.0f, 0.0f, 0.0f, 0.0f);
         }
         
         drawContent();
         
         if(isBlurring){
-            layout->mFboBlur->endDrawScene();
+            layout->mFboBlur.endDrawScene();
             glPushAttrib(GL_BLEND);
             glDisable(GL_BLEND);
-            layout->mFboBlur->performBlur();
+            layout->mFboBlur.performBlur();
             ofSetColor(ofColor::white);
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            layout->mFboBlur->drawBlurFbo();
+            layout->mFboBlur.drawBlurFbo();
             glPopAttrib();
         }
         
@@ -572,7 +572,7 @@ bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
 }
 
 ofxOssRule* ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules[styleKey];
+    return &styles.rules[styleKey];
 }
 
 string ofxLayoutElement::getStringStyle(OSS_KEY::ENUM styleKey){
@@ -1098,7 +1098,7 @@ void ofxLayoutElement::drawBackgroundColor(){
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
-        this->styles.generateRule(iterator->first, iterator->second->asString());
+        this->styles.generateRule(iterator->first, iterator->second.asString());
     }
 }
 
