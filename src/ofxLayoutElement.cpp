@@ -389,7 +389,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             ofPushMatrix();
             float scale = getFloatStyle(OSS_KEY::SCALE);
             ofTranslate((1-scale)*dimensions.width/2, (1-scale)*dimensions.height/2);
-            ofScale(scale,scale);
+            ofScale(scale,scale, 1.0);
         }
         if(hasStyle(OSS_KEY::BORDER_WIDTH)){
             setBorders(getFloatStyle(OSS_KEY::BORDER_WIDTH));
@@ -403,6 +403,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             ofRectangle glScissorRect = getGlobalClippingRegion();
             ofRectangle viewport = layout->getBody()->getGlobalClippingRegion();
             glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
+//            ofBackground(255, 0, 0);
         }
         
         
@@ -698,7 +699,7 @@ void ofxLayoutElement::beginBackgroundSize(){
     float xTrans = (getWidth()-bgWidth*scale)/2;
     float yTrans = (getHeight()-bgHeight*scale)/2;
     ofTranslate(xTrans, yTrans);
-    ofScale(scale, scale);
+    ofScale(scale, scale, 1.0);
 
 }
 
@@ -1246,6 +1247,7 @@ ofRectangle ofxLayoutElement::getGlobalClippingRegion(){
     if(hasParent()){
         globalClippingRegion.translate(parent->getGlobalPosition());
         globalClippingRegion.translate(getPosition());
+        globalClippingRegion = parent->getGlobalClippingRegion().getIntersection(globalClippingRegion);
     }
     return globalClippingRegion;
 }

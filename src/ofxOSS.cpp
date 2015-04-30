@@ -44,7 +44,7 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::COLOR, ofColor::black);
     
-    generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::VISIBLE);
+    generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::HIDDEN);
     
     generateRule(OSS_KEY::BORDER_WIDTH, 0);
     

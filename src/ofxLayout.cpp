@@ -139,9 +139,10 @@ void ofxLayout::update(){
 //    cout << ofGetFrameRate() << endl;
     width = ofGetViewportWidth();
     height = ofGetViewportHeight();
+    
+    am.update(1.0f/60.0f);
     assets.update();
     contextTreeRoot.update();
-    am.update(1.0f/ofGetTargetFrameRate());
 }
 
 void ofxLayout::draw(){
