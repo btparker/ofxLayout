@@ -182,6 +182,9 @@ public:
     ofxLayout* getLayout();
     void lockState(bool stateLocked);
     bool isStateLocked();
+    
+    void beginOverlay();
+    void endOverlay();
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -215,4 +218,5 @@ protected:
     FontData fontData;
     ofRectangle scissorStack;
     bool stateLocked;
+    ofFbo overlayFbo;
 };

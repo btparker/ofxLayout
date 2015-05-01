@@ -421,6 +421,13 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         
         drawContent();
         
+        if(overlayFbo.isAllocated()){
+            ofPushStyle();
+            ofSetColor(255);
+            overlayFbo.draw(0,0);
+            ofPopStyle();
+        }
+        
         if(isBlurring){
             layout->mFboBlur.endDrawScene();
             glPushAttrib(GL_BLEND);
@@ -456,7 +463,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
 }
 
 void ofxLayoutElement::drawContent(){
-    ofSetColor(255*opacity);
+    ofSetColor(min(255,int(255*opacity)));
     drawBorder();
     drawBackground();
     drawShape();
@@ -948,6 +955,18 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
     }
     
     return blendModeActive;
+}
+
+void ofxLayoutElement::beginOverlay(){
+    if(!overlayFbo.isAllocated() || overlayFbo.getWidth() != (int)getWidth() || overlayFbo.getHeight() != (int)getHeight()){
+        overlayFbo.allocate(getWidth(), getHeight(), GL_RGBA);
+    }
+    overlayFbo.begin();
+    ofClear(0, 0, 0, 0);
+}
+
+void ofxLayoutElement::endOverlay(){
+    overlayFbo.end();
 }
 
 void ofxLayoutElement::endBackgroundBlendMode(){
