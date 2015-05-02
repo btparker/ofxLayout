@@ -190,9 +190,12 @@ void ofxLayout::loadFromTemplate(string templateFolder, ofxJSONElement data){
 }
 
 void ofxLayout::loadAnimationsFromFile(string animationsFilename){
-    am.setData(data);
-    am.load(animationsFilename);
-    applyAnimations();
+    ofxJSONElement animationData;
+    if(animationData.open(animationsFilename)){
+        populateJSON(&animationData);
+        am.load(animationData);
+        applyAnimations();
+    }
     contextTreeRoot.setState("default",true, true);
 }
 
