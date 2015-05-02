@@ -828,51 +828,6 @@ void ofxLayoutElement::drawText(){
                     y = dimensions.height-fontData.fontHeight*1.05f;
                 }
             }
-            
-//            drawBox.x = x;
-//            drawBox.y = y;
-            
-//            if(hasStyle(OSS_KEY::TEXT_PADDING)){
-//                float paddingTop, paddingRight, paddingBottom, paddingLeft = 0.0f;
-//                vector<string> paddings = ofSplitString(getStringStyle(OSS_KEY::TEXT_PADDING), " ");
-//                if(paddings.size() == 1){
-//                    float padding = ofToFloat(paddings[0]);
-//                    paddingTop = padding;
-//                    paddingRight = padding;
-//                    paddingBottom = padding;
-//                    paddingLeft = padding;
-//                }
-//                else if(paddings.size() == 2){
-//                    float paddingV = ofToFloat(paddings[0]);
-//                    float paddingH = ofToFloat(paddings[1]);
-//                    paddingTop = paddingV;
-//                    paddingRight = paddingH;
-//                    paddingBottom = paddingV;
-//                    paddingLeft = paddingH;
-//                }
-//                
-//                else if(paddings.size() == 4){
-//                    paddingTop = ofToFloat(paddings[0]);
-//                    paddingRight = ofToFloat(paddings[1]);
-//                    paddingBottom = ofToFloat(paddings[2]);
-//                    paddingLeft = ofToFloat(paddings[3]);
-//                }
-//                
-//                x += paddingLeft;
-//                
-//                drawBox.width += paddingLeft+paddingRight;
-//                drawBox.height += paddingTop+paddingBottom;
-//                
-//            }
-            
-            
-            
-//            ofFill();
-//            if(hasStyle(OSS_KEY::TEXT_BACKGROUND_COLOR)){
-//                ofSetColor(getColorStyle(OSS_KEY::TEXT_BACKGROUND_COLOR));
-//                ofDrawRectangle(drawBox);
-//            }
-            
             ofFill();
             if(hasStyle(OSS_KEY::COLOR)){
                 string colorStr = getStringStyle(OSS_KEY::COLOR);
