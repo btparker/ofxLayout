@@ -228,6 +228,7 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
     ofxXmlSettings xmlLayout;
     bool ofmlParsingSuccessful = xmlLayout.loadFile(ofmlFilename);
     if(ofmlParsingSuccessful){
+        populateXML(&xmlLayout);
         loadFromXmlLayout(&xmlLayout, &contextTreeRoot, TAG::BODY);
     }
     else{
@@ -250,6 +251,7 @@ void ofxLayout::loadOssFromFile(string ossFilename){
     ofxJSONElement ossStylesheet;
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
+        populateJSON(&ossStylesheet);
         loadFromOss(&ossStylesheet, &styleRulesRoot);
         applyChanges();
         allocateBlurFbo(width, height);
@@ -264,14 +266,12 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     string tag = ofxLayoutElement::getTagString(tagEnum);
     
     string id = xmlLayout->getAttribute(tag,"id", "", which);
-    id = populateExpressions(id);
     element->setID(id);
     if(id != ""){
         idElementMap[id] = element;
     }
     
     string classes = xmlLayout->getAttribute(tag,"class", "", which);
-    classes = populateExpressions(classes);
     element->setClasses(classes);
     for(string classname : ofSplitString(classes, " ",true,true)){
         set<ofxLayoutElement*> cmap = classElementMap[classname];
@@ -284,11 +284,9 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     }
     
     string style = xmlLayout->getAttribute(tag,"style", "", which);
-    style = populateExpressions(style);
     element->setInlineStyle(style);
     
     string value = xmlLayout->getValue(tag,"", which);
-    value = populateExpressions(value);
     element->setValue(value);
     
     
@@ -304,7 +302,6 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
     }
     
     string file = xmlLayout->getAttribute(tag,"file", "", which);
-    file = populateExpressions(file);
     
     if(file != ""){
         ofxXmlSettings fileLayout;
@@ -413,7 +410,6 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
         }
         else if(ofxOSS::validKey(key)){
             string value = (*jsonElement)[key].asString();
-            value = populateExpressions(value);
             styleObject->generateRule(key, value);
         }
         else{
@@ -505,19 +501,18 @@ set<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
     }
 }
 
-string ofxLayout::populateExpressions(string input){
-    string value = input;
+void ofxLayout::populateExpressions(string& value){
     while(ofStringTimesInString(value, "{{") > 0){
         string leftDeliminator = "{{";
         string rightDeliminator = "}}";
         
-        int leftDeliminatorPos = input.find(leftDeliminator);
-        int rightDeliminatorPos = input.find(rightDeliminator);
+        int leftDeliminatorPos = value.find(leftDeliminator);
+        int rightDeliminatorPos = value.find(rightDeliminator);
         
         int dataKeyPos = leftDeliminatorPos+leftDeliminator.length();
         int dataKeyLength = rightDeliminatorPos-dataKeyPos;
 
-        string dataKey = input.substr(dataKeyPos, dataKeyLength);
+        string dataKey = value.substr(dataKeyPos, dataKeyLength);
         
         if(data.count(dataKey) > 0){
             ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, data[dataKey]);
@@ -527,7 +522,21 @@ string ofxLayout::populateExpressions(string input){
             ofStringReplace(value, leftDeliminator+dataKey+rightDeliminator, "");
         }
     }
-    return value;
+}
+
+void ofxLayout::populateXML(ofxXmlSettings* xml){
+    string xmlStr;
+    xml->copyXmlToString(xmlStr);
+    populateExpressions(xmlStr);
+    xml->clear();
+    xml->loadFromBuffer(xmlStr);
+}
+
+void ofxLayout::populateJSON(ofxJSONElement* json){
+    string jsonStr = json->toStyledString();
+    populateExpressions(jsonStr);
+    json->clear();
+    json->parse(jsonStr);
 }
 
 ofxLayoutElement* ofxLayout::getBody(){

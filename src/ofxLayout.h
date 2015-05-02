@@ -68,7 +68,7 @@ public:
     map<string, ofxLayoutElement*> idElementMap;
     map<string, set<ofxLayoutElement*> > classElementMap;
     
-    string populateExpressions(string value);
+    void populateExpressions(string& value);
 
 //    ofxAnimatableManager animatableManager;
     
@@ -98,6 +98,9 @@ public:
     ofMatrix4x4 getMouseTransformation();
     void enableMouseEvents();
     void disableMouseEvents();
+    
+    void populateXML(ofxXmlSettings* xml);
+    void populateJSON(ofxJSONElement* json);
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
