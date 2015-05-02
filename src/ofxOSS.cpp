@@ -794,125 +794,6 @@ ofColor ofxOSS::parseColorChannels(string colorChannels){
     return color;
 }
 
-/// |   Transformation Styles   | ///
-/// | ------------------------- | ///
-ofRectangle ofxOSS::computeElementTransform(ofRectangle parentBoundary){
-    ofRectangle transform = ofRectangle();
-    float width = getDimensionStyleValue(getStyle(OSS_KEY::WIDTH)->asString(), parentBoundary.width);
-    transform.width = width;
-    float height = getDimensionStyleValue(getStyle(OSS_KEY::HEIGHT)->asString(), parentBoundary.height);
-    transform.height = height;
-    ofPoint pos = getPosition(transform, parentBoundary);
-    transform.setPosition(pos);
-    return transform;
-}
-
-float ofxOSS::getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension){
-    string dimensionValue = getStyle(dimensionKey)->asString();
-    return getDimensionStyleValue(dimensionValue, parentDimension);
-}
-
-float ofxOSS::getDimensionStyleValue(string dimensionValue, float parentDimension){
-    // If dimension not found, return parent's
-    if(dimensionValue == ""){
-        return parentDimension;
-    }
-    
-    if(ofIsStringInString(dimensionValue,"%")){
-        float percent = (ofToFloat(ofSplitString(dimensionValue,"%")[0])/100.0);
-        return percent*parentDimension;
-    }
-    else if(ofIsStringInString(dimensionValue,"px")){
-        return ofToFloat(ofSplitString(dimensionValue,"px")[0]);
-    }
-    else{
-        return ofToFloat(dimensionValue);
-    }
-}
-
-ofPoint ofxOSS::getPosition(ofRectangle boundary, ofRectangle parentBoundary){
-    string posString;
-    if(getStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->asString() != ""){
-        posString = getStyle(OSS_KEY::POSITION)->asString();
-    }
-    else{
-        posString = getStyle(OSS_KEY::LEFT)->asString()+" "+getStyle(OSS_KEY::TOP)->asString();
-    }
-    
-    return computePosition(posString,boundary, parentBoundary);
-}
-
-
-ofPoint ofxOSS::getBackgroundPosition(ofRectangle boundary, ofRectangle parentBoundary){
-    string posString = getStyle(OSS_KEY::BACKGROUND_POSITION)->asString();
-    return computePosition(posString,boundary, parentBoundary);
-}
-
-ofPoint ofxOSS::computePosition(string posString, ofRectangle boundary, ofRectangle parentBoundary){
-    if(posString.length() > 0){
-        ofPoint posPt;
-        vector<string> posPieces = ofSplitString(posString, " ");
-        string xStr, yStr;
-        float x,y;
-        if(posPieces.size() == 2){
-            xStr = posPieces[0];
-            yStr = posPieces[1];
-        }
-        else{
-            xStr = yStr = posPieces[0];
-        }
-        
-        x = computeLeftPosition(xStr, boundary, parentBoundary);
-        y = computeTopPosition(yStr, boundary, parentBoundary);
-        
-        return ofPoint(x,y);
-    }
-    else{
-        return ofPoint();
-    }
-}
-
-/// |   Private Functions   | ///
-/// | --------------------- | ///
-
-float ofxOSS::computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary){
-    float x;
-    if(xStr == "center"){
-        x = (parentBoundary.width/2.0)-(boundary.width/2.0);
-    }
-    else if(ofIsStringInString(xStr,"%")){
-        float percent = (ofToFloat(ofSplitString(xStr,"%")[0])/100.0);
-        x = percent*parentBoundary.width;
-    }
-    else if(ofIsStringInString(xStr,"px")){
-        x = ofToFloat(ofSplitString(xStr,"px")[0]);
-    }
-    else{
-        x = ofToFloat(xStr);
-    }
-    return x+parentBoundary.x;
-}
-
-float ofxOSS::computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary){
-    float y;
-    
-    if(yStr == "center"){
-        y = (parentBoundary.height/2.0)-(boundary.height/2.0);
-    }
-    else if(ofIsStringInString(yStr,"%")){
-        float percent = (ofToFloat(ofSplitString(yStr,"%")[0])/100.0);
-        y = percent*parentBoundary.height;
-    }
-    else if(ofIsStringInString(yStr,"px")){
-        y = ofToFloat(ofSplitString(yStr,"px")[0]);
-    }
-    else{
-        y = ofToFloat(yStr);
-    }
-    
-    return y+parentBoundary.y;
-}
-
 void ofxOSS::generateRule(string key, string value){
     return generateRule(getOssKeyFromString(key), value);
 }
@@ -935,13 +816,6 @@ void ofxOSS::generateRule(OSS_KEY::ENUM key, float value){
 void ofxOSS::generateRule(OSS_KEY::ENUM key, ofColor value){
     this->rules[key].setType(getOssTypeFromOssKey(key));
     this->rules[key].setColor(value);
-}
-
-void ofxOSS::parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical){
-    vector<string> pieces = ofSplitString(bgGradientStr, " ", true, true);
-    firstColor->set(parseColor(pieces[0]));
-    secondColor->set(parseColor(pieces[1]));
-    *vertical = !(pieces.size() > 2 && pieces[2] == "horizontal");
 }
 
 string ofxOSS::stringifyColor(ofColor color){

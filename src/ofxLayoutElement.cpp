@@ -7,7 +7,7 @@ ofxLayoutElement::ofxLayoutElement(){
 //    stateTransitioning = false;
     opacity = 1.0;
     shape = NULL;
-    svg = NULL;
+    isSVG = false;
     parent = NULL;
     video = NULL;
     position = ofPoint(0,0);
@@ -22,10 +22,6 @@ ofxLayoutElement::~ofxLayoutElement(){
     if(shape){
         shape->clear();
         delete shape;
-    }
-    
-    if(svg){
-        delete svg;
     }
     
     if(video != NULL){
@@ -163,8 +159,8 @@ void ofxLayoutElement::update(){
         if(getBackgroundImageTexture()){
             dimensions.width = max(getBackgroundImageTexture()->getWidth(), minWidth);
         }
-        else if(svg){
-            dimensions.width = max(svg->getWidth(), minWidth);
+        else if(isSVG){
+            dimensions.width = max(svg.getWidth(), minWidth);
         }
     }
     
@@ -172,8 +168,8 @@ void ofxLayoutElement::update(){
         if(getBackgroundImageTexture()){
             dimensions.height = getBackgroundImageTexture()->getHeight();
         }
-        else if(svg){
-            dimensions.height = svg->getHeight();
+        else if(isSVG){
+            dimensions.height = svg.getHeight();
         }
     }
     
@@ -682,9 +678,9 @@ void ofxLayoutElement::beginBackgroundSize(){
         bgWidth = getBackgroundImageTexture()->getWidth();
         bgHeight = getBackgroundImageTexture()->getHeight();
     }
-    else if(svg){
-        bgWidth = svg->getWidth();
-        bgHeight = svg->getHeight();
+    else if(isSVG){
+        bgWidth = svg.getWidth();
+        bgHeight = svg.getHeight();
     }
     
     float wRatio = bgWidth/getWidth();
@@ -982,8 +978,8 @@ void ofxLayoutElement::drawBackgroundImage(){
         string imageFilename = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
         ofFile file(ofToDataPath(imageFilename));
         string bgImgExt = ofToLower(file.getExtension());
-        if(bgImgExt == "svg" && svg){
-            svg->draw(opacity);
+        if(bgImgExt == "svg" && isSVG){
+            svg.draw(opacity);
         }
         else{
             drawBackgroundTexture(getBackgroundImageTexture());
@@ -1335,8 +1331,8 @@ bool ofxLayoutElement::hasState(string state){
 }
 
 void ofxLayoutElement::loadSvg(string imageFilename){
-    svg = new ofxSVG();
-    svg->load(imageFilename);
+    isSVG = true;
+    svg.load(imageFilename);
     getStyle(OSS_KEY::BACKGROUND_IMAGE)->setValue(imageFilename);
 }
 

@@ -208,7 +208,8 @@ protected:
     
     ofVideoPlayer* video;
     ofPath* shape;
-    ofxSVG* svg;
+    ofxSVG svg;
+    bool isSVG;
     map<string, vector<ofxAnimationInstance*> > states;
     
     ofPoint mouseMovedPt;

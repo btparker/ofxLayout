@@ -146,35 +146,6 @@ public:
     static ofColor parseColor(string colorValue);
     static string stringifyColor(ofColor color);
     
-    
-    
-    static void parseBackgroundGradient(string bgGradientStr, ofColor* firstColor, ofColor* secondColor, bool* vertical);
-    
-    
-    
-    /// |   Transformation Styles   | ///
-    /// | ------------------------- | ///
-    
-    
-    /// \brief Based on the parent dimension and current display modes, returns the absolute value
-    /// for the dimension given.
-    ///
-    /// Accepts percent ( '100%' ), and absolute values ( '50px', '50')
-    ///
-    /// \param parentDimension Bounding box width, height, etc of the parent
-    float getDimensionStyleValue(string dimensionValue, float parentDimension);
-    float getDimensionStyleValue(OSS_KEY::ENUM dimensionKey, float parentDimension);
-    
-    /// \brief Based on the boundary and current display modes, returns the absolute value
-    /// for the [x,y] position given.
-    ///
-    /// \param ofRectangle boundary
-    ofPoint getPosition(ofRectangle boundary, ofRectangle parentBoundary);
-    ofPoint getBackgroundPosition(ofRectangle boundary, ofRectangle parentBoundary);
-    
-    ofPoint computePosition(string posString, ofRectangle boundary, ofRectangle parentBoundary);
-    
-    
     /// \brief Based on the background position style, (update) image dimensions, and the element boundary, returns the computed background transform of the image
     ///
     /// \param ofRectangle imageDimensions
@@ -186,9 +157,6 @@ public:
     void generateRule(OSS_KEY::ENUM key, float value);
     void generateRule(OSS_KEY::ENUM key, ofColor value);
     void generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
-    
-    ofRectangle computeElementTransform(ofRectangle parentBoundary);
-    
     //    bool isBackgroundSizeDynamic();
     
     ofxOSS* parent = NULL;
@@ -207,21 +175,6 @@ private:
     ///
     /// \param colorChannels The string of color channels ( '255, 0, 0' )
     static ofColor parseColorChannels(string colorChannels);
-    
-    /// \brief Calculates the x position (from the left) given a style string and relevant boundary information
-    ///
-    /// \param string xStr Describes the x position ('center', 50px, 25%)
-    /// \param ofRectangle boundary The boundary of the element which the style is to be applied to
-    /// \param ofRectangle parentBoundary The boundary of the parent element of the element which the style is to be applied
-    float computeLeftPosition(string xStr, ofRectangle boundary, ofRectangle parentBoundary);
-    
-    /// \brief Calculates the y position (from the top) given a style string and relevant boundary information
-    ///
-    /// \param string yStr Describes the y position ('center', 50px, 25%)
-    /// \param ofRectangle boundary The boundary of the element which the style is to be applied to
-    /// \param ofRectangle parentBoundary The boundary of the parent element of the element which the style is to be applied
-    float computeTopPosition(string yStr, ofRectangle boundary, ofRectangle parentBoundary);
-    
     map<string,ofxFontStash*> fonts;
 };
 
