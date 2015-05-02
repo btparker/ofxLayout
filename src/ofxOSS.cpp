@@ -1,7 +1,6 @@
 #include "ofxOSS.h"
 
 ofxOSS::ofxOSS(){
-    
 }
 
 void ofxOSS::setDefaults(){
@@ -36,17 +35,24 @@ void ofxOSS::setDefaults(){
     
     generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
     
-    generateRule(OSS_KEY::OPACITY, "1.0f");
+    generateRule(OSS_KEY::OPACITY, "1.0");
+    
+    generateRule(OSS_KEY::LINE_HEIGHT, "1.0");
+
+//    generateRule(OSS_KEY::SCALE, "1.0");
     
     generateRule(OSS_KEY::POSITION, OSS_VALUE::STATIC);
     
     generateRule(OSS_KEY::TEXT_TRANSFORM, OSS_VALUE::NONE);
     
     generateRule(OSS_KEY::COLOR, ofColor::black);
+    generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
     
     generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::VISIBLE);
     
     generateRule(OSS_KEY::BORDER_WIDTH, 0);
+    
+    generateRule(OSS_KEY::BLUR, 0);
     
     generateRule(OSS_KEY::BORDER_COLOR, ofColor::black);
     

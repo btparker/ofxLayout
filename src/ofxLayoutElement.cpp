@@ -111,30 +111,24 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(){
-//    if(getID() == ")
     globalTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
         setPosition(layout->getPosition());
         setDimensions(layout->getWidth(),layout->getHeight());
-        
-        if(hasStyle(OSS_KEY::WIDTH)){
-            this->getStyle(OSS_KEY::WIDTH)->setValue("100%");
-            this->getStyle(OSS_KEY::HEIGHT)->setValue("100%");
-        }
+        this->getStyle(OSS_KEY::WIDTH)->setValue("100%");
+        this->getStyle(OSS_KEY::HEIGHT)->setValue("100%");
     }
     
     // *** COMPUTE WIDTH *** //
-    if(hasStyle(OSS_KEY::WIDTH)){
-        // Percent width
-        if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
-            float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
-            dimensions.width = percentWidth * parent->getBoundary().getWidth();
-        }
-        // Fixed size (px)
-        else if (getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::NUMBER){
-            dimensions.width = getStyle(OSS_KEY::WIDTH)->asFloat();
-        }
+    // Percent width
+    if(hasParent() && getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::PERCENT){
+        float percentWidth = getStyle(OSS_KEY::WIDTH)->asFloat()/100.0f;
+        dimensions.width = percentWidth * parent->getBoundary().getWidth();
+    }
+    // Fixed size (px)
+    else if (getStyle(OSS_KEY::WIDTH)->getType() == OSS_TYPE::NUMBER){
+        dimensions.width = getStyle(OSS_KEY::WIDTH)->asFloat();
     }
     
     // *** COMPUTING CHILDREN *** //
@@ -146,8 +140,8 @@ void ofxLayoutElement::update(){
     float relY = 0;
     float childRowHeight = 0;
     
-    bool isWidthAuto = hasStyle(OSS_KEY::WIDTH) && getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
-    bool isHeightAuto = hasStyle(OSS_KEY::HEIGHT) && getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO;
+    bool isWidthAuto = getStyle(OSS_KEY::WIDTH)->asOssValue() == OSS_VALUE::AUTO;
+    bool isHeightAuto = getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO;
 
     float minWidth = 0;
     if(hasStyle(OSS_KEY::MIN_WIDTH)){
@@ -237,24 +231,22 @@ void ofxLayoutElement::update(){
     
     
     // *** COMPUTE HEIGHT *** //
-    if(hasStyle(OSS_KEY::HEIGHT)){
-        if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO){
-            if(hasStyle(OSS_KEY::FONT_FAMILY)){
-                dimensions.height = fontData.drawBox.getHeight();
-            }
-            else if(!children.empty()){
-                dimensions.height = childrenHeight;
-            }
+    if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO){
+        if(hasStyle(OSS_KEY::FONT_FAMILY)){
+            dimensions.height = fontData.drawBox.getHeight();
+        }
+        else if(!children.empty()){
+            dimensions.height = childrenHeight;
+        }
 
-        }
-        else if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
-            float percentHeight = getStyle(OSS_KEY::HEIGHT)->asFloat()/100.0f;
-            dimensions.height = percentHeight * parent->getBoundary().getHeight();
-        }
-        // Fixed size (px)
-        else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
-            dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
-        }
+    }
+    else if(hasParent() && getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::PERCENT){
+        float percentHeight = getStyle(OSS_KEY::HEIGHT)->asFloat()/100.0f;
+        dimensions.height = percentHeight * parent->getBoundary().getHeight();
+    }
+    // Fixed size (px)
+    else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
+        dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
     }
     // Positioning
     for(int i = 0 ; i < children.size(); i++){
@@ -265,7 +257,7 @@ void ofxLayoutElement::update(){
         
         // If positioning type is fixed, need to compute offset to the viewport, not parent element
         ofRectangle containingDimensions;
-        if(hasStyle(OSS_KEY::POSITION) && getStyle(OSS_KEY::POSITION)->asOssValue() == OSS_VALUE::FIXED){
+        if(getStyle(OSS_KEY::POSITION)->asOssValue() == OSS_VALUE::FIXED){
             containingDimensions.setPosition(layout->getPosition());
             containingDimensions = layout->getBody()->getDimensions();
         }
@@ -274,48 +266,42 @@ void ofxLayoutElement::update(){
         }
         
         
-        if(children[i]->hasStyle(OSS_KEY::TOP)){
-            if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
-                float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
-                offset.y = percentTop * containingDimensions.getHeight();
-            }
-            // Fixed size (px)
-            else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
-                offset.y = children[i]->getStyle(OSS_KEY::TOP)->asFloat();
-            }
+        if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
+            float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
+            offset.y = percentTop * containingDimensions.getHeight();
         }
-        if(children[i]->hasStyle(OSS_KEY::BOTTOM)){
-            if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
-                // Inverse
-                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
-                offset.y = percentTop * containingDimensions.getHeight();
-            }
-            // Fixed size (px)
-            else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
-                offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
-            }
+        // Fixed size (px)
+        else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
+            offset.y = children[i]->getStyle(OSS_KEY::TOP)->asFloat();
+        }
+        
+        if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
+            // Inverse
+            float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
+            offset.y = percentTop * containingDimensions.getHeight();
+        }
+        // Fixed size (px)
+        else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
+            offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
+        }
+        
+        if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
+            float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
+            offset.x = percentLeft * containingDimensions.getWidth();
+        }
+        // Fixed size (px)
+        else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
+            offset.x = children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
         }
 
-        if(children[i]->hasStyle(OSS_KEY::LEFT)){
-            if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
-                float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
-                offset.x = percentLeft * containingDimensions.getWidth();
-            }
-            // Fixed size (px)
-            else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
-                offset.x = children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
-            }
+        if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
+            // Inverse
+            float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
+            offset.x = percentTop * containingDimensions.getWidth();
         }
-        if(children[i]->hasStyle(OSS_KEY::RIGHT)){
-            if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
-                // Inverse
-                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
-                offset.x = percentTop * containingDimensions.getWidth();
-            }
-            // Fixed size (px)
-            else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
-                offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
-            }
+        // Fixed size (px)
+        else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
+            offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
         }
         
         if(children[i]->getOssValueStyle(OSS_KEY::MARGIN_LEFT) == OSS_VALUE::AUTO){
@@ -324,36 +310,24 @@ void ofxLayoutElement::update(){
         
         ofPoint childPos = offset;
         
-        if(hasStyle(OSS_KEY::POSITION)){
-            switch(children[i]->getStyle(OSS_KEY::POSITION)->asOssValue()){
-                case OSS_VALUE::RELATIVE:
-                    childPos = relativePos+offset;
-                    break;
-                case OSS_VALUE::ABSOLUTE:
-                    childPos = offset;
-                    break;
-                case OSS_VALUE::FIXED:
-                    // Note that offset is computed differently for fixed
-                    childPos = offset - getGlobalPosition() + layout->getPosition();
-                    break;
-                case OSS_VALUE::STATIC:
-                default:
-                    childPos = relativePos+offset;
-            }
+        switch(children[i]->getStyle(OSS_KEY::POSITION)->asOssValue()){
+            case OSS_VALUE::RELATIVE:
+                childPos = relativePos+offset;
+                break;
+            case OSS_VALUE::ABSOLUTE:
+                childPos = offset;
+                break;
+            case OSS_VALUE::FIXED:
+                // Note that offset is computed differently for fixed
+                childPos = offset - getGlobalPosition() + layout->getPosition();
+                break;
+            case OSS_VALUE::STATIC:
+            default:
+                childPos = relativePos+offset;
         }
+    
         children[i]->setPosition(childPos);
     }
-    
-    // Setting child position
-    
-//    if((int)fbo.getWidth() != (int)dimensions.getWidth() || (int)fbo.getHeight() != (int)dimensions.getHeight()){
-//        cout << "CHANGES" << endl;
-//        fbo.allocate((int)dimensions.getWidth(),(int)dimensions.getHeight(), GL_RGBA);
-//        fbo.begin();
-//        ofClear(0,0,0,0);
-//        fbo.end();
-//    }
-//    globalTransformations = ofMatrix4x4::newIdentityMatrix();
 }
 
 void ofxLayoutElement::addChild(ofxLayoutElement* child){
@@ -795,15 +769,7 @@ void ofxLayoutElement::updateText(){
         
         // LINE HEIGHT
         {
-            float lineHeight;
-            if(hasStyle(OSS_KEY::LINE_HEIGHT)){
-                lineHeight = getFloatStyle(OSS_KEY::LINE_HEIGHT)/100.0f;
-            }
-            else{
-                lineHeight = 1.0f;
-            }
-            
-            layout->getFonts()->at(fontData.fontFilename).setLineHeight(lineHeight);
+            layout->getFonts()->at(fontData.fontFilename).setLineHeight(getFloatStyle(OSS_KEY::LINE_HEIGHT));
         }
         
         // AUTO WIDTH
