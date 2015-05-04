@@ -25,7 +25,7 @@ public:
     
     void update();
     void draw();
-    map<string, ofxFontStash>* getFonts();
+    map<string, ofxFontStash*>* getFonts();
     ofxLoaderSpool* getAssets();
     
     /// |   Utilities   | ///
@@ -58,7 +58,7 @@ public:
     void removeElement(ofxLayoutElement* element);
     
     ofxLoaderSpool assets;
-    map<string, ofxFontStash> fonts;
+    map<string, ofxFontStash*> fonts;
     map<string, string> data;
     
     void unload();

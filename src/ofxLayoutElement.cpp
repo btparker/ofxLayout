@@ -748,7 +748,7 @@ void ofxLayoutElement::updateText(){
             }
             
             if(fitText){
-                ofRectangle fontBBox = layout->getFonts()->at(fontData.fontFilename).getBBox(textToFit,fontSize,0,0);
+                ofRectangle fontBBox = layout->getFonts()->at(fontData.fontFilename)->getBBox(textToFit,fontSize,0,0);
                 fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
             }
             
@@ -764,12 +764,12 @@ void ofxLayoutElement::updateText(){
         
         // LETTER SPACING
         {
-            layout->getFonts()->at(fontData.fontFilename).setCharacterSpacing(getFloatStyle(OSS_KEY::LETTER_SPACING));
+            layout->getFonts()->at(fontData.fontFilename)->setCharacterSpacing(getFloatStyle(OSS_KEY::LETTER_SPACING));
         }
         
         // LINE HEIGHT
         {
-            layout->getFonts()->at(fontData.fontFilename).setLineHeight(getFloatStyle(OSS_KEY::LINE_HEIGHT));
+            layout->getFonts()->at(fontData.fontFilename)->setLineHeight(getFloatStyle(OSS_KEY::LINE_HEIGHT));
         }
         
         // AUTO WIDTH
@@ -793,7 +793,7 @@ void ofxLayoutElement::drawText(){
             
             int numLines;
             
-            fontData.fontHeight = layout->getFonts()->at(fontFilename).getBBox("A", fontSize, 0, 0).height;
+            fontData.fontHeight = layout->getFonts()->at(fontFilename)->getBBox("A", fontSize, 0, 0).height;
             float x = 0.0f;
             float y = 0.0f;
             
@@ -835,11 +835,11 @@ void ofxLayoutElement::drawText(){
                 fontColor.a *= opacity;
                 ofSetColor(fontColor);
             }
-            layout->getFonts()->at(fontFilename).setKerning(true);
+            layout->getFonts()->at(fontFilename)->setKerning(true);
             glPushAttrib(GL_BLEND);
             glEnable(GL_BLEND);
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            fontData.drawBox = layout->getFonts()->at(fontFilename).drawMultiLineColumn(fontData.text, fontData.fontSize, x, y+fontData.fontHeight, textMaxWidth,numLines, false, 0, true, ta);
+            fontData.drawBox = layout->getFonts()->at(fontFilename)->drawMultiLineColumn(fontData.text, fontData.fontSize, x, y+fontData.fontHeight, textMaxWidth,numLines, false, 0, true, ta);
             glPopAttrib();
         }
     }

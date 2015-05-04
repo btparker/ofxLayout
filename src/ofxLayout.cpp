@@ -27,8 +27,6 @@ void ofxLayout::init(int x, int y, int w, int h){
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     
-    
-    
     assets.addBatch(IMAGES_BATCH);
 }
 
@@ -46,7 +44,7 @@ void ofxLayout::disableMouseEvents(){
     ofRemoveListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
 }
 
-map<string, ofxFontStash>* ofxLayout::getFonts(){
+map<string, ofxFontStash*>* ofxLayout::getFonts(){
     return &fonts;
 }
 
@@ -152,6 +150,9 @@ void ofxLayout::draw(){
 }
 
 void ofxLayout::unload(){
+    for(pair<string,ofxFontStash*> fsPair : fonts){
+        delete fonts[fsPair.first];
+    }
     fonts.clear();
     assets.getBatch(IMAGES_BATCH)->clear();
 }
@@ -469,8 +470,8 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
         string fontFilename = element->getStringStyle(OSS_KEY::FONT_FAMILY);
         
         if(fonts.count(fontFilename) == 0){
-            fonts[fontFilename] = ofxFontStash();
-            fonts[fontFilename].setup(fontFilename,
+            fonts[fontFilename] = new ofxFontStash();
+            fonts[fontFilename]->setup(fontFilename,
                                       1.0,
                                       2048,
                                       true,
