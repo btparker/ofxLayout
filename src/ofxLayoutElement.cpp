@@ -354,7 +354,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
 
         updateGlobalTransformations();
         
-        ofTranslate(getGlobalPosition());
+        ofTranslate(getPosition());
         if(hasStyle(OSS_KEY::SCALE)){
             ofPushMatrix();
             float scale = getFloatStyle(OSS_KEY::SCALE);
@@ -411,11 +411,8 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             glPopAttrib();
         }
         
-        if(hasStyle(OSS_KEY::SCALE)){
-            ofPopMatrix();
-        }
         
-        ofPopMatrix();
+        
         ofPopStyle();
 
         for(int i = 0 ; i < children.size(); i++){
@@ -425,43 +422,12 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         
         
         if(overlayFbo.isAllocated()){
-            ofPushStyle();
-            ofPushMatrix();
-            
-            ofTranslate(getGlobalPosition());
-            if(hasStyle(OSS_KEY::SCALE)){
-                ofPushMatrix();
-                float scale = getFloatStyle(OSS_KEY::SCALE);
-                float bgTransX = getFloatStyle(OSS_KEY::ORIGIN_X);
-                float bgTransY = getFloatStyle(OSS_KEY::ORIGIN_Y);
-                ofTranslate((1-scale)*dimensions.width*bgTransX, (1-scale)*dimensions.height*bgTransY);
-                ofScale(scale,scale, 1.0);
-            }
-            
-            if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
-                glPushAttrib(GL_SCISSOR_BIT);
-                glEnable(GL_SCISSOR_TEST);
-                ofRectangle glScissorRect = getGlobalClippingRegion();
-                ofRectangle viewport = layout->getBody()->getGlobalClippingRegion();
-                glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
-            }
 
             ofPushStyle();
             ofSetColor(255*opacity);
             overlayFbo.draw(0,0);
             ofPopStyle();
             
-            if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW)== OSS_VALUE::HIDDEN){
-                glDisable(GL_SCISSOR_TEST);
-                glPopAttrib();
-            }
-            
-            if(hasStyle(OSS_KEY::SCALE)){
-                ofPopMatrix();
-            }
-            
-            ofPopMatrix();
-            ofPopStyle();
         }
         
         
@@ -470,6 +436,11 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             glDisable(GL_SCISSOR_TEST);
             glPopAttrib();
         }
+        
+        if(hasStyle(OSS_KEY::SCALE)){
+            ofPopMatrix();
+        }
+        ofPopMatrix();
     }
     if(fbo){
         fbo->end();
