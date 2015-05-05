@@ -588,7 +588,7 @@ void ofxLayout::applyAnimations(){
         if(isID){
             ofxLayoutElement* element = getElementById(selector);
             if(element && !element->hasState(state)){
-                element->addState(state, am.cloneAnimationInstance(it.second->getID()));
+                element->addState(state, it.second);
             }
         }
         else if(isClass){
