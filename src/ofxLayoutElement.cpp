@@ -358,7 +358,9 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         if(hasStyle(OSS_KEY::SCALE)){
             ofPushMatrix();
             float scale = getFloatStyle(OSS_KEY::SCALE);
-            ofTranslate((1-scale)*dimensions.width/2, (1-scale)*dimensions.height/2);
+            float bgTransX = getFloatStyle(OSS_KEY::ORIGIN_X);
+            float bgTransY = getFloatStyle(OSS_KEY::ORIGIN_Y);
+            ofTranslate((1-scale)*dimensions.width*bgTransX, (1-scale)*dimensions.height*bgTransY);
             ofScale(scale,scale, 1.0);
         }
         if(hasStyle(OSS_KEY::BORDER_WIDTH)){

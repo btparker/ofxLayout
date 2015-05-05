@@ -32,7 +32,8 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::LETTER_SPACING, 0);
     
     generateRule(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
-    
+    generateRule(OSS_KEY::ORIGIN_X, 0.5f);
+    generateRule(OSS_KEY::ORIGIN_Y, 0.5f);
     generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
     
     generateRule(OSS_KEY::OPACITY, "1.0");
@@ -118,6 +119,12 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     }
     else if(key == "background-size"){
         return OSS_KEY::BACKGROUND_SIZE;
+    }
+    else if(key == "origin-x"){
+        return OSS_KEY::ORIGIN_X;
+    }
+    else if(key == "origin-y"){
+        return OSS_KEY::ORIGIN_Y;
     }
     else if(key == "background-position"){
         return OSS_KEY::BACKGROUND_POSITION;
@@ -268,6 +275,12 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::BACKGROUND_SIZE:
             keyString = "background-size";
+            break;
+        case OSS_KEY::ORIGIN_X:
+            keyString = "origin-x";
+            break;
+        case OSS_KEY::ORIGIN_Y:
+            keyString = "origin-y";
             break;
         case OSS_KEY::BACKGROUND_POSITION:
             keyString = "background-position";
@@ -691,6 +704,8 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::FONT_SIZE:
         case OSS_KEY::FONT_SIZE_MIN:
         case OSS_KEY::FONT_SIZE_MAX:
+        case OSS_KEY::ORIGIN_X:
+        case OSS_KEY::ORIGIN_Y:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::LINE_HEIGHT:
