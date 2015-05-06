@@ -60,7 +60,7 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
     while(traverseStack.size()){
         ofxLayoutElement* element = traverseStack.top();
         traverseStack.pop();
-        for(int i = 0; i < element->children.size(); i++){
+        for(int i = element->children.size()-1; i >= 0; i--){
             ofxLayoutElement* child = element->children[i];
             if(child->visible() && child->hittest(pt)){
                 traverseStack.push(child);

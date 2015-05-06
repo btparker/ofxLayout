@@ -891,7 +891,13 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
 
 void ofxLayoutElement::beginOverlay(){
     if(!overlayFbo.isAllocated() || overlayFbo.getWidth() != (int)getWidth() || overlayFbo.getHeight() != (int)getHeight()){
-        overlayFbo.allocate(getWidth(), getHeight(), GL_RGBA);
+        
+        ofFbo::Settings fboS;
+        fboS.width = getWidth();
+        fboS.height = getHeight();
+        fboS.internalformat = GL_RGBA;
+        fboS.numSamples = 4;
+        overlayFbo.allocate(fboS);
     }
     overlayFbo.begin();
     ofClear(0, 0, 0, 0);
