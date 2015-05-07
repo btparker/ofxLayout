@@ -40,6 +40,7 @@ void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
 }
 
 void ofxLayoutElement::mouseReleased(ofMouseEventArgs &args){
+    mouseDraggedPt.set(ofPoint());
     mouseReleasedPt = getLocalPoint(args);
     string evtStr = "mouseReleased";
     ofNotifyEvent(mouseReleasedEvt, evtStr, this);
