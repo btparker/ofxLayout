@@ -1220,7 +1220,7 @@ void ofxLayoutElement::updateGlobalTransformations(){
     globalTransformations.translate(getPosition());
     
     if(hasStyle(OSS_KEY::SCALE)){
-        globalTransformations.scale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE),1.0);
+        //globalTransformations.scale(getFloatStyle(OSS_KEY::SCALE),getFloatStyle(OSS_KEY::SCALE),1.0);
     }
 }
 
