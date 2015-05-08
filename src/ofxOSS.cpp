@@ -156,6 +156,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "height"){
         return OSS_KEY::HEIGHT;
     }
+    else if(key == "max-height"){
+        return OSS_KEY::MAX_HEIGHT;
+    }
     else if(key == "scale"){
         return OSS_KEY::SCALE;
     }
@@ -311,6 +314,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::HEIGHT:
             keyString = "height";
+            break;
+        case OSS_KEY::MAX_HEIGHT:
+            keyString = "max-height";
             break;
         case OSS_KEY::TOP:
             keyString = "top";
@@ -671,6 +677,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::MAX_WIDTH:
+            type = OSS_TYPE::NUMBER;
+            break;
+        case OSS_KEY::MAX_HEIGHT:
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::HEIGHT:

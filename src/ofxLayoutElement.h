@@ -87,7 +87,10 @@ public:
     float getFloatStyle(OSS_KEY::ENUM styleKey);
     ofColor getColorStyle(OSS_KEY::ENUM styleKey);
     OSS_VALUE::ENUM getOssValueStyle(OSS_KEY::ENUM styleKey);
-
+    void setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);
+    void setStyle(OSS_KEY::ENUM key, string value);
+    void setStyle(OSS_KEY::ENUM key, float value);
+    void setStyle(OSS_KEY::ENUM key, ofColor value);
     string getInlineStyle();
     ofxOSS getInlineStyles();
     void setInlineStyle(string style);
@@ -185,6 +188,9 @@ public:
     
     void beginOverlay();
     void endOverlay();
+    
+    bool isSVG;
+    ofxSVG* getSvg();
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -202,14 +208,13 @@ protected:
     void endBackgroundSize();
     float opacity;
     
+    ofxSVG svg;
     string inlineStyle;
     
     MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
     ofPath* shape;
-    ofxSVG svg;
-    bool isSVG;
     map<string, vector<ofxAnimationInstance*> > states;
     
     ofPoint mouseMovedPt;

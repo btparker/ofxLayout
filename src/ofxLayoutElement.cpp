@@ -81,7 +81,30 @@ MOUSE_STATE::ENUM ofxLayoutElement::getMouseState(){
     return this->mouseState;
 }
 
+void ofxLayoutElement::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
+    styles.setStyle(key, value);
+}
 
+void ofxLayoutElement::setStyle(OSS_KEY::ENUM key, string value){
+    if(key == OSS_KEY::BACKGROUND_IMAGE){
+        string oldImage = getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
+        if(layout->getAssets()->getBatch("images")->hasTexture(oldImage) && value != oldImage){
+            layout->getAssets()->getBatch("images")->removeTexture(oldImage);
+        }
+    }
+    styles.setStyle(key, value);
+    if(key == OSS_KEY::BACKGROUND_IMAGE){
+        layout->updateAssets(this);
+    }
+}
+
+void ofxLayoutElement::setStyle(OSS_KEY::ENUM key, float value){
+    styles.setStyle(key, value);
+}
+
+void ofxLayoutElement::setStyle(OSS_KEY::ENUM key, ofColor value){
+    styles.setStyle(key, value);
+}
 
 void ofxLayoutElement::show(){
     if(!states["show"].empty()){
@@ -232,7 +255,7 @@ void ofxLayoutElement::update(){
     
     
     // *** COMPUTE HEIGHT *** //
-    if(getStyle(OSS_KEY::HEIGHT)->asOssValue() == OSS_VALUE::AUTO){
+    if(isHeightAuto){
         if(hasStyle(OSS_KEY::FONT_FAMILY)){
             dimensions.height = fontData.drawBox.getHeight();
         }
@@ -249,6 +272,11 @@ void ofxLayoutElement::update(){
     else if(getStyle(OSS_KEY::HEIGHT)->getType() == OSS_TYPE::NUMBER){
         dimensions.height = getStyle(OSS_KEY::HEIGHT)->asFloat();
     }
+    
+    if(hasStyle(OSS_KEY::MAX_HEIGHT)){
+        dimensions.height = min(dimensions.height, getFloatStyle(OSS_KEY::MAX_HEIGHT));
+    }
+    
     // Positioning
     for(int i = 0 ; i < children.size(); i++){
         ofPoint relativePos = children[i]->getPosition();
@@ -370,8 +398,6 @@ void ofxLayoutElement::draw(ofFbo* fbo){
 
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW) == OSS_VALUE::HIDDEN){
             glPushAttrib(GL_SCISSOR_BIT);
-            
-            
             glEnable(GL_SCISSOR_TEST);
             ofRectangle glScissorRect = getGlobalClippingRegion();
             ofRectangle viewport = layout->getBody()->getGlobalClippingRegion();
@@ -1205,6 +1231,7 @@ ofRectangle ofxLayoutElement::getGlobalClippingRegion(){
     if(hasParent()){
         globalClippingRegion.translate(parent->getGlobalPosition());
         globalClippingRegion.translate(getPosition());
+        
         globalClippingRegion = parent->getGlobalClippingRegion().getIntersection(globalClippingRegion);
     }
     return globalClippingRegion;
@@ -1306,4 +1333,8 @@ void ofxLayoutElement::lockState(bool stateLocked){
 
 bool ofxLayoutElement::isStateLocked(){
     return this->stateLocked;
+}
+
+ofxSVG* ofxLayoutElement::getSvg(){
+    return &svg;
 }

@@ -145,9 +145,7 @@ void ofxLayout::update(){
 }
 
 void ofxLayout::draw(){
-    if(ready()){
-        contextTreeRoot.draw();
-    }
+    contextTreeRoot.draw();
 }
 
 void ofxLayout::unload(){
@@ -246,7 +244,6 @@ void ofxLayout::loadOfmlFromFile(string ofmlFilename){
 
 void ofxLayout::applyChanges(){
     applyStyles();
-    assets.loadBatch(IMAGES_BATCH);
     if(x || y){
         getBody()->setPosition(ofPoint(x,y));
     }
@@ -425,12 +422,14 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     }
 }
 
-void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
+void ofxLayout::applyStyles(ofxLayoutElement* element){
+    ofxOSS* styleObject;
     if(element == NULL){
         element = &contextTreeRoot;
-    }
-    if(styleObject == NULL){
         styleObject = &styleRulesRoot;
+    }
+    else{
+        styleObject = &element->styles;
     }
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
@@ -447,46 +446,13 @@ void ofxLayout::applyStyles(ofxLayoutElement* element, ofxOSS* styleObject){
     ofxOSS inlineStyles = element->getInlineStyles();
     element->overrideStyles(&inlineStyles);
     
-    // Get assets
-    if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
-        string imageFilename = element->getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
-        ofxLoaderBatch* imagesBatch = assets.getBatch(IMAGES_BATCH);
-        if(ofStringTimesInString(imageFilename, ":")){
-            vector<string> ids = ofSplitString(imageFilename, ":");
-            imagesBatch = assets.getBatch(IMAGES_BATCH)->getBatch(ids[0]);
-            imageFilename = ids[1];
-        }
-        ofFile file(ofToDataPath(imageFilename));
-        string bgImgExt = file.getExtension();
-        if(bgImgExt == "svg" && ofFile::doesFileExist(imageFilename)){
-            element->loadSvg(imageFilename);
-        }
-        else if(!imageFilename.empty() && !imagesBatch->hasTexture(imageFilename)){
-            imagesBatch->addTexture(imageFilename, imageFilename);
-        }
-    }
-    
-    // Get fonts
-    if(element->hasStyle(OSS_KEY::FONT_FAMILY)){
-        string fontFilename = element->getStringStyle(OSS_KEY::FONT_FAMILY);
+    updateAssets(element);
         
-        if(fonts.count(fontFilename) == 0){
-            fonts[fontFilename] = new ofxFontStash();
-            fonts[fontFilename]->setup(fontFilename,
-                                      1.0,
-                                      2048,
-                                      true,
-                                      8,
-                                      4.0f
-                                      );
-        }
-    }
-    
     if(element->getTag() == TAG::POLYGON || element->getTag() == TAG::G || element->getTag() == TAG::PATH){
         element->getStyle(OSS_KEY::POSITION)->setOssValue(OSS_VALUE::ABSOLUTE);
     }
     for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i], &styleRulesRoot);
+        applyStyles(element->children[i]);
     }
 }
 
@@ -499,6 +465,48 @@ ofxLayoutElement* ofxLayout::getElementById(string ID){
     }
 }
 
+void ofxLayout::updateAssets(ofxLayoutElement *element){
+    if(element->hasStyle(OSS_KEY::BACKGROUND_IMAGE)){
+        string imageFilename = element->getStringStyle(OSS_KEY::BACKGROUND_IMAGE);
+        ofxLoaderBatch* imagesBatch = assets.getBatch(IMAGES_BATCH);
+        if(ofStringTimesInString(imageFilename, ":")){
+            vector<string> ids = ofSplitString(imageFilename, ":");
+            imagesBatch = assets.getBatch(IMAGES_BATCH)->getBatch(ids[0]);
+            imageFilename = ids[1];
+        }
+        ofFile file(ofToDataPath(imageFilename));
+        string bgImgExt = ofToLower(file.getExtension());
+        bool fileExists = ofFile::doesFileExist(imageFilename);
+        if(bgImgExt == "svg"){
+            if(fileExists){
+                element->loadSvg(imageFilename);
+            }
+            else if(element->isSVG){
+                element->getSvg()->clear();
+            }
+        }
+        else if((bgImgExt == "jpg" || bgImgExt == "png") &&!imageFilename.empty() && !imagesBatch->hasTexture(imageFilename)){
+            imagesBatch->addTexture(imageFilename, imageFilename);
+            imagesBatch->loadTexture(imageFilename);
+        }
+    }
+    
+    // Get fonts
+    if(element->hasStyle(OSS_KEY::FONT_FAMILY)){
+        string fontFilename = element->getStringStyle(OSS_KEY::FONT_FAMILY);
+        
+        if(fonts.count(fontFilename) == 0){
+            fonts[fontFilename] = new ofxFontStash();
+            fonts[fontFilename]->setup(fontFilename,
+                                       1.0,
+                                       2048,
+                                       true,
+                                       8,
+                                       4.0f
+                                       );
+        }
+    }
+}
 set<ofxLayoutElement*> ofxLayout::getElementsByClass(string classname){
     if(classElementMap.count(classname) == 0){
         return set<ofxLayoutElement*>();

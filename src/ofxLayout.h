@@ -53,7 +53,7 @@ public:
     void loadOssFromFile(string ossFilename);
     void loadDataFromFile(string dataFilename);
     void loadData(ofxJSONElement data);
-    void applyStyles(ofxLayoutElement* element = NULL, ofxOSS* styleObject = NULL);
+    void applyStyles(ofxLayoutElement* element = NULL);
     
     void removeElement(ofxLayoutElement* element);
     
@@ -101,6 +101,7 @@ public:
     
     void populateXML(ofxXmlSettings* xml);
     void populateJSON(ofxJSONElement* json);
+    void updateAssets(ofxLayoutElement* element);
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
