@@ -294,7 +294,6 @@ void ofxLayoutElement::update(){
             containingDimensions = getDimensions();
         }
         
-        
         if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
             float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
             offset.y = percentTop * containingDimensions.getHeight();
@@ -311,6 +310,7 @@ void ofxLayoutElement::update(){
         }
         // Fixed size (px)
         else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
+
             offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
         }
         
@@ -719,7 +719,6 @@ void ofxLayoutElement::beginBackgroundSize(){
     float yTrans = (getHeight()-bgHeight*scale)/2;
     ofTranslate(xTrans, yTrans);
     ofScale(scale, scale, 1.0);
-
 }
 
 void ofxLayoutElement::endBackgroundSize(){
@@ -864,10 +863,10 @@ void ofxLayoutElement::drawText(){
                     y = 0;
                 }
                 else if(verticalAlign == "center"){
-                    y = dimensions.height/2-fontData.fontHeight/2;
+                    y = dimensions.height/2-fontData.drawBox.height/2;
                 }
                 else if(verticalAlign == "bottom"){
-                    y = dimensions.height-fontData.fontHeight*1.05f;
+                    y = dimensions.height-fontData.drawBox.height*1.05f;
                 }
             }
             ofFill();
@@ -923,6 +922,8 @@ void ofxLayoutElement::beginOverlay(){
         fboS.width = getWidth();
         fboS.height = getHeight();
         fboS.internalformat = GL_RGBA;
+        fboS.minFilter = GL_LINEAR;
+        fboS.maxFilter = GL_LINEAR;
         fboS.numSamples = 4;
         overlayFbo.allocate(fboS);
     }

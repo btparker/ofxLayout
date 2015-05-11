@@ -12,6 +12,8 @@ ofxLayout::ofxLayout(){
 
 ofxLayout::ofxLayout(ofPoint pos, ofRectangle dimensions){
     init(pos.x,pos.y,dimensions.width, dimensions.height);
+    ofMouseEventArgs pt;
+    mouseReleased(pt);
 }
 
 ofxLayout::ofxLayout(int x, int y, int w, int h){
@@ -135,11 +137,14 @@ void ofxLayout::allocateBlurFbo(int w, int h){
 /// | ------------------ | ///
 
 void ofxLayout::update(){
-//    cout << ofGetFrameRate() << endl;
+//    cout << "***" << endl;
+//    cout << "Frame num : " << ofGetFrameNum() << endl;
+//    cout << "Frame rate : " <<  ofGetFrameRate() << endl;
+//    cout << "Target frame rate : " <<  ofGetTargetFrameRate() << endl;
     width = ofGetViewportWidth();
     height = ofGetViewportHeight();
     
-    am.update(1.0f/60.0f);
+    am.update(1.0f/ofGetFrameRate());
     assets.update();
     contextTreeRoot.update();
 }

@@ -829,7 +829,7 @@ void ofxOSS::generateRule(string key, string value){
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
-    OSS_TYPE::ENUM type =  getOssTypeFromOssKey(key);
+    OSS_TYPE::ENUM type = getOssTypeFromOssKey(key);
     this->rules[key].setType(type);
     this->rules[key].setValue(value);
 }
