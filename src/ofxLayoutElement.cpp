@@ -1077,7 +1077,20 @@ void ofxLayoutElement::drawBackgroundColor(){
         color.a *= opacity;
         ofSetColor(color);
         ofFill();
-        ofDrawRectangle(0,0,dimensions.width,dimensions.height);
+        if(getFloatStyle(OSS_KEY::BORDER_RADIUS) > 0.0){
+            float r = 0.0;
+            if(getStyle(OSS_KEY::BORDER_RADIUS)->getType() == OSS_TYPE::PERCENT){
+                r = (getFloatStyle(OSS_KEY::BORDER_RADIUS)/100.0)*min(getWidth(),getHeight());
+            }
+            else{
+                r = getFloatStyle(OSS_KEY::BORDER_RADIUS);
+            }
+            ofSetCircleResolution(100);
+            ofDrawRectRounded(0, 0, getWidth(), getHeight(), r);
+        }
+        else{
+            ofDrawRectangle(0,0,dimensions.width,dimensions.height);
+        }
     }
     ofPopStyle();
 }

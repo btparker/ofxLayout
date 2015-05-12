@@ -39,8 +39,6 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::OPACITY, "1.0");
     
     generateRule(OSS_KEY::LINE_HEIGHT, "1.0");
-
-//    generateRule(OSS_KEY::SCALE, "1.0");
     
     generateRule(OSS_KEY::POSITION, OSS_VALUE::STATIC);
     
