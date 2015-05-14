@@ -195,14 +195,14 @@ void ofxLayout::allocateBlurFbo(int w, int h){
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
-void ofxLayout::update(){
+void ofxLayout::update(float dt){
     if(tuioEnabled){
         tuioClient.getMessage();
     }
     width = ofGetViewportWidth();
     height = ofGetViewportHeight();
     
-    am.update(1.0f/60.0f);
+    am.update(dt);
     assets.update();
     contextTreeRoot.update();
 }
