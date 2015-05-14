@@ -39,6 +39,8 @@ void ofxOSS::setDefaults(){
     generateRule(OSS_KEY::OPACITY, "1.0");
     
     generateRule(OSS_KEY::LINE_HEIGHT, "1.0");
+
+//    generateRule(OSS_KEY::SCALE, "1.0");
     
     generateRule(OSS_KEY::POSITION, OSS_VALUE::STATIC);
     
@@ -827,7 +829,7 @@ void ofxOSS::generateRule(string key, string value){
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
-    OSS_TYPE::ENUM type = getOssTypeFromOssKey(key);
+    OSS_TYPE::ENUM type =  getOssTypeFromOssKey(key);
     this->rules[key].setType(type);
     this->rules[key].setValue(value);
 }

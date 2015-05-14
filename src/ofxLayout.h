@@ -6,6 +6,7 @@
 #include "ofxFontStash.h"
 #include "ofShader.h"
 #include "ofxMultiFboBlur.h"
+#include "ofxTuio.h"
 
 const string IMAGES_BATCH = "images";
 class ofxLayout{
@@ -76,10 +77,20 @@ public:
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
     void mouseDragged(ofMouseEventArgs& args);
+    
     ofEvent<string> mouseMovedEvt;
     ofEvent<string> mouseReleasedEvt;
     ofEvent<string> mousePressedEvt;
     ofEvent<string> mouseDraggedEvt;
+    
+    void tuioPressed(ofxTuioCursor &tuioCursor);
+    void tuioRemoved(ofxTuioCursor &tuioCursor);
+    void tuioUpdated(ofxTuioCursor &tuioCursor);
+
+    ofEvent<ofxTuioCursor> tuioCursorAddedEvt;
+    ofEvent<ofxTuioCursor> tuioCursorRemovedEvt;
+    ofEvent<ofxTuioCursor> tuioCursorUpdatedEvt;
+    
     
     /// \brief Using an ofxXmlSettings object (likely loaded from file), recursively constructs elements based on current depth.
     ///
@@ -102,6 +113,13 @@ public:
     void populateXML(ofxXmlSettings* xml);
     void populateJSON(ofxJSONElement* json);
     void updateAssets(ofxLayoutElement* element);
+    
+
+    ofxTuioClient tuioClient;
+    void enableTuioEvents(int port);
+    void disableTuioEvents();
+    bool tuioEnabled;
+    
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;

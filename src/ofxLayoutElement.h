@@ -125,6 +125,9 @@ public:
     void mousePressed(ofMouseEventArgs& args);
     void mouseReleased(ofMouseEventArgs& args);
     void mouseDragged(ofMouseEventArgs& args);
+    void fingerPressed(ofPoint _finger);
+    void fingerDragged(ofPoint _finger);
+    void fingerReleased(ofPoint _finger);
     
     // Display methods
     void show();
@@ -177,6 +180,14 @@ public:
     ofPoint getMousePressed();
     ofPoint getMouseDragged();
     
+    //BLUE MARKER STUFF
+    void setupMarker();
+    bool hasBlueMarker;
+    void updateBlueMarker(ofPoint pt);
+    ofPoint blueMarkerPt;
+    void drawBlueMarker();
+    ofColor blue;
+    int radius, radius_min, radius_max;
     
     ofEvent<string> mouseMovedEvt;
     ofEvent<string> mouseReleasedEvt;

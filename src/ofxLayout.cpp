@@ -12,8 +12,6 @@ ofxLayout::ofxLayout(){
 
 ofxLayout::ofxLayout(ofPoint pos, ofRectangle dimensions){
     init(pos.x,pos.y,dimensions.width, dimensions.height);
-    ofMouseEventArgs pt;
-    mouseReleased(pt);
 }
 
 ofxLayout::ofxLayout(int x, int y, int w, int h){
@@ -28,7 +26,7 @@ void ofxLayout::init(int x, int y, int w, int h){
     styleRulesRoot.setDefaults();
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
-    
+    tuioEnabled = false;
     assets.addBatch(IMAGES_BATCH);
 }
 
@@ -37,13 +35,30 @@ void ofxLayout::enableMouseEvents(){
     ofAddListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofAddListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
     ofAddListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
+
 }
+
 
 void ofxLayout::disableMouseEvents(){
     ofRemoveListener(ofEvents().mouseMoved, this, &ofxLayout::mouseMoved);
     ofRemoveListener(ofEvents().mousePressed, this, &ofxLayout::mousePressed);
     ofRemoveListener(ofEvents().mouseReleased, this, &ofxLayout::mouseReleased);
     ofRemoveListener(ofEvents().mouseDragged, this, &ofxLayout::mouseDragged);
+}
+
+void ofxLayout::enableTuioEvents(int port){
+    tuioEnabled = true;
+    tuioClient.start(port);
+    ofAddListener(tuioClient.cursorAdded,this,&ofxLayout::tuioPressed);
+    ofAddListener(tuioClient.cursorRemoved,this,&ofxLayout::tuioRemoved);
+    ofAddListener(tuioClient.cursorUpdated,this,&ofxLayout::tuioUpdated);
+}
+
+void ofxLayout::disableTuioEvents(){
+    tuioEnabled = false;
+    ofRemoveListener(tuioClient.cursorAdded,this,&ofxLayout::tuioPressed);
+    ofRemoveListener(tuioClient.cursorRemoved,this,&ofxLayout::tuioRemoved);
+    ofRemoveListener(tuioClient.cursorUpdated,this,&ofxLayout::tuioUpdated);
 }
 
 map<string, ofxFontStash*>* ofxLayout::getFonts(){
@@ -80,20 +95,26 @@ void ofxLayout::setMouseTransformation(ofMatrix4x4 mouseTransformation){
     this->mouseTransformation = mouseTransformation;
 }
 
-void ofxLayout::mouseMoved(ofMouseEventArgs &args){
-    ofPoint mousePt = ofPoint(args)*mouseTransformation;
-    ofxLayoutElement* mouseMovedElement = hittest(mousePt);
-    mouseMovedElement->mouseMoved(args);
-    string evtStr = "mouseMoved";
-    ofNotifyEvent(mouseMovedEvt, evtStr, mouseMovedElement);
-}
-
 void ofxLayout::mouseReleased(ofMouseEventArgs &args){
     ofPoint mousePt = ofPoint(args)*mouseTransformation;
     ofxLayoutElement* mouseReleasedElement = hittest(mousePt);
     mouseReleasedElement->mouseReleased(args);
     string evtStr = "mouseReleased";
     ofNotifyEvent(mouseReleasedEvt, evtStr, mouseReleasedElement);
+}
+
+void ofxLayout::tuioRemoved(ofxTuioCursor &tuioCursor)
+{
+    if(tuioCursor.getFingerId() == 0)
+    {
+        ofPoint loc = ofPoint(tuioCursor.getX()*ofGetWidth(),tuioCursor.getY()*ofGetHeight());
+        ofPoint mousePt = loc*mouseTransformation;
+        ofxLayoutElement* mouseReleasedElement = hittest(mousePt);
+        mouseReleasedElement->fingerReleased(loc);
+        string evtStr = "mouseReleased";
+        ofNotifyEvent(mouseReleasedEvt, evtStr, mouseReleasedElement);
+        ofNotifyEvent(tuioCursorRemovedEvt, tuioCursor, mouseReleasedElement);
+    }
 }
 
 void ofxLayout::mousePressed(ofMouseEventArgs &args){
@@ -104,12 +125,50 @@ void ofxLayout::mousePressed(ofMouseEventArgs &args){
     ofNotifyEvent(mousePressedEvt, evtStr, mousePressedElement);
 }
 
+void ofxLayout::tuioPressed(ofxTuioCursor &tuioCursor)
+{
+    if(tuioCursor.getFingerId() == 0)
+    {
+        ofPoint loc = ofPoint(tuioCursor.getX()*ofGetWidth(),tuioCursor.getY()*ofGetHeight());
+        ofPoint mousePt = loc*mouseTransformation;
+        ofxLayoutElement* mousePressedElement = hittest(mousePt);
+        mousePressedElement->fingerPressed(loc);
+        string evtStr = "mousePressed";
+        ofNotifyEvent(mousePressedEvt, evtStr, mousePressedElement);
+        ofNotifyEvent(tuioCursorAddedEvt, tuioCursor, mousePressedElement);
+    }
+    
+}
 void ofxLayout::mouseDragged(ofMouseEventArgs &args){
+    
     ofPoint mousePt = ofPoint(args)*mouseTransformation;
     ofxLayoutElement* mouseDraggedElement = hittest(mousePt);
     mouseDraggedElement->mouseDragged(args);
     string evtStr = "mouseDragged";
     ofNotifyEvent(mouseDraggedEvt, evtStr, mouseDraggedElement);
+}
+
+
+void ofxLayout::mouseMoved(ofMouseEventArgs &args){
+    ofPoint mousePt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseMovedElement = hittest(mousePt);
+    mouseMovedElement->mouseMoved(args);
+    string evtStr = "mouseMoved";
+    ofNotifyEvent(mouseMovedEvt, evtStr, mouseMovedElement);
+}
+
+void ofxLayout::tuioUpdated(ofxTuioCursor &tuioCursor)
+{
+    if(tuioCursor.getFingerId() == 0)
+    {
+        ofPoint loc = ofPoint(tuioCursor.getX()*ofGetWidth(),tuioCursor.getY()*ofGetHeight());
+        ofPoint mousePt = ofPoint(loc)*mouseTransformation;
+        ofxLayoutElement* mouseDraggedElement = hittest(mousePt);
+        mouseDraggedElement->fingerDragged(loc);
+        string evtStr = "mouseDragged";
+        ofNotifyEvent(mouseDraggedEvt, evtStr, mouseDraggedElement);
+        ofNotifyEvent(tuioCursorUpdatedEvt, tuioCursor, mouseDraggedElement);
+    }
 }
 
 ofMatrix4x4 ofxLayout::getMouseTransformation(){
@@ -137,14 +196,13 @@ void ofxLayout::allocateBlurFbo(int w, int h){
 /// | ------------------ | ///
 
 void ofxLayout::update(){
-//    cout << "***" << endl;
-//    cout << "Frame num : " << ofGetFrameNum() << endl;
-//    cout << "Frame rate : " <<  ofGetFrameRate() << endl;
-//    cout << "Target frame rate : " <<  ofGetTargetFrameRate() << endl;
+    if(tuioEnabled){
+        tuioClient.getMessage();
+    }
     width = ofGetViewportWidth();
     height = ofGetViewportHeight();
     
-    am.update(1.0f/ofGetFrameRate());
+    am.update(1.0f/60.0f);
     assets.update();
     contextTreeRoot.update();
 }
@@ -348,16 +406,10 @@ void ofxLayout::loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLay
         if(tag == TAG::PATH){
             ofPath* shape = child->initShape();
             string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
-            
-            // Good ol' ofxSVGPathParser, saving me here
-//            ofxSVGPathParser pp(shape);
-//            pp.parse(dStr);
         }
         else if(tag == TAG::POLYGON){
             ofPath* shape = child->initShape();
-            
-            // TODO: maybe not hard code this
-            shape->setCurveResolution(50);
+            shape->setCurveResolution(100);
             string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
             
             // Getting the points as a vector, then translating
