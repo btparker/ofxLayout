@@ -70,25 +70,29 @@ ofxLoaderSpool* ofxLayout::getAssets(){
 }
 
 ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
-    stack<ofxLayoutElement*> hitStack;
-    hitStack.push(getBody());
-    stack<ofxLayoutElement*> traverseStack;
-    traverseStack.push(getBody());
-    while(traverseStack.size()){
-        ofxLayoutElement* element = traverseStack.top();
-        traverseStack.pop();
-        for(int i = element->children.size()-1; i >= 0; i--){
-            ofxLayoutElement* child = element->children[i];
+    stack<ofxLayoutElement*> hits;
+    stack<ofxLayoutElement*> parentStack;
+    ofxLayoutElement* node = getBody();
+    while(!parentStack.empty() || node != NULL){
+        if(node->clickable()){
+            hits.push(node);
+        }
+        for(int i = node->children.size()-1; i >= 0; i--){
+            ofxLayoutElement* child = node->children[i];
             if(child->visible() && child->hittest(pt)){
-                traverseStack.push(child);
-                if(child->clickable()){
-                    hitStack.push(child);
-                }
+                parentStack.push(child);
             }
         }
+        if(!parentStack.empty()){
+            node = parentStack.top();
+            parentStack.pop();
+        }
+        else{
+            node = NULL;
+        }
     }
-
-    return hitStack.top();
+    
+    return hits.top();
 }
 
 void ofxLayout::setMouseTransformation(ofMatrix4x4 mouseTransformation){

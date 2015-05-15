@@ -202,6 +202,7 @@ public:
     
     bool isSVG;
     ofxSVG* getSvg();
+    int getLevel();
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -236,4 +237,5 @@ protected:
     ofRectangle scissorStack;
     bool stateLocked;
     ofFbo* overlayFbo;
+    int level;
 };

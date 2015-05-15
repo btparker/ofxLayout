@@ -12,6 +12,7 @@ ofxLayoutElement::ofxLayoutElement(){
     position = ofPoint(0,0);
     dimensions = ofRectangle(0,0,0,0);
     tag = TAG::DIV;
+    level = 0;
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
     stateLocked = false;
@@ -103,6 +104,7 @@ void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
 
 void ofxLayoutElement::setParent(ofxLayoutElement *parent){
     this->parent = parent;
+    this->level = parent->getLevel()+1;
     this->layout = parent->layout;
 }
 
@@ -1425,4 +1427,8 @@ bool ofxLayoutElement::isStateLocked(){
 
 ofxSVG* ofxLayoutElement::getSvg(){
     return &svg;
+}
+
+int ofxLayoutElement::getLevel(){
+    return level;
 }
