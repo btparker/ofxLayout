@@ -100,8 +100,9 @@ void ofxLayout::setMouseTransformation(ofMatrix4x4 mouseTransformation){
 }
 
 void ofxLayout::mouseReleased(ofMouseEventArgs &args){
-    ofPoint mousePt = ofPoint(args)*mouseTransformation;
-    ofxLayoutElement* mouseReleasedElement = hittest(mousePt);
+    mouseDraggedPt.set(ofPoint());
+    mouseReleasedPt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseReleasedElement = hittest(mouseReleasedPt);
     mouseReleasedElement->mouseReleased(args);
     string evtStr = "mouseReleased";
     ofNotifyEvent(mouseReleasedEvt, evtStr, mouseReleasedElement);
@@ -112,8 +113,9 @@ void ofxLayout::tuioRemoved(ofxTuioCursor &tuioCursor)
     if(tuioCursor.getFingerId() == 0)
     {
         ofPoint loc = ofPoint(tuioCursor.getX()*ofGetWidth(),tuioCursor.getY()*ofGetHeight());
-        ofPoint mousePt = loc*mouseTransformation;
-        ofxLayoutElement* mouseReleasedElement = hittest(mousePt);
+        mouseDraggedPt.set(ofPoint());
+        mouseReleasedPt = loc*mouseTransformation;
+        ofxLayoutElement* mouseReleasedElement = hittest(mouseReleasedPt);
         mouseReleasedElement->fingerReleased(loc);
         string evtStr = "mouseReleased";
         ofNotifyEvent(mouseReleasedEvt, evtStr, mouseReleasedElement);
@@ -122,8 +124,9 @@ void ofxLayout::tuioRemoved(ofxTuioCursor &tuioCursor)
 }
 
 void ofxLayout::mousePressed(ofMouseEventArgs &args){
-    ofPoint mousePt = ofPoint(args)*mouseTransformation;
-    ofxLayoutElement* mousePressedElement = hittest(mousePt);
+    mouseDraggedPt.set(ofPoint());
+    mousePressedPt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mousePressedElement = hittest(mousePressedPt);
     mousePressedElement->mousePressed(args);
     string evtStr = "mousePressed";
     ofNotifyEvent(mousePressedEvt, evtStr, mousePressedElement);
@@ -134,8 +137,9 @@ void ofxLayout::tuioPressed(ofxTuioCursor &tuioCursor)
     if(tuioCursor.getFingerId() == 0)
     {
         ofPoint loc = ofPoint(tuioCursor.getX()*ofGetWidth(),tuioCursor.getY()*ofGetHeight());
-        ofPoint mousePt = loc*mouseTransformation;
-        ofxLayoutElement* mousePressedElement = hittest(mousePt);
+        mouseDraggedPt.set(ofPoint());
+        mousePressedPt = loc*mouseTransformation;
+        ofxLayoutElement* mousePressedElement = hittest(mousePressedPt);
         mousePressedElement->fingerPressed(loc);
         string evtStr = "mousePressed";
         ofNotifyEvent(mousePressedEvt, evtStr, mousePressedElement);
@@ -145,8 +149,8 @@ void ofxLayout::tuioPressed(ofxTuioCursor &tuioCursor)
 }
 void ofxLayout::mouseDragged(ofMouseEventArgs &args){
     
-    ofPoint mousePt = ofPoint(args)*mouseTransformation;
-    ofxLayoutElement* mouseDraggedElement = hittest(mousePt);
+    mouseDraggedPt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseDraggedElement = hittest(mouseDraggedPt);
     mouseDraggedElement->mouseDragged(args);
     string evtStr = "mouseDragged";
     ofNotifyEvent(mouseDraggedEvt, evtStr, mouseDraggedElement);
@@ -154,8 +158,8 @@ void ofxLayout::mouseDragged(ofMouseEventArgs &args){
 
 
 void ofxLayout::mouseMoved(ofMouseEventArgs &args){
-    ofPoint mousePt = ofPoint(args)*mouseTransformation;
-    ofxLayoutElement* mouseMovedElement = hittest(mousePt);
+    mouseMovedPt = ofPoint(args)*mouseTransformation;
+    ofxLayoutElement* mouseMovedElement = hittest(mouseMovedPt);
     mouseMovedElement->mouseMoved(args);
     string evtStr = "mouseMoved";
     ofNotifyEvent(mouseMovedEvt, evtStr, mouseMovedElement);
@@ -166,8 +170,8 @@ void ofxLayout::tuioUpdated(ofxTuioCursor &tuioCursor)
     if(tuioCursor.getFingerId() == 0)
     {
         ofPoint loc = ofPoint(tuioCursor.getX()*ofGetWidth(),tuioCursor.getY()*ofGetHeight());
-        ofPoint mousePt = ofPoint(loc)*mouseTransformation;
-        ofxLayoutElement* mouseDraggedElement = hittest(mousePt);
+        mouseDraggedPt = ofPoint(loc)*mouseTransformation;
+        ofxLayoutElement* mouseDraggedElement = hittest(mouseDraggedPt);
         mouseDraggedElement->fingerDragged(loc);
         string evtStr = "mouseDragged";
         ofNotifyEvent(mouseDraggedEvt, evtStr, mouseDraggedElement);

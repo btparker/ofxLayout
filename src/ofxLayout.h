@@ -83,6 +83,11 @@ public:
     ofEvent<string> mousePressedEvt;
     ofEvent<string> mouseDraggedEvt;
     
+    ofPoint mouseMovedPt;
+    ofPoint mouseReleasedPt;
+    ofPoint mousePressedPt;
+    ofPoint mouseDraggedPt;
+    
     void tuioPressed(ofxTuioCursor &tuioCursor);
     void tuioRemoved(ofxTuioCursor &tuioCursor);
     void tuioUpdated(ofxTuioCursor &tuioCursor);
