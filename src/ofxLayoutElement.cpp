@@ -477,12 +477,14 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         
         
         if(overlayFbo.isAllocated()){
-            
             ofPushStyle();
+            glPushAttrib(GL_BLEND);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             ofSetColor(255*opacity);
             overlayFbo.draw(0,0);
+            glPopAttrib();
             ofPopStyle();
-            
         }
         
         
@@ -985,10 +987,17 @@ void ofxLayoutElement::beginOverlay(){
         fboS.internalformat = GL_RGBA;
         fboS.minFilter = GL_LINEAR;
         fboS.maxFilter = GL_LINEAR;
-        fboS.numSamples = 4;
+        fboS.numSamples = 8;
+        fboS.useStencil = true;
         overlayFbo.allocate(fboS);
     }
     overlayFbo.begin();
+    ofSetVerticalSync(true);
+    ofSetCurveResolution(100);
+    ofSetCircleResolution(100);
+    ofEnableSmoothing();
+    ofEnableAlphaBlending();
+    ofEnableArbTex();
     ofClear(0, 0, 0, 0);
 }
 
