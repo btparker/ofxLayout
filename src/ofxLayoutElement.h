@@ -235,5 +235,5 @@ protected:
     FontData fontData;
     ofRectangle scissorStack;
     bool stateLocked;
-    ofFbo overlayFbo;
+    ofFbo* overlayFbo;
 };

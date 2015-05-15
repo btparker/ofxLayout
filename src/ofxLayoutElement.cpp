@@ -16,6 +16,7 @@ ofxLayoutElement::ofxLayoutElement(){
     mouseState = MOUSE_STATE::NONE;
     stateLocked = false;
     hasBlueMarker = false;
+    overlayFbo = NULL;
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -27,6 +28,10 @@ ofxLayoutElement::~ofxLayoutElement(){
     if(video != NULL){
         video->closeMovie();
         video = NULL;
+    }
+    if(overlayFbo){
+        overlayFbo->clear();
+        delete overlayFbo;
     }
     for(int i = 0 ; i < children.size(); i++){
         delete children[i];
@@ -447,13 +452,6 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         
         drawContent();
         
-        if(overlayFbo.isAllocated()){
-            ofPushStyle();
-            ofSetColor(255);
-            overlayFbo.draw(0,0);
-            ofPopStyle();
-        }
-        
         if(isBlurring){
             layout->mFboBlur.endDrawScene();
             glPushAttrib(GL_BLEND);
@@ -476,13 +474,13 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         }
         
         
-        if(overlayFbo.isAllocated()){
+        if(overlayFbo && overlayFbo->isAllocated()){
             ofPushStyle();
             glPushAttrib(GL_BLEND);
             glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             ofSetColor(255*opacity);
-            overlayFbo.draw(0,0);
+            overlayFbo->draw(0,0);
             glPopAttrib();
             ofPopStyle();
         }
@@ -979,7 +977,13 @@ bool ofxLayoutElement::beginBackgroundBlendMode(){
 }
 
 void ofxLayoutElement::beginOverlay(){
-    if(!overlayFbo.isAllocated() || overlayFbo.getWidth() != (int)getWidth() || overlayFbo.getHeight() != (int)getHeight()){
+    if(overlayFbo == NULL || !overlayFbo->isAllocated() || overlayFbo->getWidth() != (int)getWidth() || overlayFbo->getHeight() != (int)getHeight()){
+        if(overlayFbo != NULL){
+            overlayFbo->clear();
+            delete overlayFbo;
+        }
+        
+        overlayFbo = new ofFbo();
         
         ofFbo::Settings fboS;
         fboS.width = getWidth();
@@ -989,9 +993,9 @@ void ofxLayoutElement::beginOverlay(){
         fboS.maxFilter = GL_LINEAR;
         fboS.numSamples = 8;
         fboS.useStencil = true;
-        overlayFbo.allocate(fboS);
+        overlayFbo->allocate(fboS);
     }
-    overlayFbo.begin();
+    overlayFbo->begin();
     ofSetVerticalSync(true);
     ofSetCurveResolution(100);
     ofSetCircleResolution(100);
@@ -1002,7 +1006,7 @@ void ofxLayoutElement::beginOverlay(){
 }
 
 void ofxLayoutElement::endOverlay(){
-    overlayFbo.end();
+    overlayFbo->end();
 }
 
 void ofxLayoutElement::endBackgroundBlendMode(){
