@@ -180,14 +180,6 @@ public:
     ofPoint getMousePressed();
     ofPoint getMouseDragged();
     
-    //BLUE MARKER STUFF
-    void setupMarker();
-    bool hasBlueMarker;
-    void updateBlueMarker(ofPoint pt);
-    ofPoint blueMarkerPt;
-    void drawBlueMarker();
-    ofColor blue;
-    int radius, radius_min, radius_max;
     
     ofEvent<string> mouseMovedEvt;
     ofEvent<string> mouseReleasedEvt;
@@ -202,6 +194,7 @@ public:
     
     bool isSVG;
     ofxSVG* getSvg();
+    void setShape(ofPath* shape);
     int getLevel();
 protected:
     ofMatrix4x4 globalTransformations;

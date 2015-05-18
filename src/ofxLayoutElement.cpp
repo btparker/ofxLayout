@@ -16,14 +16,13 @@ ofxLayoutElement::ofxLayoutElement(){
     styles.setDefaults();
     mouseState = MOUSE_STATE::NONE;
     stateLocked = false;
-    hasBlueMarker = false;
     overlayFbo = NULL;
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
     if(shape){
         shape->clear();
-        delete shape;
+//        delete shape;
     }
     
     if(video != NULL){
@@ -510,8 +509,6 @@ void ofxLayoutElement::drawContent(){
     drawBackground();
     drawShape();
     drawText();
-    if(hasBlueMarker)
-        drawBlueMarker();
 }
 
 /// |   Setters/Getters   | ///
@@ -647,18 +644,24 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 /// | ------------- | ///
 void ofxLayoutElement::drawShape(){
     if(shape){
+        
+                      
         ofPushStyle();
         ofColor fill;
         ofColor stroke;
         if(hasStyle(OSS_KEY::FILL)){
             fill = getColorStyle(OSS_KEY::FILL);
             fill.a *= opacity;
+            ofFill();
+            shape->setFilled(true);
             shape->setFillColor(fill);
         }
         
         if(hasStyle(OSS_KEY::STROKE)){
             stroke = getColorStyle(OSS_KEY::STROKE);
             stroke.a *= opacity;
+            ofNoFill();
+            shape->setFilled(false);
             shape->setStrokeColor(stroke);
         }
         
@@ -667,40 +670,10 @@ void ofxLayoutElement::drawShape(){
         }
         
         ofSetColor(255,255, 255, 255);
+        shape->setCurveResolution(100);
         shape->draw();
         ofPopStyle();
     }
-}
-
-void ofxLayoutElement::setupMarker()
-{
-    hasBlueMarker = true;
-    blue.set(39,170,225,255);
-    radius_min = 10;
-    radius_max = 50;
-    radius = radius_min;
-    blueMarkerPt = ofPoint(0,0);
-}
-
-void ofxLayoutElement::updateBlueMarker(ofPoint pt)
-{
-    blueMarkerPt = pt;
-}
-void ofxLayoutElement::drawBlueMarker()
-{
-    radius++;
-    if(radius > radius_max)
-        radius = radius_min;
-    
-    ofColor test;
-    test.set(blue);
-    test.a = (float)((radius_max - radius)/(70.0))*255;
-    ofSetColor(test);
-    ofCircle(blueMarkerPt, radius);
-    ofSetColor(blue);
-    ofCircle(blueMarkerPt, radius_min);
-    ofSetColor(255,255,255,255);
-    
 }
 
 void ofxLayoutElement::drawBorder(){
@@ -1227,6 +1200,10 @@ void ofxLayoutElement::setLayout(ofxLayout *layout){
 
 ofPath* ofxLayoutElement::getShape(){
     return this->shape;
+}
+
+void ofxLayoutElement::setShape(ofPath* shape){
+    this->shape = shape;
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
