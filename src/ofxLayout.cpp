@@ -23,11 +23,27 @@ void ofxLayout::init(int x, int y, int w, int h){
     this->y = y;
     this->width = w;
     this->height = h;
+    
+    fonts = new map<string, ofxFontStash*>();
     styleRulesRoot.setDefaults();
     contextTreeRoot.setLayout(this);
     contextTreeRoot.styles = styleRulesRoot;
     tuioEnabled = false;
     assets.addBatch(IMAGES_BATCH);
+    externalFonts = false;
+}
+
+void ofxLayout::setGlobalFonts(map<string, ofxFontStash*> * fonts){
+    if(!externalFonts){
+        for(pair<string,ofxFontStash*> fsPair : *fonts){
+            delete (*fonts)[fsPair.first];
+        }
+        fonts->clear();
+        delete fonts;
+        fonts = NULL;
+    }
+    externalFonts = true;
+    this->fonts = fonts;
 }
 
 void ofxLayout::enableMouseEvents(){
@@ -62,7 +78,7 @@ void ofxLayout::disableTuioEvents(){
 }
 
 map<string, ofxFontStash*>* ofxLayout::getFonts(){
-    return &fonts;
+    return fonts;
 }
 
 ofxLoaderSpool* ofxLayout::getAssets(){
@@ -185,7 +201,13 @@ ofMatrix4x4 ofxLayout::getMouseTransformation(){
 
 ofxLayout::~ofxLayout(){
     disableMouseEvents();
+    
     unload();
+    
+    if(!externalFonts){
+        delete fonts;
+        fonts = NULL;
+    }
 }
 
 void ofxLayout::allocateBlurFbo(int w, int h){
@@ -220,10 +242,12 @@ void ofxLayout::draw(){
 }
 
 void ofxLayout::unload(){
-    for(pair<string,ofxFontStash*> fsPair : fonts){
-        delete fonts[fsPair.first];
+    if(!externalFonts){
+        for(pair<string,ofxFontStash*> fsPair : *fonts){
+            delete (*fonts)[fsPair.first];
+        }
+        fonts->clear();
     }
-    fonts.clear();
     assets.getBatch(IMAGES_BATCH)->clear();
 }
 
@@ -558,9 +582,9 @@ void ofxLayout::updateAssets(ofxLayoutElement *element){
     if(element->hasStyle(OSS_KEY::FONT_FAMILY)){
         string fontFilename = element->getStringStyle(OSS_KEY::FONT_FAMILY);
         
-        if(fonts.count(fontFilename) == 0){
-            fonts[fontFilename] = new ofxFontStash();
-            fonts[fontFilename]->setup(fontFilename,
+        if(fonts->count(fontFilename) == 0){
+            (*fonts)[fontFilename] = new ofxFontStash();
+            fonts->at(fontFilename)->setup(fontFilename,
                                        1.0,
                                        2048,
                                        true,

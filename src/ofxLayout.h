@@ -59,7 +59,7 @@ public:
     void removeElement(ofxLayoutElement* element);
     
     ofxLoaderSpool assets;
-    map<string, ofxFontStash*> fonts;
+    map<string, ofxFontStash*>* fonts;
     map<string, string> data;
     
     void unload();
@@ -125,6 +125,8 @@ public:
     void disableTuioEvents();
     bool tuioEnabled;
     
+    void setGlobalFonts(map<string, ofxFontStash* > * fonts);
+    
 protected:
     ofxLayoutElement contextTreeRoot;
     ofxOSS styleRulesRoot;
@@ -145,4 +147,5 @@ protected:
     void allocateBlurFbo(int w, int h);
     
     ofMatrix4x4 mouseTransformation;
+    bool externalFonts;
 };
