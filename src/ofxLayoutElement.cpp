@@ -22,7 +22,6 @@ ofxLayoutElement::ofxLayoutElement(){
 ofxLayoutElement::~ofxLayoutElement(){
     if(shape){
         shape->clear();
-//        delete shape;
     }
     
     if(video != NULL){
@@ -644,29 +643,32 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 /// | ------------- | ///
 void ofxLayoutElement::drawShape(){
     if(shape){
-        
-                      
         ofPushStyle();
         ofColor fill;
         ofColor stroke;
+        if(hasStyle(OSS_KEY::STROKE) && !hasStyle(OSS_KEY::FILL)){
+            ofNoFill();
+            shape->setFilled(false);
+        }
+        else if(!hasStyle(OSS_KEY::STROKE) && hasStyle(OSS_KEY::FILL)){
+            ofFill();
+            shape->setFilled(true);
+        }
+        
         if(hasStyle(OSS_KEY::FILL)){
             fill = getColorStyle(OSS_KEY::FILL);
             fill.a *= opacity;
-            ofFill();
-            shape->setFilled(true);
             shape->setFillColor(fill);
         }
         
         if(hasStyle(OSS_KEY::STROKE)){
             stroke = getColorStyle(OSS_KEY::STROKE);
             stroke.a *= opacity;
-            ofNoFill();
-            shape->setFilled(false);
             shape->setStrokeColor(stroke);
         }
         
         if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
-            shape->setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT)/10);
+            shape->setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
         }
         
         ofSetColor(255,255, 255, 255);

@@ -247,7 +247,6 @@ void ofxLayout::loadFromFile(string filename){
         loadOfmlFromFile(layoutConfig["template"].asString()+"/index.ofml");
         loadOssFromFile(layoutConfig["template"].asString()+"/styles.oss");
         loadAnimationsFromFile(layoutConfig["template"].asString()+"/animations.json");
-        cout << "loaded file" << endl;
     }
     else{
         ofLogError("ofxLayout::loadFromFile","Unable to parse config file "+filename+".");
@@ -259,7 +258,6 @@ void ofxLayout::loadFromTemplate(string templateFolder, ofxJSONElement data){
     loadOfmlFromFile(templateFolder+"/index.ofml");
     loadOssFromFile(templateFolder+"/styles.oss");
     loadAnimationsFromFile(templateFolder+"/animations.json");
-    cout << "loaded template" << endl;
 }
 
 void ofxLayout::loadAnimationsFromFile(string animationsFilename){
