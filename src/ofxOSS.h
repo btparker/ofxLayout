@@ -92,6 +92,7 @@ public:
     /// | ------------------- | ///
     
     ofxOssRule* getStyle(OSS_KEY::ENUM key);
+    bool hasStyle(OSS_KEY::ENUM key);
     ofxOssRule* getStyle(string key);
     
     void setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value);

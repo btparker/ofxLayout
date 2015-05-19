@@ -420,11 +420,6 @@ void ofxLayout::loadFromXmlLayout(ofxXmlSettings *xmlLayout, ofxLayoutElement* e
 
 void ofxLayout::loadTags(ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
     loadTagElements(TAG::DIV, xmlLayout, element);
-    loadTagElements(TAG::SVG, xmlLayout, element);
-    loadTagElements(TAG::G, xmlLayout, element);
-    loadTagElements(TAG::POLYGON, xmlLayout, element);
-    loadTagElements(TAG::PATH, xmlLayout, element);
-    loadTagElements(TAG::CIRCLE, xmlLayout, element);
 }
 
 void ofxLayout::loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLayoutElement* element){
@@ -432,40 +427,6 @@ void ofxLayout::loadTagElements(TAG::ENUM tag, ofxXmlSettings *xmlLayout, ofxLay
     for(int i = 0; i < numElements; i++){
         ofxLayoutElement* child = new ofxLayoutElement();
         element->addChild(child);
-        
-        if(tag == TAG::PATH){
-            ofPath* shape = child->initShape();
-            string dStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::PATH),"d", "", i);
-        }
-        else if(tag == TAG::POLYGON){
-            ofPath* shape = child->initShape();
-            shape->setCurveResolution(100);
-            string ptStr = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::POLYGON),"points", "", i);
-            
-            // Getting the points as a vector, then translating
-            vector<string> ptsStr = ofSplitString(ptStr, " ", true, true);
-            for(int j = 0; j < ptsStr.size(); j++){
-                vector<string> ptVec = ofSplitString(ptsStr[j],",", true, true);
-                ofPoint pt(ofToFloat(ptVec[0]),ofToFloat(ptVec[1]));
-                if(j==0){
-                    shape->moveTo(pt);
-                }
-                else{
-                    shape->lineTo(pt);
-                }
-            }
-            shape->close();
-        }
-        else if(tag == TAG::CIRCLE){
-            ofPath* shape = child->initShape();
-            float x = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::CIRCLE),"cx", 0.0f, i);
-            
-            float y = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::CIRCLE),"cy", 0.0f, i);
-            
-            float r = xmlLayout->getAttribute(ofxLayoutElement::getTagString(TAG::CIRCLE),"r", 0.0f, i);
-            
-            shape->circle(0, 0, 5);
-        }
         loadFromXmlLayout(xmlLayout, child, tag, i);
     }
 }
@@ -534,10 +495,6 @@ void ofxLayout::applyStyles(ofxLayoutElement* element){
     element->overrideStyles(&inlineStyles);
     
     updateAssets(element);
-        
-    if(element->getTag() == TAG::POLYGON || element->getTag() == TAG::G || element->getTag() == TAG::PATH){
-        element->getStyle(OSS_KEY::POSITION)->setOssValue(OSS_VALUE::ABSOLUTE);
-    }
     for(int i = 0; i < element->children.size(); i++){
         applyStyles(element->children[i]);
     }

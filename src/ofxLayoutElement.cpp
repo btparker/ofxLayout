@@ -5,7 +5,8 @@
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
     opacity = 1.0;
-    shape = NULL;
+    path = NULL;
+    pathFillHack = false;
     isSVG = false;
     parent = NULL;
     video = NULL;
@@ -20,8 +21,8 @@ ofxLayoutElement::ofxLayoutElement(){
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
-    if(shape){
-        shape->clear();
+    if(path){
+        path->clear();
     }
     
     if(video != NULL){
@@ -315,8 +316,7 @@ void ofxLayoutElement::update(){
         ofPoint relativePos = children[i]->getPosition();
         
         ofPoint offset = ofPoint(0,0);
-        
-        
+
         // If positioning type is fixed, need to compute offset to the viewport, not parent element
         ofRectangle containingDimensions;
         if(getStyle(OSS_KEY::POSITION)->asOssValue() == OSS_VALUE::FIXED){
@@ -335,17 +335,19 @@ void ofxLayoutElement::update(){
         else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
             offset.y = children[i]->getStyle(OSS_KEY::TOP)->asFloat();
         }
+        if(children[i]->hasStyle(OSS_KEY::BOTTOM)){
+            if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
+                // Inverse
+                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
+                offset.y = percentTop * containingDimensions.getHeight();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
+                
+                offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
+            }
+        }
         
-        if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
-            // Inverse
-            float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
-            offset.y = percentTop * containingDimensions.getHeight();
-        }
-        // Fixed size (px)
-        else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
-            
-            offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
-        }
         
         if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
             float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
@@ -355,16 +357,18 @@ void ofxLayoutElement::update(){
         else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
             offset.x = children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
         }
+        if(children[i]->hasStyle(OSS_KEY::RIGHT)){
+            if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
+                // Inverse
+                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
+                offset.x = percentTop * containingDimensions.getWidth();
+            }
+            // Fixed size (px)
+            else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
+                offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
+            }
+        }
         
-        if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
-            // Inverse
-            float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
-            offset.x = percentTop * containingDimensions.getWidth();
-        }
-        // Fixed size (px)
-        else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
-            offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
-        }
         
         if(children[i]->getOssValueStyle(OSS_KEY::MARGIN_LEFT) == OSS_VALUE::AUTO){
             offset.x = dimensions.width/2.0-children[i]->getDimensions().getWidth()/2.0;
@@ -436,9 +440,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             ofRectangle viewport = layout->getBody()->getGlobalClippingRegion();
             glScissor(glScissorRect.getX(), glScissorRect.getY(), glScissorRect.width, glScissorRect.height);
         }
-        
-        
-        
+
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
@@ -506,7 +508,7 @@ void ofxLayoutElement::drawContent(){
     ofSetColor(min(255,int(255*opacity)));
     drawBorder();
     drawBackground();
-    drawShape();
+    drawPath();
     drawText();
 }
 
@@ -543,21 +545,6 @@ string ofxLayoutElement::getTagString(TAG::ENUM tagEnum){
         case TAG::DIV:
             tag = "div";
             break;
-        case TAG::SVG:
-            tag = "svg";
-            break;
-        case TAG::G:
-            tag = "g";
-            break;
-        case TAG::POLYGON:
-            tag = "polygon";
-            break;
-        case TAG::PATH:
-            tag = "path";
-            break;
-        case TAG::CIRCLE:
-            tag = "circle";
-            break;
         default:
             ofLogWarning("ofxLayout::getTagString","Can't find corresponding string for enum");
             break;
@@ -572,21 +559,6 @@ TAG::ENUM ofxLayoutElement::getTagEnum(string tagString){
     }
     else if(tagString == "div") {
         return TAG::DIV;
-    }
-    else if(tagString == "svg") {
-        return TAG::SVG;
-    }
-    else if(tagString == "g") {
-        return TAG::G;
-    }
-    else if(tagString == "polygon") {
-        return TAG::POLYGON;
-    }
-    else if(tagString == "path") {
-        return TAG::PATH;
-    }
-    else if(tagString == "circle") {
-        return TAG::CIRCLE;
     }
     else{
         ofLogWarning("ofxLayout::getTagString","Can't find corresponding enum for tag string '"+tagString+"'");
@@ -616,11 +588,11 @@ void ofxLayoutElement::setID(string ID){
 }
 
 bool ofxLayoutElement::hasStyle(OSS_KEY::ENUM styleKey){
-    return this->styles.rules.count(styleKey) > 0;
+    return styles.hasStyle(styleKey);
 }
 
 ofxOssRule* ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
-    return &styles.rules[styleKey];
+    return styles.getStyle(styleKey);
 }
 
 string ofxLayoutElement::getStringStyle(OSS_KEY::ENUM styleKey){
@@ -641,42 +613,58 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 
 /// |   Utilities   | ///
 /// | ------------- | ///
-void ofxLayoutElement::drawShape(){
-    if(shape){
+void ofxLayoutElement::drawPath(){
+    if(path){
         ofPushStyle();
         ofColor fill;
         ofColor stroke;
-        if(hasStyle(OSS_KEY::STROKE) && !hasStyle(OSS_KEY::FILL)){
-            ofNoFill();
-            shape->setFilled(false);
-        }
-        else if(!hasStyle(OSS_KEY::STROKE) && hasStyle(OSS_KEY::FILL)){
-            ofFill();
-            shape->setFilled(true);
-        }
-        
+
         if(hasStyle(OSS_KEY::FILL)){
-            fill = getColorStyle(OSS_KEY::FILL);
+            fill = getColorStyle(OSS_KEY::FILL);    
             fill.a *= opacity;
-            shape->setFillColor(fill);
+            
+            ofFill();
+            path->setFilled(true);
+            path->setFillColor(fill);
         }
-        
+
         if(hasStyle(OSS_KEY::STROKE)){
             stroke = getColorStyle(OSS_KEY::STROKE);
             stroke.a *= opacity;
-            shape->setStrokeColor(stroke);
+            
+            ofNoFill();
+            path->setFilled(false);
+            path->setStrokeColor(stroke);
         }
-        
+
         if(hasStyle(OSS_KEY::STROKE_MITERLIMIT)){
-            shape->setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
+            path->setStrokeWidth(getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
+        }
+
+        ofSetColor(255,255, 255, 255);
+        
+        path->setCurveResolution(100);
+        path->draw();
+        if(pathFillHack){
+            ofEnableSmoothing();
+            ofEnableAntiAliasing();
+            
+            if(hasStyle(OSS_KEY::STROKE)){
+                ofSetColor(stroke);
+                ofFill();
+                for(int i = 0; i < path->getOutline().size(); i++){
+                    
+                    for(int j = 0; j < path->getOutline()[i].getVertices().size(); j++){
+                        ofDrawCircle(path->getOutline()[i].getVertices()[j], getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
+                    }
+                }
+            }
         }
         
-        ofSetColor(255,255, 255, 255);
-        shape->setCurveResolution(100);
-        shape->draw();
         ofPopStyle();
     }
 }
+
 
 void ofxLayoutElement::drawBorder(){
     float bw = 0;
@@ -1200,12 +1188,13 @@ void ofxLayoutElement::setLayout(ofxLayout *layout){
     this->layout = layout;
 }
 
-ofPath* ofxLayoutElement::getShape(){
-    return this->shape;
+ofPath* ofxLayoutElement::getPath(){
+    return this->path;
 }
 
-void ofxLayoutElement::setShape(ofPath* shape){
-    this->shape = shape;
+void ofxLayoutElement::setPath(ofPath* path, bool pathFillHack){
+    this->pathFillHack = pathFillHack;
+    this->path = path;
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
@@ -1315,13 +1304,8 @@ ofRectangle ofxLayoutElement::getClippingRegion(){
     return clippingRegion;
 }
 
-ofPath* ofxLayoutElement::initShape(){
-    shape = new ofPath();
-    return shape;
-}
-
-bool ofxLayoutElement::isShape(){
-    return shape != NULL;
+bool ofxLayoutElement::isPath(){
+    return path != NULL;
 }
 
 float ofxLayoutElement::getGlobalScale(){

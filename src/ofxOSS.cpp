@@ -95,7 +95,21 @@ ofxOssRule* ofxOSS::getStyle(string key){
 }
 
 ofxOssRule* ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
-    return &rules[styleKey];
+    if(hasStyle(styleKey)){
+        return &rules[styleKey];
+    }
+    else{
+        return NULL;
+    }
+}
+
+bool ofxOSS::hasStyle(OSS_KEY::ENUM styleKey){
+    if(rules.count(styleKey) > 0){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 bool ofxOSS::validKey(string key){
