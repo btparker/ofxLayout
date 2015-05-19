@@ -5,82 +5,109 @@ ofxOSS::ofxOSS(){
 
 void ofxOSS::setDefaults(){
     // Create defaults
-    generateRule(OSS_KEY::TOP, "0px");
+    setStyle(OSS_KEY::TOP, 0);
     
-    generateRule(OSS_KEY::LEFT, "0px");
+    setStyle(OSS_KEY::LEFT, 0);
     
-    generateRule(OSS_KEY::BACKGROUND_POSITION, OSS_VALUE::AUTO);
+    setStyle(OSS_KEY::BACKGROUND_POSITION, OSS_VALUE::AUTO);
     
-    generateRule(OSS_KEY::WIDTH, OSS_VALUE::AUTO);
+    setStyle(OSS_KEY::WIDTH, OSS_VALUE::AUTO);
     
-    generateRule(OSS_KEY::HEIGHT, OSS_VALUE::AUTO);
+    setStyle(OSS_KEY::HEIGHT, OSS_VALUE::AUTO);
     
-    generateRule(OSS_KEY::MARGIN_LEFT, "0px");
+    setStyle(OSS_KEY::MARGIN_LEFT, 0);
     
-    generateRule(OSS_KEY::MARGIN_RIGHT, "0px");
+    setStyle(OSS_KEY::MARGIN_RIGHT, 0);
     
-    generateRule(OSS_KEY::MARGIN_TOP, "0px");
+    setStyle(OSS_KEY::MARGIN_TOP, 0);
     
-    generateRule(OSS_KEY::MARGIN_BOTTOM, "0px");
+    setStyle(OSS_KEY::MARGIN_BOTTOM, 0);
     
-    generateRule(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
+    setStyle(OSS_KEY::TEXT_ALIGN, OSS_VALUE::LEFT);
     
-    generateRule(OSS_KEY::VERTICAL_ALIGN, OSS_VALUE::TOP);
+    setStyle(OSS_KEY::VERTICAL_ALIGN, OSS_VALUE::TOP);
     
-    generateRule(OSS_KEY::FONT_SIZE, 50);
+    setStyle(OSS_KEY::FONT_SIZE, 50);
     
-    generateRule(OSS_KEY::LETTER_SPACING, 0);
+    setStyle(OSS_KEY::LETTER_SPACING, 0);
     
-    generateRule(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
-    generateRule(OSS_KEY::ORIGIN_X, 0.5f);
-    generateRule(OSS_KEY::ORIGIN_Y, 0.5f);
-    generateRule(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
+    setStyle(OSS_KEY::BACKGROUND_SIZE, OSS_VALUE::AUTO);
     
-    generateRule(OSS_KEY::OPACITY, "1.0");
+    setStyle(OSS_KEY::ORIGIN_X, 0.5f);
     
-    generateRule(OSS_KEY::LINE_HEIGHT, "1.0");
+    setStyle(OSS_KEY::ORIGIN_Y, 0.5f);
+    
+    setStyle(OSS_KEY::BACKGROUND_BLEND_MODE, OSS_VALUE::ALPHA);
+    
+    setStyle(OSS_KEY::OPACITY, 1.0);
+    
+    setStyle(OSS_KEY::LINE_HEIGHT, 1.0f);
 
-//    generateRule(OSS_KEY::SCALE, "1.0");
+    setStyle(OSS_KEY::SCALE, 1.0);
     
-    generateRule(OSS_KEY::POSITION, OSS_VALUE::STATIC);
+    setStyle(OSS_KEY::POSITION, OSS_VALUE::STATIC);
     
-    generateRule(OSS_KEY::TEXT_TRANSFORM, OSS_VALUE::NONE);
+    setStyle(OSS_KEY::TEXT_TRANSFORM, OSS_VALUE::NONE);
     
-    generateRule(OSS_KEY::COLOR, ofColor::black);
-    generateRule(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
+    setStyle(OSS_KEY::COLOR, ofColor::black);
     
-    generateRule(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::VISIBLE);
+    setStyle(OSS_KEY::BACKGROUND_COLOR, ofColor(0,0,0,0));
     
-    generateRule(OSS_KEY::BORDER_WIDTH, 0);
+    setStyle(OSS_KEY::OSS_OVERFLOW, OSS_VALUE::VISIBLE);
     
-    generateRule(OSS_KEY::BLUR, 0);
+    setStyle(OSS_KEY::BORDER_WIDTH, 0);
     
-    generateRule(OSS_KEY::BORDER_COLOR, ofColor::black);
+    setStyle(OSS_KEY::BLUR, 0);
     
-    generateRule(OSS_KEY::BORDER_RADIUS, 0);
+    setStyle(OSS_KEY::BORDER_COLOR, ofColor::black);
     
-    generateRule(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+    setStyle(OSS_KEY::BORDER_RADIUS, 0);
     
-    generateRule(OSS_KEY::POINTER_EVENTS, OSS_VALUE::AUTO);
+    setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
+    
+    setStyle(OSS_KEY::POINTER_EVENTS, OSS_VALUE::AUTO);
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
-    generateRule(key, value);
+    if(hasStyle(key)){
+        rules[key]->setOssValue(value);
+    }
+    else{
+        generateRule(key, value);
+    }
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, string value){
-    generateRule(key, value);
+    if(hasStyle(key)){
+        rules[key]->setValue(value);
+    }
+    else{
+        generateRule(key, value);
+    }
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, float value){
-    generateRule(key, value);
+    if(hasStyle(key)){
+        rules[key]->setFloat(value);
+    }
+    else{
+        generateRule(key, value);
+    }
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, ofColor value){
-    generateRule(key, value);
+    if(hasStyle(key)){
+        rules[key]->setColor(value);
+    }
+    else{
+        generateRule(key, value);
+    }
 }
 
 ofxOSS::~ofxOSS(){
+    for(auto rulepair : rules){
+        delete rulepair.second;
+    }
     rules.clear();
     idMap.clear();
     classMap.clear();
@@ -96,7 +123,7 @@ ofxOssRule* ofxOSS::getStyle(string key){
 
 ofxOssRule* ofxOSS::getStyle(OSS_KEY::ENUM styleKey){
     if(hasStyle(styleKey)){
-        return &rules[styleKey];
+        return rules[styleKey];
     }
     else{
         return NULL;
@@ -844,23 +871,28 @@ void ofxOSS::generateRule(string key, string value){
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, string value){
     OSS_TYPE::ENUM type =  getOssTypeFromOssKey(key);
-    this->rules[key].setType(type);
-    this->rules[key].setValue(value);
+    this->rules[key] = new ofxOssRule();
+    this->rules[key]->setType(type);
+    this->rules[key]->setValue(value);
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
-    this->rules[key].setType(getOssTypeFromOssKey(key));
-    this->rules[key].setOssValue(value);
+    OSS_TYPE::ENUM type =  getOssTypeFromOssKey(key);
+    this->rules[key] = new ofxOssRule();
+    this->rules[key]->setType(type);
+    this->rules[key]->setOssValue(value);
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, float value){
-    this->rules[key].setType(getOssTypeFromOssKey(key));
-    this->rules[key].setFloat(value);
+    this->rules[key] = new ofxOssRule();
+    this->rules[key]->setType(getOssTypeFromOssKey(key));
+    this->rules[key]->setFloat(value);
 }
 
 void ofxOSS::generateRule(OSS_KEY::ENUM key, ofColor value){
-    this->rules[key].setType(getOssTypeFromOssKey(key));
-    this->rules[key].setColor(value);
+    this->rules[key] = new ofxOssRule();
+    this->rules[key]->setType(getOssTypeFromOssKey(key));
+    this->rules[key]->setColor(value);
 }
 
 string ofxOSS::stringifyColor(ofColor color){

@@ -25,9 +25,7 @@ void ofxLayout::init(int x, int y, int w, int h){
     this->height = h;
     
     fonts = new map<string, ofxFontStash*>();
-    styleRulesRoot.setDefaults();
     contextTreeRoot.setLayout(this);
-    contextTreeRoot.styles = styleRulesRoot;
     tuioEnabled = false;
     assets.addBatch(IMAGES_BATCH);
     externalFonts = false;
@@ -342,14 +340,12 @@ void ofxLayout::applyChanges(){
     }
 }
 
-void ofxLayout::loadOssFromFile(string ossFilename){
-    styleRulesRoot.setDefaults();
-    
+void ofxLayout::loadOssFromFile(string ossFilename){  
     ofxJSONElement ossStylesheet;
     bool ossParsingSuccessful = ossStylesheet.open(ossFilename);
     if(ossParsingSuccessful){
         populateJSON(&ossStylesheet);
-        loadFromOss(&ossStylesheet, &styleRulesRoot);
+        loadFromOss(&ossStylesheet, &contextTreeRoot.styles);
         applyChanges();
         allocateBlurFbo(width, height);
     }
@@ -474,7 +470,7 @@ void ofxLayout::applyStyles(ofxLayoutElement* element){
     ofxOSS* styleObject;
     if(element == NULL){
         element = &contextTreeRoot;
-        styleObject = &styleRulesRoot;
+        styleObject = &contextTreeRoot.styles;
     }
     else{
         styleObject = &element->styles;
@@ -482,13 +478,13 @@ void ofxLayout::applyStyles(ofxLayoutElement* element){
     // Order is important! Styling override order is [ CLASS, ID, INLINE ]
     vector<string> classes = ofSplitString(element->getClasses(), " ");
     for(int i = 0; i < classes.size(); i++){
-        if(styleRulesRoot.classMap.count(classes[i])){
-            element->overrideStyles(&styleRulesRoot.classMap[classes[i]]);
+        if(contextTreeRoot.styles.classMap.count(classes[i])){
+            element->overrideStyles(&contextTreeRoot.styles.classMap[classes[i]]);
         }
     }
     string id = element->getID();
-    if(styleRulesRoot.idMap.count(id)){
-        element->overrideStyles(&styleRulesRoot.idMap[id]);
+    if(contextTreeRoot.styles.idMap.count(id)){
+        element->overrideStyles(&contextTreeRoot.styles.idMap[id]);
     }
     
     ofxOSS inlineStyles = element->getInlineStyles();

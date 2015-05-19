@@ -596,19 +596,40 @@ ofxOssRule* ofxLayoutElement::getStyle(OSS_KEY::ENUM styleKey){
 }
 
 string ofxLayoutElement::getStringStyle(OSS_KEY::ENUM styleKey){
-    return getStyle(styleKey)->asString();
+    if(hasStyle(styleKey)){
+        return getStyle(styleKey)->asString();
+    }
+    else{
+        return "";
+    }
 }
 
 float ofxLayoutElement::getFloatStyle(OSS_KEY::ENUM styleKey){
-    return getStyle(styleKey)->asFloat();
+    if(hasStyle(styleKey)){
+        return getStyle(styleKey)->asFloat();
+    }
+    else{
+        return 0.0;
+    }
+    
 }
 
 ofColor ofxLayoutElement::getColorStyle(OSS_KEY::ENUM styleKey){
-    return getStyle(styleKey)->asColor();
+    if(hasStyle(styleKey)){
+        return getStyle(styleKey)->asColor();
+    }
+    else{
+        return ofColor::black;
+    }
 }
 
 OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
-    return getStyle(styleKey)->asOssValue();
+    if(hasStyle(styleKey)){
+        return getStyle(styleKey)->asOssValue();
+    }
+    else{
+        return OSS_VALUE::INVALID;
+    }
 }
 
 /// |   Utilities   | ///
@@ -1136,7 +1157,9 @@ void ofxLayoutElement::drawBackgroundColor(){
 
 void ofxLayoutElement::overrideStyles(ofxOSS *styleObject){
     for(auto iterator = styleObject->rules.begin(); iterator != styleObject->rules.end(); iterator++){
-        this->styles.generateRule(iterator->first, iterator->second.asString());
+        OSS_KEY::ENUM key = iterator->first;
+        string value = iterator->second->asString();
+        setStyle(key, value);
     }
 }
 

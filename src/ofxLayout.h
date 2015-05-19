@@ -129,7 +129,6 @@ public:
     
 protected:
     ofxLayoutElement contextTreeRoot;
-    ofxOSS styleRulesRoot;
     
     
     void loadTags(ofxXmlSettings* xmlLayout, ofxLayoutElement* element);

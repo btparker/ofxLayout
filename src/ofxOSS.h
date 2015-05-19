@@ -34,7 +34,7 @@ namespace OSS_KEY{
         
         // TEXT
         FONT_FAMILY, COLOR, TEXT_ALIGN, FONT_SIZE, TEXT_TRANSFORM, LETTER_SPACING, /*TEXT_BACKGROUND_COLOR,
-        TEXT_PADDING,*/ TEXT_MAX_WIDTH, LINE_HEIGHT, VERTICAL_ALIGN, FONT_SIZE_MIN, FONT_SIZE_MAX,
+                                                                                    TEXT_PADDING,*/ TEXT_MAX_WIDTH, LINE_HEIGHT, VERTICAL_ALIGN, FONT_SIZE_MIN, FONT_SIZE_MAX,
         
         BLUR,
         
@@ -163,7 +163,7 @@ public:
     
     ofxOSS* parent = NULL;
     
-    map<OSS_KEY::ENUM, ofxOssRule> rules;
+    map<OSS_KEY::ENUM, ofxOssRule*> rules;
     
     map<string,ofxOSS> idMap;
     map<string,ofxOSS> classMap;
@@ -184,23 +184,8 @@ class ofxOssRule{
 public:
     ~ofxOssRule(){
     }
+    
     ofxOssRule(){
-        setType(OSS_TYPE::NONE);
-    }
-    
-    ofxOssRule(string value){
-        setType(OSS_TYPE::NONE);
-        setValue(value);
-    }
-    
-    ofxOssRule(ofColor color){
-        setType(OSS_TYPE::COLOR);
-        setColor(color);
-    }
-    
-    ofxOssRule(float number){
-        setType(OSS_TYPE::NUMBER);
-        setFloat(number);
     }
     
     string asString(){
