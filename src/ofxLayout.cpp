@@ -33,8 +33,8 @@ void ofxLayout::init(int x, int y, int w, int h){
     externalFonts = false;
 }
 
-void ofxLayout::setGlobalFonts(map<string, ofxFontStash*> * fonts){
-    if(!externalFonts){
+void ofxLayout::setGlobalFonts(map<string, ofxFontStash*> * gfonts){
+    if(!externalFonts && fonts != NULL){
         for(pair<string,ofxFontStash*> fsPair : *fonts){
             delete (*fonts)[fsPair.first];
         }
@@ -43,7 +43,7 @@ void ofxLayout::setGlobalFonts(map<string, ofxFontStash*> * fonts){
         fonts = NULL;
     }
     externalFonts = true;
-    this->fonts = fonts;
+    this->fonts = gfonts;
 }
 
 void ofxLayout::enableMouseEvents(){

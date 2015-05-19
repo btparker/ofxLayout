@@ -125,7 +125,7 @@ public:
     void disableTuioEvents();
     bool tuioEnabled;
     
-    void setGlobalFonts(map<string, ofxFontStash* > * fonts);
+    void setGlobalFonts(map<string, ofxFontStash* >* gfonts);
     
 protected:
     ofxLayoutElement contextTreeRoot;
