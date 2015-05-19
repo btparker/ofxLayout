@@ -31,7 +31,7 @@ struct FontData{
 };
 
 namespace TAG {
-    enum ENUM{BODY, DIV, SVG, G, POLYGON, PATH, CIRCLE, INVALID};
+    enum ENUM{BODY, DIV, INVALID};
 };
 
 class ofxLayout;
@@ -60,7 +60,7 @@ public:
     void setTag(TAG::ENUM tag);
     void setTag(string tag);
     
-    ofPath* getShape();
+    ofPath* getPath();
     
     static string getTagString(TAG::ENUM tagEnum);
     static TAG::ENUM getTagEnum(string tagString);
@@ -111,7 +111,7 @@ public:
     void drawBackgroundColor();
     void drawBackgroundTexture(ofTexture* texture);
     void drawText();
-    void drawShape();
+    void drawPath();
     
     bool beginBackgroundBlendMode();
     void endBackgroundBlendMode();
@@ -160,8 +160,7 @@ public:
     ofRectangle getGlobalClippingRegion();
     ofRectangle getClippingRegion();
     
-    ofPath* initShape();
-    bool isShape();
+    bool isPath();
     void drawContent();
     bool clickable();
     void attachAnimationInstance(ofxAnimationInstance* animationInstance);
@@ -194,8 +193,9 @@ public:
     
     bool isSVG;
     ofxSVG* getSvg();
-    void setShape(ofPath* shape);
+    void drawPath(ofPath* path);
     int getLevel();
+    void setPath(ofPath* path, bool pathFillHack = false);
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -219,7 +219,8 @@ protected:
     MOUSE_STATE::ENUM mouseState;
     
     ofVideoPlayer* video;
-    ofPath* shape;
+    ofPath* path;
+    bool pathFillHack;
     map<string, vector<ofxAnimationInstance*> > states;
     
     ofPoint mouseMovedPt;
