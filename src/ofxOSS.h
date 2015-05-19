@@ -182,36 +182,22 @@ private:
 class ofxOssRule{
 public:
     ~ofxOssRule(){
-        if(colorValue){
-            delete colorValue;
-        }
-        if(numberValue){
-            delete numberValue;
-        }
     }
     ofxOssRule(){
-        colorValue = NULL;
-        numberValue = NULL;
         setType(OSS_TYPE::NONE);
     }
     
     ofxOssRule(string value){
-        colorValue = NULL;
-        numberValue = NULL;
         setType(OSS_TYPE::NONE);
         setValue(value);
     }
     
     ofxOssRule(ofColor color){
-        colorValue = new ofxAnimatableOfColor();
-        numberValue = NULL;
         setType(OSS_TYPE::COLOR);
         setColor(color);
     }
     
     ofxOssRule(float number){
-        colorValue = NULL;
-        numberValue = new ofxAnimatableFloat();
         setType(OSS_TYPE::NUMBER);
         setFloat(number);
     }
@@ -225,10 +211,10 @@ public:
                 this->stringValue = ofxOSS::getStringFromOssValue(asOssValue());
                 break;
             case OSS_TYPE::NUMBER:
-                this->stringValue = ofToString(numberValue->getCurrentValue());
+                this->stringValue = ofToString(numberValue.getCurrentValue());
                 break;
             case OSS_TYPE::PERCENT:
-                this->stringValue = ofToString(numberValue->getCurrentValue())+"%";
+                this->stringValue = ofToString(numberValue.getCurrentValue())+"%";
                 break;
             default:;
         }
@@ -242,7 +228,7 @@ public:
         }
         switch(getType()){
             case OSS_TYPE::COLOR:
-                this->colorValue->setColor(ofxOSS::parseColor(value));
+                this->colorValue.setColor(ofxOSS::parseColor(value));
                 break;
             case OSS_TYPE::NUMBER:
             case OSS_TYPE::PERCENT:
@@ -252,7 +238,7 @@ public:
                 if(ofStringTimesInString(value, "pt")){
                     value = ofToString((4.0f/3.0f)*ofToFloat(value));
                 }
-                this->numberValue->reset(ofToFloat(value));
+                this->numberValue.reset(ofToFloat(value));
                 break;
             default:;
         }
@@ -260,19 +246,19 @@ public:
     }
     
     void setColor(ofColor color){
-        this->colorValue->setColor(color);
+        this->colorValue.setColor(color);
     }
     
     ofColor asColor(){
-        return colorValue->getCurrentColor();
+        return colorValue.getCurrentColor();
     }
     
     void setFloat(float number){
-        this->numberValue->reset(number);
+        this->numberValue.reset(number);
     }
     
     float asFloat(){
-        return numberValue->getCurrentValue();
+        return numberValue.getCurrentValue();
     }
     
     void setOssValue(OSS_VALUE::ENUM ossValue){
@@ -284,10 +270,10 @@ public:
     }
     
     ofxAnimatableOfColor* getAnimatableColor(){
-        return colorValue;
+        return &colorValue;
     }
     ofxAnimatableFloat* getAnimatableFloat(){
-        return numberValue;
+        return &numberValue;
     }
     
     OSS_TYPE::ENUM getType(){
@@ -296,28 +282,12 @@ public:
     
     void setType(OSS_TYPE::ENUM type){
         this->type = type;
-        if(type == OSS_TYPE::NUMBER || type ==  OSS_TYPE::PERCENT){
-            if(colorValue){
-                delete colorValue;
-                colorValue = NULL;
-            }
-            
-            numberValue = new ofxAnimatableFloat();
-        }
-        if(type == OSS_TYPE::COLOR){
-            if(numberValue){
-                delete numberValue;
-                numberValue = NULL;
-            }
-            
-            colorValue = new ofxAnimatableOfColor();
-        }
     }
     
 protected:
     OSS_TYPE::ENUM type = OSS_TYPE::NONE;
     OSS_VALUE::ENUM ossValue = OSS_VALUE::NONE;
     string stringValue;
-    ofxAnimatableOfColor* colorValue;
-    ofxAnimatableFloat* numberValue;
+    ofxAnimatableOfColor colorValue;
+    ofxAnimatableFloat numberValue;
 };
