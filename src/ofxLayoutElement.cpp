@@ -94,7 +94,9 @@ ofPoint ofxLayoutElement::getLocalPoint(ofPoint pt){
     
     ofMatrix4x4 mat = layout->getMouseTransformation();
     ofPoint gp = getGlobalPosition();
-    return pt*mat-gp;
+    ofPoint lp = pt*mat-gp;
+    
+    return lp;
 }
 
 void ofxLayoutElement::setMouseState(MOUSE_STATE::ENUM mouseState){
