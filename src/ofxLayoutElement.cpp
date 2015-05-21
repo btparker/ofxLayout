@@ -26,7 +26,8 @@ ofxLayoutElement::~ofxLayoutElement(){
     }
     
     if(video != NULL){
-        video->closeMovie();
+        video->close();
+        delete video;
         video = NULL;
     }
     if(overlayFbo){
@@ -1050,7 +1051,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
         string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
         
         if(video == NULL){
-            video = new ofVideoPlayer();
+            video = new ofxHapPlayer();
             video->load(videoPath);
             video->setVolume(0.0f);
             video->play();
@@ -1058,7 +1059,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
         }
         else{
             video->update();
-            drawBackgroundTexture(&video->getTexture());
+            drawBackgroundTexture(video->getTexture());
         }
         
     }
