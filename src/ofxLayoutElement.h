@@ -6,6 +6,7 @@
 #include "ofxLoaderSpool.h"
 #include "ofxMask.h"
 #include "ofxSvg.h"
+#include "ofxHapPlayer.h"
 
 struct SideDimensions{
     float top = 0.0f;
@@ -218,7 +219,8 @@ protected:
     
     MOUSE_STATE::ENUM mouseState;
     
-    ofVideoPlayer* video;
+//    ofVideoPlayer* video;
+    ofxHapPlayer* video;
     ofPath* path;
     bool pathFillHack;
     map<string, vector<ofxAnimationInstance*> > states;
