@@ -34,8 +34,8 @@ ofxLayoutElement::~ofxLayoutElement(){
         overlayFbo->clear();
         delete overlayFbo;
     }
-    for(int i = 0 ; i < children.size(); i++){
-        delete children[i];
+    for(int i = 0 ; i < childElements.size(); i++){
+        delete childElements[i];
     }
 }
 
@@ -243,7 +243,7 @@ void ofxLayoutElement::update(){
     float expandingWidth = minWidth;
     float maxExpandedWidth = expandingWidth;
     
-    for(ofxLayoutElement* child : children){
+    for(ofxLayoutElement* child : childElements){
         child->update();
         if(!child->visible()){
             continue;
@@ -296,7 +296,7 @@ void ofxLayoutElement::update(){
         if(hasStyle(OSS_KEY::FONT_FAMILY)){
             dimensions.height = fontData.drawBox.getHeight();
         }
-        else if(!children.empty()){
+        else if(!childElements.empty()){
             dimensions.height = childrenHeight;
         }
         
@@ -315,8 +315,8 @@ void ofxLayoutElement::update(){
     }
     
     // Positioning
-    for(int i = 0 ; i < children.size(); i++){
-        ofPoint relativePos = children[i]->getPosition();
+    for(ofxLayoutElement* child : childElements){
+        ofPoint relativePos = child->getPosition();
         
         ofPoint offset = ofPoint(0,0);
 
@@ -330,56 +330,56 @@ void ofxLayoutElement::update(){
             containingDimensions = getDimensions();
         }
         
-        if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
-            float percentTop = children[i]->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
+        if(child->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::PERCENT){
+            float percentTop = child->getStyle(OSS_KEY::TOP)->asFloat()/100.0f;
             offset.y = percentTop * containingDimensions.getHeight();
         }
         // Fixed size (px)
-        else if(children[i]->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
-            offset.y = children[i]->getStyle(OSS_KEY::TOP)->asFloat();
+        else if(child->getStyle(OSS_KEY::TOP)->getType() == OSS_TYPE::NUMBER){
+            offset.y = child->getStyle(OSS_KEY::TOP)->asFloat();
         }
-        if(children[i]->hasStyle(OSS_KEY::BOTTOM)){
-            if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
+        if(child->hasStyle(OSS_KEY::BOTTOM)){
+            if(child->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::PERCENT){
                 // Inverse
-                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
+                float percentTop = 1.0f-(child->getStyle(OSS_KEY::BOTTOM)->asFloat()/100.0f);
                 offset.y = percentTop * containingDimensions.getHeight();
             }
             // Fixed size (px)
-            else if(children[i]->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
+            else if(child->getStyle(OSS_KEY::BOTTOM)->getType() == OSS_TYPE::NUMBER){
                 
-                offset.y = containingDimensions.getHeight() - children[i]->getHeight() - children[i]->getStyle(OSS_KEY::BOTTOM)->asFloat();
+                offset.y = containingDimensions.getHeight() - child->getHeight() - child->getStyle(OSS_KEY::BOTTOM)->asFloat();
             }
         }
         
         
-        if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
-            float percentLeft = children[i]->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
+        if(child->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::PERCENT){
+            float percentLeft = child->getStyle(OSS_KEY::LEFT)->asFloat()/100.0f;
             offset.x = percentLeft * containingDimensions.getWidth();
         }
         // Fixed size (px)
-        else if(children[i]->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
-            offset.x = children[i]->getStyle(OSS_KEY::LEFT)->asFloat();
+        else if(child->getStyle(OSS_KEY::LEFT)->getType() == OSS_TYPE::NUMBER){
+            offset.x = child->getStyle(OSS_KEY::LEFT)->asFloat();
         }
-        if(children[i]->hasStyle(OSS_KEY::RIGHT)){
-            if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
+        if(child->hasStyle(OSS_KEY::RIGHT)){
+            if(child->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::PERCENT){
                 // Inverse
-                float percentTop = 1.0f-(children[i]->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
+                float percentTop = 1.0f-(child->getStyle(OSS_KEY::RIGHT)->asFloat()/100.0f);
                 offset.x = percentTop * containingDimensions.getWidth();
             }
             // Fixed size (px)
-            else if(children[i]->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
-                offset.x = containingDimensions.getWidth() - children[i]->getWidth() - children[i]->getStyle(OSS_KEY::RIGHT)->asFloat();
+            else if(child->getStyle(OSS_KEY::RIGHT)->getType() == OSS_TYPE::NUMBER){
+                offset.x = containingDimensions.getWidth() - child->getWidth() - child->getStyle(OSS_KEY::RIGHT)->asFloat();
             }
         }
         
         
-        if(children[i]->getOssValueStyle(OSS_KEY::MARGIN_LEFT) == OSS_VALUE::AUTO){
-            offset.x = dimensions.width/2.0-children[i]->getDimensions().getWidth()/2.0;
+        if(child->getOssValueStyle(OSS_KEY::MARGIN_LEFT) == OSS_VALUE::AUTO){
+            offset.x = dimensions.width/2.0-child->getDimensions().getWidth()/2.0;
         }
         
         ofPoint childPos = offset;
         
-        switch(children[i]->getStyle(OSS_KEY::POSITION)->asOssValue()){
+        switch(child->getStyle(OSS_KEY::POSITION)->asOssValue()){
             case OSS_VALUE::RELATIVE:
                 childPos = relativePos+offset;
                 break;
@@ -395,7 +395,7 @@ void ofxLayoutElement::update(){
                 childPos = relativePos+offset;
         }
         
-        children[i]->setPosition(childPos);
+        child->setPosition(childPos);
     }
 }
 
@@ -407,7 +407,7 @@ void ofxLayoutElement::addChild(ofxLayoutElement* child){
     for(string className : ofSplitString(child->getClasses()," ")){
         this->layout->classElementMap[className].insert(child);
     }
-    children.push_back(child);
+    childElements.push_back(child);
     layout->applyStyles(child);
     layout->applyAnimations();
     child->setState("default");
@@ -477,9 +477,9 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         
         ofPopStyle();
         
-        for(int i = 0 ; i < children.size(); i++){
-            children[i]->setOpacity(opacity);
-            children[i]->draw();
+        for(ofxLayoutElement* child : childElements){
+            child->setOpacity(opacity);
+            child->draw();
         }
         
         
@@ -1280,7 +1280,7 @@ void ofxLayoutElement::setState(string stateChange, bool recursive, bool reset){
     }
     
     if(recursive){
-        for(ofxLayoutElement* child : children){
+        for(ofxLayoutElement* child : childElements){
             child->setState(stateChange, recursive, reset);
         }
     }
@@ -1432,4 +1432,53 @@ ofxSVG* ofxLayoutElement::getSvg(){
 
 int ofxLayoutElement::getLevel(){
     return level;
+}
+
+vector<ofxLayoutElement*> ofxLayoutElement::children(string selector){
+    if(selector.empty()){
+        return childElements;
+    }
+    else{
+        vector<ofxLayoutElement*> selectedChildren;
+        vector<string> selectors = ofSplitString(selector, " ");
+        for(ofxLayoutElement* child : childElements){
+            for(string& selector : selectors){
+                if(selector.substr(0,1) == "#"){
+                    string ID = selector.substr(1);
+                    if(child->getID() == ID){
+                        selectedChildren.push_back(child);
+                        break;
+                    }
+                }
+                else if(selector.substr(0,1) == "."){
+                    string className = selector.substr(1);
+                    bool hasClass = false;
+                    for(string childClassName : ofSplitString(child->getClasses(), " ")){
+                        if(childClassName == className){
+                            hasClass = true;
+                            break;
+                        }
+                    }
+                    if(hasClass){
+                        selectedChildren.push_back(child);
+                        break;
+                    }
+                }
+            }
+        }
+        return selectedChildren;
+    }
+}
+
+void ofxLayoutElement::remove(ofxLayoutElement *element){
+    for(int i = 0; i < childElements.size(); i++){
+        if(childElements[i] == element){
+            childElements.erase(childElements.begin()+i);
+        }
+    }
+}
+
+void ofxLayoutElement::setChildren(vector<ofxLayoutElement *> childs){
+    childElements.clear();
+    childElements = childs;
 }

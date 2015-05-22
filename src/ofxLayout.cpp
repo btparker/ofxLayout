@@ -91,8 +91,8 @@ ofxLayoutElement* ofxLayout::hittest(ofPoint pt){
         if(node->clickable()){
             hits.push(node);
         }
-        for(int i = node->children.size()-1; i >= 0; i--){
-            ofxLayoutElement* child = node->children[i];
+        for(int i = node->children().size()-1; i >= 0; i--){
+            ofxLayoutElement* child = node->children()[i];
             if(child->visible() && child->hittest(pt)){
                 parentStack.push(child);
             }
@@ -493,8 +493,8 @@ void ofxLayout::applyStyles(ofxLayoutElement* element){
     element->overrideStyles(&inlineStyles);
     
     updateAssets(element);
-    for(int i = 0; i < element->children.size(); i++){
-        applyStyles(element->children[i]);
+    for(ofxLayoutElement* child : element->children()){
+        applyStyles(child);
     }
 }
 
@@ -681,9 +681,5 @@ void ofxLayout::removeElement(ofxLayoutElement* element){
             }
         }
     }
-    for(int i = 0; i < p->children.size(); i++){
-        if(p->children[i] == element){
-            p->children.erase(p->children.begin()+i);
-        }
-    }
+    p->remove(element);
 }

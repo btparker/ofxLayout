@@ -102,8 +102,6 @@ public:
     void addChild(ofxLayoutElement* child);
     
     ofxOSS styles;
-    
-    vector<ofxLayoutElement*> children;
     ofxLayoutElement* parent;
     
     void drawBackground();
@@ -197,6 +195,9 @@ public:
     void drawPath(ofPath* path);
     int getLevel();
     void setPath(ofPath* path, bool pathFillHack = false);
+    vector<ofxLayoutElement*> children(string selector = "");
+    void remove(ofxLayoutElement* element);
+    void setChildren(vector<ofxLayoutElement*> childs);
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -234,4 +235,5 @@ protected:
     bool stateLocked;
     ofFbo* overlayFbo;
     int level;
+    vector<ofxLayoutElement*> childElements;
 };
