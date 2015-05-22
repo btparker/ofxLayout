@@ -752,6 +752,10 @@ void ofxLayoutElement::beginBackgroundSize(){
         bgWidth = svg.getWidth();
         bgHeight = svg.getHeight();
     }
+	else if (video != NULL) {
+		bgWidth = video->getWidth();
+		bgHeight = video->getHeight();
+	}
     
     float wRatio = bgWidth/getWidth();
     float hRatio = bgHeight/getHeight();
