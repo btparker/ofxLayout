@@ -447,8 +447,12 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
-        
-        bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->mFboBlur.isAllocated();
+
+#ifndef OFXLAYOUT_DISABLE_MULTIBLUR
+		bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->mFboBlur.isAllocated();
+#else
+		bool isBlurring = false;
+#endif
         if(isBlurring){
             layout->mFboBlur.setBlurOffset(getFloatStyle(OSS_KEY::BLUR));
             layout->mFboBlur.beginDrawScene();

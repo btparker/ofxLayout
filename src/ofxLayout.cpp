@@ -214,10 +214,12 @@ void ofxLayout::allocateBlurFbo(int w, int h){
     s.height = h;
     s.internalformat = GL_RGB;
     s.maxFilter = GL_LINEAR;
+#ifndef OFXLAYOUT_DISABLE_MULTIBLUR
     mFboBlur.setup(s, 5, 15.0);
     mFboBlur.setBlurOffset(20);
     mFboBlur.setBlurPasses(4);
     mFboBlur.setNumBlurOverlays(1);
+#endif
 }
 
 /// |   Cycle Functions  | ///
