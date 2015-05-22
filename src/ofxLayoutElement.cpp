@@ -857,10 +857,7 @@ void ofxLayoutElement::updateText(){
             layout->getFonts()->at(fontData.fontFilename)->setCharacterSpacing(getFloatStyle(OSS_KEY::LETTER_SPACING));
         }
         
-        // LINE HEIGHT
-        {
-            layout->getFonts()->at(fontData.fontFilename)->setLineHeight(getFloatStyle(OSS_KEY::LINE_HEIGHT));
-        }
+        
         
         // AUTO WIDTH
         if(getOssValueStyle(OSS_KEY::WIDTH) == OSS_VALUE::AUTO){
@@ -925,6 +922,13 @@ void ofxLayoutElement::drawText(){
                 fontColor.a *= opacity;
                 ofSetColor(fontColor);
             }
+            
+            // LINE HEIGHT
+            {
+                float lh = getFloatStyle(OSS_KEY::LINE_HEIGHT);
+                layout->getFonts()->at(fontData.fontFilename)->setLineHeight(lh);
+            }
+            
             layout->getFonts()->at(fontFilename)->setKerning(true);
             glPushAttrib(GL_BLEND);
             glEnable(GL_BLEND);
