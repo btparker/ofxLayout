@@ -1,5 +1,6 @@
 #include "ofxLayoutElement.h"
 #include "ofxLayout.h"
+#include "ofxTimeMeasurements.h"
 
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
@@ -26,9 +27,11 @@ ofxLayoutElement::~ofxLayoutElement(){
     }
     
     if(video != NULL){
+		TS_START("ofxLayout close video");
         video->close();
         delete video;
         video = NULL;
+		TS_STOP("ofxLayout close video");
     }
     if(overlayFbo){
         overlayFbo->clear();
@@ -1063,10 +1066,14 @@ void ofxLayoutElement::drawBackgroundVideo(){
         string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
         
         if(video == NULL){
+			TS_START("ofxLayout open video");
             video = new ofxHapPlayer();
             video->load(videoPath);
             video->setVolume(0.0f);
             video->setLoopState(OF_LOOP_NORMAL);
+			video->play();
+			video->setPaused(true);
+			TS_STOP("ofxLayout open video");
         }
         else{
             video->update();
@@ -1079,13 +1086,13 @@ void ofxLayoutElement::drawBackgroundVideo(){
 
 void ofxLayoutElement::playBackgroundVideo(){
     if(hasStyle(OSS_KEY::BACKGROUND_VIDEO) && video != NULL){
-        video->play();
+		video->setPaused(false);
     }
 }
 
 void ofxLayoutElement::pauseBackgroundVideo(){
     if(hasStyle(OSS_KEY::BACKGROUND_VIDEO) && video != NULL){
-        video->stop();
+		video->setPaused(true);
     }
 }
 
