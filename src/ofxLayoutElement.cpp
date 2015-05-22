@@ -26,7 +26,8 @@ ofxLayoutElement::~ofxLayoutElement(){
     }
     
     if(video != NULL){
-        video->closeMovie();
+        video->close();
+        delete video;
         video = NULL;
     }
     if(overlayFbo){
@@ -446,8 +447,12 @@ void ofxLayoutElement::draw(ofFbo* fbo){
         if(hasStyle(OSS_KEY::OPACITY)){
             opacity *= getStyle(OSS_KEY::OPACITY)->asFloat();
         }
-        
-        bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->mFboBlur.isAllocated();
+
+#ifndef OFXLAYOUT_DISABLE_MULTIBLUR
+		bool isBlurring = hasStyle(OSS_KEY::BLUR) && getFloatStyle(OSS_KEY::BLUR) > 0 && layout->mFboBlur.isAllocated();
+#else
+		bool isBlurring = false;
+#endif
         if(isBlurring){
             layout->mFboBlur.setBlurOffset(getFloatStyle(OSS_KEY::BLUR));
             layout->mFboBlur.beginDrawScene();
@@ -747,6 +752,10 @@ void ofxLayoutElement::beginBackgroundSize(){
         bgWidth = svg.getWidth();
         bgHeight = svg.getHeight();
     }
+	else if (video != NULL) {
+		bgWidth = video->getWidth();
+		bgHeight = video->getHeight();
+	}
     
     float wRatio = bgWidth/getWidth();
     float hRatio = bgHeight/getHeight();
@@ -1054,7 +1063,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
         string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
         
         if(video == NULL){
-            video = new ofVideoPlayer();
+            video = new ofxHapPlayer();
             video->load(videoPath);
             video->setVolume(0.0f);
             video->play();
@@ -1062,7 +1071,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
         }
         else{
             video->update();
-            drawBackgroundTexture(&video->getTexture());
+            drawBackgroundTexture(video->getTexture());
         }
         
     }
