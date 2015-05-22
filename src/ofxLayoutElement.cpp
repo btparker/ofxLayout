@@ -1066,7 +1066,6 @@ void ofxLayoutElement::drawBackgroundVideo(){
             video = new ofxHapPlayer();
             video->load(videoPath);
             video->setVolume(0.0f);
-            video->play();
             video->setLoopState(OF_LOOP_NORMAL);
         }
         else{
@@ -1076,6 +1075,18 @@ void ofxLayoutElement::drawBackgroundVideo(){
         
     }
     ofPopStyle();
+}
+
+void ofxLayoutElement::playBackgroundVideo(){
+    if(hasStyle(OSS_KEY::BACKGROUND_VIDEO) && video != NULL){
+        video->play();
+    }
+}
+
+void ofxLayoutElement::pauseBackgroundVideo(){
+    if(hasStyle(OSS_KEY::BACKGROUND_VIDEO) && video != NULL){
+        video->stop();
+    }
 }
 
 
@@ -1274,8 +1285,15 @@ void ofxLayoutElement::setState(string stateChange, bool recursive, bool reset){
                 anim->trigger();
             }
         }
+        if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
+            if(stateChange == PLAY_STATE){
+                playBackgroundVideo();
+            }
+            else if(stateChange == PAUSE_STATE){
+                pauseBackgroundVideo();
+            }
+        }
         this->state = stateChange;
-        
         ofNotifyEvent(stateEvt, stateChange, this);
     }
     

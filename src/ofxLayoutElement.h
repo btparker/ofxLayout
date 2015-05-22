@@ -35,6 +35,9 @@ namespace TAG {
     enum ENUM{BODY, DIV, INVALID};
 };
 
+const string PLAY_STATE = "play";
+const string PAUSE_STATE = "pause";
+
 class ofxLayout;
 class ofxLayoutElement{
     
@@ -198,6 +201,10 @@ public:
     vector<ofxLayoutElement*> children(string selector = "");
     void remove(ofxLayoutElement* element);
     void setChildren(vector<ofxLayoutElement*> childs);
+    
+    void playBackgroundVideo();
+    void pauseBackgroundVideo();
+    
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
