@@ -197,7 +197,7 @@ public:
     ofxSVG* getSvg();
     void drawPath(ofPath* path);
     int getLevel();
-    void setPath(ofPath* path, bool pathFillHack = false);
+    void setPath(ofPath* path, bool pathFillHack = false, ofPoint startPoint = ofPoint(), ofPoint endPoint = ofPoint());
     vector<ofxLayoutElement*> children(string selector = "");
     void remove(ofxLayoutElement* element);
     void setChildren(vector<ofxLayoutElement*> childs);
@@ -205,11 +205,17 @@ public:
     void playBackgroundVideo();
     void pauseBackgroundVideo();
     
+    void setPathPercent(float percent);
+    
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
     virtual void drawTag(){};
     ofPoint position;
+    ofPoint startPt;
+    ofPoint endPt;
+    float pathStartFi;
+    float pathEndFi;
     
     ofRectangle dimensions;
     SideDimensions borders;
@@ -231,6 +237,7 @@ protected:
     ofxHapPlayer* video;
     ofPath* path;
     bool pathFillHack;
+    float pathPercent;
     map<string, vector<ofxAnimationInstance*> > states;
     
     ofPoint mouseMovedPt;
@@ -242,5 +249,6 @@ protected:
     bool stateLocked;
     ofFbo* overlayFbo;
     int level;
+    ofMesh mesh;
     vector<ofxLayoutElement*> childElements;
 };

@@ -34,9 +34,22 @@ ofxLayoutElement::~ofxLayoutElement(){
         overlayFbo->clear();
         delete overlayFbo;
     }
-    for(int i = 0 ; i < childElements.size(); i++){
-        delete childElements[i];
+    
+    for(auto state : states){
+        for(ofxAnimationInstance* anim : states[state.first]){
+            layout->am.removeAnimationInstance(anim->getID());
+        }
+        states[state.first].clear();
     }
+    
+    for(int i = 0 ; i < childElements.size(); i++){
+        if(childElements[i]){
+            delete childElements[i];
+            childElements[i] = NULL;
+        }
+    }
+    
+    
 }
 
 void ofxLayoutElement::mouseMoved(ofMouseEventArgs &args){
@@ -672,21 +685,56 @@ void ofxLayoutElement::drawPath(){
         ofSetColor(255,255, 255, 255);
         
         path->setCurveResolution(100);
-        path->draw();
         if(pathFillHack){
-            ofEnableSmoothing();
-            ofEnableAntiAliasing();
-            
             if(hasStyle(OSS_KEY::STROKE)){
                 ofSetColor(stroke);
                 ofFill();
-                for(int i = 0; i < path->getOutline().size(); i++){
-                    
-                    for(int j = 0; j < path->getOutline()[i].getVertices().size(); j++){
-                        ofDrawCircle(path->getOutline()[i].getVertices()[j], getFloatStyle(OSS_KEY::STROKE_MITERLIMIT));
+                float radius = getFloatStyle(OSS_KEY::STROKE_MITERLIMIT);
+                for(ofPolyline& poly : path->getOutline()){
+                    int numSamples = round(poly.getPerimeter());
+                    float startDist = INFINITY;
+                    float endDist = INFINITY;
+                    for(int i = 0; i <= numSamples; i++){
+                        float percent = (1.0f*i)/(1.0f*numSamples);
+                        float findex = poly.getIndexAtPercent(percent);
+                        ofPoint pt = poly.getPointAtIndexInterpolated(findex);
+                        if(pt.distance(startPt) < startDist){
+                            startDist = pt.distance(startPt);
+                            pathStartFi = findex;
+                        }
+                        if(pt.distance(endPt) < endDist){
+                            endDist = pt.distance(endPt);
+                            pathEndFi = findex;
+                        }
                     }
+                    float findexDiff = pathEndFi - pathStartFi;
+                    
+                    mesh.clear();
+                    mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+                    for(int i = 0; i <= numSamples; i++){
+                        float percentC = (1.0f*i)/(1.0f*numSamples);
+                        if(percentC > pathPercent){
+                            break;
+                        }
+//                        float findexC = poly.getIndexAtPercent(percentC);
+                        float findexC = pathStartFi+percentC*findexDiff;
+
+                        ofPoint cpt = poly.getPointAtIndexInterpolated(findexC);
+                        
+                        ofPoint cnPtA = cpt+radius*poly.getNormalAtIndexInterpolated(findexC);
+                        
+                        ofPoint cnPtB = cpt-radius*poly.getNormalAtIndexInterpolated(findexC);
+                        
+                        mesh.addVertex(cnPtA);
+                        mesh.addVertex(cnPtB);
+                    }
+                    mesh.draw();
+
                 }
             }
+        }
+        else{
+            path->draw();
         }
         
         ofPopStyle();
@@ -1241,9 +1289,20 @@ ofPath* ofxLayoutElement::getPath(){
     return this->path;
 }
 
-void ofxLayoutElement::setPath(ofPath* path, bool pathFillHack){
+void ofxLayoutElement::setPath(ofPath* path, bool pathFillHack, ofPoint startPoint, ofPoint endPoint){
+    this->startPt = startPoint;
+    this->endPt = endPoint;
+    
     this->pathFillHack = pathFillHack;
     this->path = path;
+    
+    if(pathFillHack){
+        pathPercent = 0.0;
+    }
+}
+
+void ofxLayoutElement::setPathPercent(float percent){
+    this->pathPercent = percent;
 }
 
 ofFbo* ofxLayoutElement::getFbo(){
@@ -1411,6 +1470,7 @@ bool ofxLayoutElement::hasState(string state){
 
 void ofxLayoutElement::loadSvg(string imageFilename){
     isSVG = true;
+    svg.clear();
     svg.load(imageFilename);
     getStyle(OSS_KEY::BACKGROUND_IMAGE)->setValue(imageFilename);
 }
@@ -1491,6 +1551,7 @@ vector<ofxLayoutElement*> ofxLayoutElement::children(string selector){
 void ofxLayoutElement::remove(ofxLayoutElement *element){
     for(int i = 0; i < childElements.size(); i++){
         if(childElements[i] == element){
+            delete childElements[i];
             childElements.erase(childElements.begin()+i);
         }
     }
