@@ -234,7 +234,7 @@ void ofxLayout::update(float dt){
     
     am.update(dt);
     assets.update();
-    contextTreeRoot.update();
+    contextTreeRoot.update(dt);
 }
 
 void ofxLayout::draw(){

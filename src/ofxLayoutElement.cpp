@@ -193,7 +193,7 @@ bool ofxLayoutElement::visible(){
 /// |   Cycle Functions  | ///
 /// | ------------------ | ///
 
-void ofxLayoutElement::update(){
+void ofxLayoutElement::update(float dt){
     globalTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
@@ -266,7 +266,7 @@ void ofxLayoutElement::update(){
     float maxExpandedWidth = expandingWidth;
     
     for(ofxLayoutElement* child : childElements){
-        child->update();
+        child->update(dt);
         if(!child->visible()){
             continue;
         }
