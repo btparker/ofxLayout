@@ -718,15 +718,6 @@ void ofxLayoutElement::drawPath(){
                             pathEndP = percent;
                         }
                     }
-                    float shaveOff = 0.0;
-                    if(pathStartP < pathEndP){
-                        pathStartP += shaveOff;
-                        pathEndP -= shaveOff;
-                    }
-                    else{
-                        pathStartP -= shaveOff;
-                        pathEndP += shaveOff;
-                    }
                     
                     float pDiff = pathEndP - pathStartP;
                     mesh.clear();
