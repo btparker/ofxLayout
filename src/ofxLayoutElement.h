@@ -214,8 +214,8 @@ protected:
     ofPoint position;
     ofPoint startPt;
     ofPoint endPt;
-    float pathStartFi;
-    float pathEndFi;
+    float pathStartP;
+    float pathEndP;
     
     ofRectangle dimensions;
     SideDimensions borders;

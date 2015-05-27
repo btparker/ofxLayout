@@ -711,24 +711,24 @@ void ofxLayoutElement::drawPath(){
                         ofPoint pt = poly.getPointAtIndexInterpolated(findex);
                         if(pt.distance(startPt) < startDist){
                             startDist = pt.distance(startPt);
-                            pathStartFi = findex;
+                            pathStartP = percent;
                         }
                         if(pt.distance(endPt) < endDist){
                             endDist = pt.distance(endPt);
-                            pathEndFi = findex;
+                            pathEndP = percent;
                         }
                     }
-                    float shaveOff = 10;
-                    if(pathStartFi < pathEndFi){
-                        pathStartFi += shaveOff;
-                        pathEndFi -= shaveOff;
+                    float shaveOff = 0.01;
+                    if(pathStartP < pathEndP){
+                        pathStartP += shaveOff;
+                        pathEndP -= shaveOff;
                     }
                     else{
-                        pathStartFi -= shaveOff;
-                        pathEndFi += shaveOff;
+                        pathStartP -= shaveOff;
+                        pathEndP += shaveOff;
                     }
                     
-                    float findexDiff = pathEndFi - pathStartFi;
+                    float pDiff = pathEndP - pathStartP;
                     mesh.clear();
                     mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
                     for(int j = 0; j < numSamples; j++){
@@ -738,13 +738,15 @@ void ofxLayoutElement::drawPath(){
                             break;
                         }
                         
-                        float findexC = pathStartFi+percentC*findexDiff;
+                        float findexC = pathStartP+percentC*pDiff;
 
-                        ofPoint cpt = poly.getPointAtIndexInterpolated(findexC);
+                        ofPoint cpt = poly.getPointAtPercent(findexC);
                         
-                        ofPoint cnPtA = cpt+radius*poly.getNormalAtIndexInterpolated(findexC);
+                        float findex = poly.getIndexAtPercent(findexC);
                         
-                        ofPoint cnPtB = cpt-radius*poly.getNormalAtIndexInterpolated(findexC);
+                        ofPoint cnPtA = cpt+radius*poly.getNormalAtIndexInterpolated(findex);
+                        
+                        ofPoint cnPtB = cpt-radius*poly.getNormalAtIndexInterpolated(findex);
                         
                         mesh.addVertex(cnPtA);
                         mesh.addVertex(cnPtB);
