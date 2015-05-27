@@ -492,6 +492,7 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             layout->mFboBlur.drawBlurFbo();
+            glDisable(GL_BLEND);
             glPopAttrib();
         }
         
@@ -512,11 +513,10 @@ void ofxLayoutElement::draw(ofFbo* fbo){
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             ofSetColor(255*opacity);
             overlayFbo->draw(0,0);
+            glDisable(GL_BLEND);
             glPopAttrib();
             ofPopStyle();
         }
-        
-        
         
         if(hasStyle(OSS_KEY::OSS_OVERFLOW) && getOssValueStyle(OSS_KEY::OSS_OVERFLOW)== OSS_VALUE::HIDDEN){
             glDisable(GL_SCISSOR_TEST);
@@ -664,7 +664,7 @@ OSS_VALUE::ENUM ofxLayoutElement::getOssValueStyle(OSS_KEY::ENUM styleKey){
 /// |   Utilities   | ///
 /// | ------------- | ///
 void ofxLayoutElement::drawPath(){
-    if(path){
+    if(path != NULL){
         ofPushStyle();
         ofColor fill;
         ofColor stroke;
@@ -696,11 +696,13 @@ void ofxLayoutElement::drawPath(){
         path->setCurveResolution(100);
         if(pathFillHack){
             if(hasStyle(OSS_KEY::STROKE)){
-                ofSetColor(stroke);
                 ofFill();
                 float radius = getFloatStyle(OSS_KEY::STROKE_MITERLIMIT);
                 for(ofPolyline& poly : path->getOutline()){
-                    int numSamples = round(poly.getPerimeter());
+                    int numSamples = 0.5*round(poly.getPerimeter());
+                    if(numSamples == 0){
+                        break;
+                    }
                     float startDist = INFINITY;
                     float endDist = INFINITY;
                     for(int i = 0; i <= numSamples; i++){
@@ -716,16 +718,26 @@ void ofxLayoutElement::drawPath(){
                             pathEndFi = findex;
                         }
                     }
-                    float findexDiff = pathEndFi - pathStartFi;
+                    float shaveOff = 10;
+                    if(pathStartFi < pathEndFi){
+                        pathStartFi += shaveOff;
+                        pathEndFi -= shaveOff;
+                    }
+                    else{
+                        pathStartFi -= shaveOff;
+                        pathEndFi += shaveOff;
+                    }
                     
+                    float findexDiff = pathEndFi - pathStartFi;
                     mesh.clear();
                     mesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
-                    for(int i = 0; i <= numSamples; i++){
-                        float percentC = (1.0f*i)/(1.0f*numSamples);
+                    for(int j = 0; j < numSamples; j++){
+                        float percentC = (float(j))/(float(numSamples));
+                        
                         if(percentC > pathPercent){
                             break;
                         }
-//                        float findexC = poly.getIndexAtPercent(percentC);
+                        
                         float findexC = pathStartFi+percentC*findexDiff;
 
                         ofPoint cpt = poly.getPointAtIndexInterpolated(findexC);
@@ -737,6 +749,8 @@ void ofxLayoutElement::drawPath(){
                         mesh.addVertex(cnPtA);
                         mesh.addVertex(cnPtB);
                     }
+                    
+                    ofSetColor(stroke);
                     mesh.draw();
 
                 }
@@ -879,8 +893,6 @@ void ofxLayoutElement::updateText(){
         }
         
         // FONT SIZE
-        //        bool updateFontSize =
-        //            getStyle(OSS_KEY::FONT_SIZE)->getType() == OSS_K
         {
             int fontSize;
             bool fitText = false;
@@ -1208,7 +1220,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     }
     glPushAttrib(GL_BLEND);
     glEnable(GL_BLEND);
-    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     ofSetColor(255, 255, 255,floor(255*opacity));
     for(int x = 0; x <= numRepeatX; x++){
         for(int y = 0; y <= numRepeatY; y++){

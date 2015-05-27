@@ -126,6 +126,7 @@ public:
     bool tuioEnabled;
     
     void setGlobalFonts(map<string, ofxFontStash* >* gfonts);
+    ofxOSS* getClassStyles(string className);
     
 protected:
     ofxLayoutElement contextTreeRoot;

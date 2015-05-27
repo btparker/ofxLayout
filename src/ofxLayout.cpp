@@ -468,6 +468,15 @@ void ofxLayout::loadFromOss(ofxJSONElement* jsonElement, ofxOSS* styleObject){
     }
 }
 
+ofxOSS* ofxLayout::getClassStyles(string className){
+    if(contextTreeRoot.styles.classMap.count(className) > 0){
+        return &contextTreeRoot.styles.classMap[className];
+    }
+    else{
+        return NULL;
+    }
+}
+
 void ofxLayout::applyStyles(ofxLayoutElement* element){
     ofxOSS* styleObject;
     if(element == NULL){
