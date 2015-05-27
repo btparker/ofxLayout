@@ -718,7 +718,7 @@ void ofxLayoutElement::drawPath(){
                             pathEndP = percent;
                         }
                     }
-                    float shaveOff = 0.01;
+                    float shaveOff = 0.0;
                     if(pathStartP < pathEndP){
                         pathStartP += shaveOff;
                         pathEndP -= shaveOff;
