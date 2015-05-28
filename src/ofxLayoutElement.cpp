@@ -4,6 +4,7 @@
   #include "ofxTimeMeasurements.h"
 #endif
 
+
 /// |   Constructor/Destructor   | ///
 /// | -------------------------- | ///
 ofxLayoutElement::ofxLayoutElement(){
@@ -21,6 +22,21 @@ ofxLayoutElement::ofxLayoutElement(){
     mouseState = MOUSE_STATE::NONE;
     stateLocked = false;
     overlayFbo = NULL;
+#define _S(a) #a
+    string shader_src = _S(
+                           uniform float opacity;
+                           uniform sampler2DRect tex0;
+                           void main(){
+                               gl_FragColor = texture2DRect(tex0, gl_TexCoord[0].st);
+                               gl_FragColor.a = texture2DRect(tex0, gl_TexCoord[0].st).a;
+                               gl_FragColor.rgb /= gl_FragColor.a;
+                               gl_FragColor.a *= min(1.0,opacity);
+                           }
+                           );
+    
+#undef _S
+    blendShader.setupShaderFromSource(GL_FRAGMENT_SHADER, shader_src);
+    blendShader.linkProgram();
 }
 
 ofxLayoutElement::~ofxLayoutElement(){
@@ -1005,6 +1021,7 @@ void ofxLayoutElement::drawText(){
             glEnable(GL_BLEND);
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             fontData.drawBox = layout->getFonts()->at(fontFilename)->drawMultiLineColumn(fontData.text, fontData.fontSize, x, y+fontData.fontHeight, textMaxWidth,numLines, false, 0, true, ta);
+            glDisable(GL_BLEND);
             glPopAttrib();
         }
     }
@@ -1213,14 +1230,31 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     }
     glPushAttrib(GL_BLEND);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    ofSetColor(255, 255, 255,floor(255*opacity));
+    ofSetColor(255, 255, 255, 255*opacity);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    makeTexCoords(tex_coords_, texture->getTextureData());
+    makeVertices(vertices_, texture->getTextureData());
+    
     for(int x = 0; x <= numRepeatX; x++){
         for(int y = 0; y <= numRepeatY; y++){
             ofRectangle textureSize(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y,bgTextureTransform.width, bgTextureTransform.height);
-            texture->draw(textureSize);
+            ofPushMatrix();
+            ofTranslate(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y);
+                blendShader.begin();
+                blendShader.setUniform1f("opacity", opacity);
+                blendShader.setUniformTexture("tex0", *texture, 0);
+                glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+                glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_ );
+                glEnableClientState(GL_VERTEX_ARRAY);
+                glVertexPointer(2, GL_FLOAT, 0, vertices_ );
+                glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+                glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+                blendShader.end();
+            ofPopMatrix();
         }
     }
+    
     glDisable(GL_BLEND);
     glPopAttrib();
     ofPopStyle();

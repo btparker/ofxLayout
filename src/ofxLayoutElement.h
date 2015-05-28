@@ -8,6 +8,8 @@
 #include "ofxSvg.h"
 #include "ofxHapPlayer.h"
 
+
+
 struct SideDimensions{
     float top = 0.0f;
     float right = 0.0f;
@@ -206,7 +208,43 @@ public:
     void pauseBackgroundVideo();
     
     void setPathPercent(float percent);
+    ofShader blendShader;
     
+    float vertices_[8];
+    float tex_coords_[8];
+    
+        void makeVertices(float *dst, ofTextureData& texture_data)
+        {
+            dst[0] =
+            dst[1] =
+            dst[3] =
+            dst[6] = 0;
+            dst[2] =
+            dst[4] = texture_data.width;
+            dst[5] =
+            dst[7] = texture_data.height;
+        }
+        void makeTexCoords(float *dst, ofTextureData& texture_data)
+        {
+            dst[0] =
+            dst[1] =
+            dst[3] =
+            dst[6] = 0;
+#ifndef TARGET_OPENGLES
+            if( texture_data.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
+                dst[2] =
+                dst[4] = texture_data.width;
+                dst[5] =
+                dst[7] = texture_data.height;
+            }else
+#endif
+            {
+                dst[2] =
+                dst[4] = texture_data.tex_t;
+                dst[5] =
+                dst[7] = texture_data.tex_u;
+            }
+        }
 protected:
     ofMatrix4x4 globalTransformations;
     ofxLayout* layout;
@@ -230,6 +268,7 @@ protected:
     
     ofxSVG svg;
     string inlineStyle;
+    ofShader shader;
     
     MOUSE_STATE::ENUM mouseState;
     
