@@ -43,6 +43,8 @@ namespace OSS_KEY{
         
         POINTER_EVENTS,
         
+        PREMULTIPLY,
+        
         // Invalid is last in case we want to extend the enum
         INVALID
     };
@@ -67,7 +69,7 @@ namespace OSS_VALUE{
         COVER, CONTAIN, FILL,
         
         // BLEND MODES
-        ALPHA, ADD, SUBTRACT, SCREEN, MULTIPLY, DISABLED,
+        ALPHA, ADD, SUBTRACT, SCREEN, MULTIPLY, DIVIDE, DISABLED,
         
         // TEXT TRANSFORM
         UPPERCASE, LOWERCASE, CAPITALIZE,

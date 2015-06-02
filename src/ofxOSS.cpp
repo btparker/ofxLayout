@@ -66,6 +66,8 @@ void ofxOSS::setDefaults(){
     setStyle(OSS_KEY::DISPLAY, OSS_VALUE::BLOCK);
     
     setStyle(OSS_KEY::POINTER_EVENTS, OSS_VALUE::AUTO);
+    
+    setStyle(OSS_KEY::PREMULTIPLY, OSS_VALUE::AUTO);
 }
 
 void ofxOSS::setStyle(OSS_KEY::ENUM key, OSS_VALUE::ENUM value){
@@ -300,6 +302,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "pointer-events"){
         return OSS_KEY::POINTER_EVENTS;
     }
+    else if(key == "premultiply"){
+        return OSS_KEY::PREMULTIPLY;
+    }
     else{
         return OSS_KEY::INVALID;
     }
@@ -452,6 +457,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
         case OSS_KEY::POINTER_EVENTS:
             keyString = "pointer-events";
             break;
+        case OSS_KEY::PREMULTIPLY:
+            keyString = "premultiply";
+            break;
         default:
             ofLogWarning("ofxOSS::getStringFromOssKey","No string key found for value provided.");
     }
@@ -536,6 +544,9 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
             break;
         case OSS_VALUE::MULTIPLY:
             valueStr = "multiply";
+            break;
+        case OSS_VALUE::DIVIDE:
+            valueStr = "divide";
             break;
         case OSS_VALUE::DISABLED:
             valueStr = "disabled";
@@ -652,6 +663,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     else if(value == "multiply"){
         return OSS_VALUE::MULTIPLY;
+    }
+    else if(value == "divide"){
+        return OSS_VALUE::DIVIDE;
     }
     else if(value == "disabled"){
         return OSS_VALUE::DISABLED;
@@ -795,6 +809,9 @@ OSS_TYPE::ENUM ofxOSS::getOssTypeFromOssKey(OSS_KEY::ENUM key){
             type = OSS_TYPE::NUMBER;
             break;
         case OSS_KEY::POINTER_EVENTS:
+            type = OSS_TYPE::OSS_VALUE;
+            break;
+        case OSS_KEY::PREMULTIPLY:
             type = OSS_TYPE::OSS_VALUE;
             break;
         case OSS_KEY::BLUR:
