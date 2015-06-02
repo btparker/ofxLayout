@@ -414,6 +414,9 @@ void ofxLayoutElement::update(float dt){
         if(child->getOssValueStyle(OSS_KEY::MARGIN_LEFT) == OSS_VALUE::AUTO){
             offset.x = dimensions.width/2.0-child->getDimensions().getWidth()/2.0;
         }
+        if(child->getOssValueStyle(OSS_KEY::MARGIN_TOP) == OSS_VALUE::AUTO){
+            offset.y = dimensions.height/2.0-child->getDimensions().getHeight()/2.0;
+        }
         
         ofPoint childPos = offset;
         
@@ -926,7 +929,7 @@ void ofxLayoutElement::updateText(){
             
             if(fitText){
                 ofRectangle fontBBox = layout->getFonts()->at(fontData.fontFilename)->getBBox(textToFit,fontSize,0,0);
-                fontSize *= (int)((dimensions.width)/(fontBBox.width+1));
+                fontSize *= (int)(0.95*(dimensions.width)/(fontBBox.width+1));
             }
             
             if(hasStyle(OSS_KEY::FONT_SIZE_MIN)){

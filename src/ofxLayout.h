@@ -42,7 +42,7 @@ public:
     void setData(string key, string value);
     
     void loadFromFile(string filename);
-    void loadFromTemplate(string templateFolder, ofxJSONElement data);
+    void loadFromTemplate(string templateFolder, ofxJSONElement data = ofxJSONElement::null);
     
     /// \brief Loads an external OFML file (basically, xml or html), ties this element to the root element described in the file,
     /// and generates all child elements as well

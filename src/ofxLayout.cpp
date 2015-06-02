@@ -278,6 +278,7 @@ void ofxLayout::loadFromFile(string filename){
 }
 
 void ofxLayout::loadFromTemplate(string templateFolder, ofxJSONElement data){
+    loadDataFromFile(templateFolder+"/layout-data.json");
     loadData(data);
     loadOfmlFromFile(templateFolder+"/index.ofml");
     loadOssFromFile(templateFolder+"/styles.oss");
@@ -553,7 +554,7 @@ void ofxLayout::updateAssets(ofxLayoutElement *element){
                                        2048,
                                        true,
                                        8,
-                                       4.0f
+                                       1.0f
                                        );
         }
     }
