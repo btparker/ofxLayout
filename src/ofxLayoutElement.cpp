@@ -1234,10 +1234,12 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     
     glPushAttrib(GL_BLEND);
     glEnable(GL_BLEND);
-    
     if(getOssValueStyle(OSS_KEY::PREMULTIPLY) == OSS_VALUE::DIVIDE){
         ofSetColor(255, 255, 255, 255*opacity);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else if(getOssValueStyle(OSS_KEY::PREMULTIPLY) == OSS_VALUE::CUSTOM){
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     }
     else{
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -1250,24 +1252,7 @@ void ofxLayoutElement::drawBackgroundTexture(ofTexture *texture){
     for(int x = 0; x <= numRepeatX; x++){
         for(int y = 0; y <= numRepeatY; y++){
             ofRectangle textureSize(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y,bgTextureTransform.width, bgTextureTransform.height);
-            if(getOssValueStyle(OSS_KEY::PREMULTIPLY) == OSS_VALUE::DIVIDE){
-                ofPushMatrix();
-                ofTranslate(bgX+bgTextureTransform.width*x, bgY+bgTextureTransform.height*y);
-                blendShader.begin();
-                blendShader.setUniform1f("opacity", opacity);
-                blendShader.setUniformTexture("tex0", *texture, 0);
-                glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-                glTexCoordPointer(2, GL_FLOAT, 0, tex_coords_ );
-                glEnableClientState(GL_VERTEX_ARRAY);
-                glVertexPointer(2, GL_FLOAT, 0, vertices_ );
-                glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-                glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-                blendShader.end();
-                ofPopMatrix();
-            }
-            else{
-                texture->draw(textureSize);
-            }
+            texture->draw(textureSize);
         }
     }
     

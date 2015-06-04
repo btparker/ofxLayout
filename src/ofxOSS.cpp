@@ -548,6 +548,9 @@ string ofxOSS::getStringFromOssValue(OSS_VALUE::ENUM value){
         case OSS_VALUE::DIVIDE:
             valueStr = "divide";
             break;
+        case OSS_VALUE::CUSTOM:
+            valueStr = "custom";
+            break;
         case OSS_VALUE::DISABLED:
             valueStr = "disabled";
             break;
@@ -666,6 +669,9 @@ OSS_VALUE::ENUM ofxOSS::getOssValueFromString(string value){
     }
     else if(value == "divide"){
         return OSS_VALUE::DIVIDE;
+    }
+    else if(value == "custom"){
+        return OSS_VALUE::CUSTOM;
     }
     else if(value == "disabled"){
         return OSS_VALUE::DISABLED;
