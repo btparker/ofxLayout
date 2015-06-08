@@ -235,6 +235,9 @@ OSS_KEY::ENUM ofxOSS::getOssKeyFromString(string key){
     else if(key == "font-size"){
         return OSS_KEY::FONT_SIZE;
     }
+    else if(key == "text-breakpoints"){
+        return OSS_KEY::TEXT_BREAKPOINTS;
+    }
     else if(key == "font-size-min"){
         return OSS_KEY::FONT_SIZE_MIN;
     }
@@ -399,6 +402,9 @@ string ofxOSS::getStringFromOssKey(OSS_KEY::ENUM key){
             break;
         case OSS_KEY::FONT_SIZE:
             keyString = "font-size";
+            break;
+        case OSS_KEY::TEXT_BREAKPOINTS:
+            keyString = "text-breakpoints";
             break;
         case OSS_KEY::COLOR:
             keyString = "color";

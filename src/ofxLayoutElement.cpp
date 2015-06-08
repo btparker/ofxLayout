@@ -912,10 +912,21 @@ void ofxLayoutElement::updateText(){
         
         // FONT SIZE
         {
-            int fontSize;
+            int fontSize = 0;
             bool fitText = false;
             string textToFit = fontData.text;
-            if(getOssValueStyle(OSS_KEY::FONT_SIZE) == OSS_VALUE::FIT){
+            if(hasStyle(OSS_KEY::TEXT_BREAKPOINTS)){
+                vector<string> breakpoints = ofSplitString(getStringStyle(OSS_KEY::TEXT_BREAKPOINTS), " ");
+                for(int i = 0; i < breakpoints.size(); i++){
+                    vector<string> bp = ofSplitString(breakpoints[i], "/");
+                    int cc = ofToInt(bp[0]);
+                    int fs = ofToInt(bp[1]);
+                    if(fontData.text.size() >= cc){
+                        fontSize = fs;
+                    }
+                }
+            }
+            else if(getOssValueStyle(OSS_KEY::FONT_SIZE) == OSS_VALUE::FIT){
                 fontSize = 5.0;
                 fitText = true;
             }
