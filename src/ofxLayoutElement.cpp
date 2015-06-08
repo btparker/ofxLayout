@@ -726,6 +726,12 @@ void ofxLayoutElement::drawPath(){
                     float endDist = INFINITY;
                     for(int i = 0; i <= numSamples; i++){
                         float percent = (1.0f*i)/(1.0f*numSamples);
+                        if(i == 0){
+                            percent = FLT_EPSILON;
+                        }
+                        else if(i == numSamples){
+                            percent = 1.0-FLT_EPSILON;
+                        }
                         float findex = poly.getIndexAtPercent(percent);
                         ofPoint pt = poly.getPointAtIndexInterpolated(findex);
                         if(pt.distance(startPt) < startDist){
