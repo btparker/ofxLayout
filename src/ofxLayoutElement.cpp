@@ -210,6 +210,7 @@ bool ofxLayoutElement::visible(){
 /// | ------------------ | ///
 
 void ofxLayoutElement::update(float dt){
+    
     globalTransformations = ofMatrix4x4::newIdentityMatrix();
     // If root element, boundary is initially set to the current viewport dimensions
     if(this->getTag() == TAG::BODY){
@@ -437,6 +438,28 @@ void ofxLayoutElement::update(float dt){
         }
         
         child->setPosition(childPos);
+    }
+    if(hasStyle(OSS_KEY::BACKGROUND_VIDEO)){
+        string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
+        
+        if(video == NULL){
+#ifdef USE_OFX_TIME_MEASUREMENTS
+            TS_START("ofxLayout open video");
+#endif
+            video = new ofxHapPlayer();
+            video->loadAsync(videoPath);
+            video->setVolume(0.0f);
+            video->setLoopState(OF_LOOP_NORMAL);
+            video->play();
+            video->setPaused(true);
+#ifdef USE_OFX_TIME_MEASUREMENTS
+            TS_STOP("ofxLayout open video");
+#endif
+        }
+        else{
+            video->update();
+        }
+        
     }
 }
 
@@ -1161,22 +1184,7 @@ void ofxLayoutElement::drawBackgroundVideo(){
         ofSetColor(255,255,255,255);
         string videoPath = getStringStyle(OSS_KEY::BACKGROUND_VIDEO);
         
-        if(video == NULL){
-#ifdef USE_OFX_TIME_MEASUREMENTS
-            TS_START("ofxLayout open video");
-#endif
-            video = new ofxHapPlayer();
-            video->load(videoPath);
-            video->setVolume(0.0f);
-            video->setLoopState(OF_LOOP_NORMAL);
-            video->play();
-            video->setPaused(true);
-#ifdef USE_OFX_TIME_MEASUREMENTS
-            TS_STOP("ofxLayout open video");
-#endif
-        }
-        else{
-            video->update();
+        if(video != NULL){
             drawBackgroundTexture(video->getTexture());
         }
         
