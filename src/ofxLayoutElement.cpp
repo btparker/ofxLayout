@@ -203,7 +203,7 @@ void ofxLayoutElement::hide(){
 bool ofxLayoutElement::visible(){
     bool displayNone = hasStyle(OSS_KEY::DISPLAY) && getOssValueStyle(OSS_KEY::DISPLAY) == OSS_VALUE::NONE;
     bool opacityZero = opacity != 0 && hasStyle(OSS_KEY::OPACITY) && getFloatStyle(OSS_KEY::OPACITY) == 0.0f;
-    return !displayNone && !opacityZero;
+    return !displayNone;
 }
 
 /// |   Cycle Functions  | ///
@@ -284,9 +284,6 @@ void ofxLayoutElement::update(float dt){
     
     for(ofxLayoutElement* child : childElements){
         child->update(dt);
-        if(!child->visible()){
-            continue;
-        }
         float cW = child->getDimensions().getWidth();
         float cH = child->getDimensions().getHeight();
         float mL = child->getFloatStyle(OSS_KEY::MARGIN_LEFT);
